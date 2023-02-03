@@ -7,12 +7,6 @@
   pointer-events: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -24,15 +18,118 @@
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.readonly {
+  background-color: rgb(136, 136, 136);
+  /* any other styles */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.starR,
+.starL,
+.starLT,
+.starRT,
+.starT {
+  position: relative;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .starR {
+    animation: starAnimR infinite 1s ease-in;
   }
+
+  .starL {
+    animation: starAnimL infinite 1s ease-in;
+  }
+
+  .starLT {
+    animation: starAnimLT infinite 1s ease-in;
+  }
+
+  .starRT {
+    animation: starAnimRT infinite 1s ease-in;
+  }
+
+  .starT {
+    animation: starAnimT infinite 1s ease-in;
+  }
+  .popupText {
+    animation: popupTextAnim infinite 1s ease-in;
+  }
+}
+@keyframes popupTextAnim {
+  from {
+    font-size: large;
+  }
+
   to {
-    transform: rotate(360deg);
+    font-size: larger;
+  }
+}
+@keyframes starAnimR {
+  from {
+    color: white;
+    left: -1rem;
+    top: 0rem;
+  }
+
+  to {
+    color: yellow;
+    left: 3rem;
+    top: -3rem;
+  }
+}
+
+@keyframes starAnimL {
+  from {
+    color: white;
+    left: 1rem;
+    top: 0rem;
+  }
+
+  to {
+    color: yellow;
+    left: -3rem;
+    top: -3rem;
+  }
+}
+
+@keyframes starAnimLT {
+  from {
+    color: white;
+    left: 0rem;
+    top: 2rem;
+  }
+
+  to {
+    color: yellow;
+    left: -2rem;
+    top: -1rem;
+  }
+}
+
+@keyframes starAnimRT {
+  from {
+    color: white;
+    left: 0rem;
+    top: 2rem;
+  }
+
+  to {
+    color: yellow;
+    left: 2rem;
+    top: -1rem;
+  }
+}
+
+@keyframes starAnimT {
+  from {
+    color: white;
+    left: 0rem;
+    top: 2rem;
+  }
+
+  to {
+    color: yellow;
+    left: 0rem;
+    top: -2rem;
   }
 }

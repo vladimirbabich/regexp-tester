@@ -4,7 +4,7 @@ Vivamus nec sem id velit tempor porta quis in quam. Donec dignissim sed lacus vi
 const reStr = '';
 const re = new RegExp('ipsum');
 const index = initialStr.search(re)
-const result =initialStr.
+const result =initialStr
 	console.log(result)
 
 

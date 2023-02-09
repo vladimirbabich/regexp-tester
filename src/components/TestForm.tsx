@@ -1,41 +1,78 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./../App.css";
-import { Form, Row, Col, ListGroup, ListGroupItem } from "react-bootstrap";
+import {
+  Form,
+  Row,
+  Col,
+  ListGroup,
+  ListGroupItem,
+  Button,
+} from "react-bootstrap";
 import Popup from "./Popup";
 import { expectedResult, getMatch } from "../TestController";
 import questions from "./../questions";
-export default function Tester() {
-  const [result, setResult] = useState<string>("");
+import Timer from "./Timer";
+import TestInput from "./TestInput";
+import { FlagsType } from "./../types";
+import { getFlagsString } from "../utils";
+
+export default function TestForm() {
+  const [flags, setFlags] = useState<FlagsType[]>([
+    {
+      name: "g",
+      description: "all matches",
+      status: false,
+    },
+    {
+      name: "i",
+      description: "case insensitive",
+      status: true,
+    },
+    {
+      name: "m",
+      description: "multiline",
+      status: true,
+    },
+  ]);
   const [isRightAnswer, setIsRightAnswer] = useState<boolean>(false);
-  const [currentText, setCurrentText] = useState<string>(questions[10].text);
+  const [currentText, setCurrentText] = useState<string>(questions[3].text);
+  const [pattern, setPattern] = useState<string>("");
+  const [isShowExpectedResult, setIsExpectedResult] = useState<boolean>(false);
+  const [isTimerActive, setIsTimerActive] = useState<boolean>(false);
+  const [timeAmount, setTimeAmount] = useState<number>(300);
+
+  useEffect(() => {
+    updateResult();
+  }, [flags, pattern]);
+  const [result, setResult] = useState<string>(
+    "a|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d"
+  );
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setPattern((prev) => e.target.value);
+  }
+  function updateResult() {
+    if (!isTimerActive) setIsTimerActive(true);
     if (!currentText) return;
-    if (typeof e.target.value != "string" || e.target.value.length === 0) {
-      if (result) setResult("No matches");
+    if (pattern.length == 0) {
+      if (result) setResult("");
       return;
     }
 
-    const answer: string = e.target.value;
-    let pattern: string | undefined = undefined,
-      flags: string | undefined = undefined;
-    if (e.target.value.indexOf("/") > -1) [pattern, flags] = answer.split("/");
-
     const match: string | undefined = getMatch(
       currentText,
-      pattern || answer,
-      flags
+      pattern,
+      getFlagsString(flags)
     );
     if (match) {
       setResult(match);
       return;
     }
     //else {
-    setResult("No matches");
+    setResult("");
   }
+
   useEffect(() => {
-    // console.log(`currentText: ${currentText}`);
-    // console.log(`${result} == ${expectedResult}`);
     if (result === expectedResult) {
       setIsRightAnswer(true);
     }
@@ -59,83 +96,78 @@ export default function Tester() {
     }
   }, [isRightAnswer]);
   return (
-    <Form className="container">
-      <Row>
-        <Form.Label>{questions[10].task}</Form.Label>
-        <Form.Control
-          as="input"
-          id="regexpInput"
-          placeholder="Type regular expression"
-          onChange={handleChange}
-        ></Form.Control>
-      </Row>
-      <Row>
+    <Form className="container-sm p-0">
+      <Row className="no-gutters p-0 m-0">
         <Col>
-          <Form.Control
-            as="textarea"
-            className="readonly"
-            id="initialTextInput"
-            rows={4}
-            // readOnly={true}
-            value={currentText}
-            onChange={(e) => {
-              setCurrentText(e.target.value);
+          <Timer
+            timeAmount={timeAmount}
+            setTimeAmount={setTimeAmount}
+            isTimerActive={isTimerActive}
+            setIsTimerActive={setIsTimerActive}
+          ></Timer>
+        </Col>
+        <Col>
+          <Form.Label
+            style={{
+              position: "relative",
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "row",
             }}
-          ></Form.Control>
+          >
+            <p>{questions[0].task}</p>
+            <span
+              onMouseEnter={(e) => setIsExpectedResult(true)}
+              // onMouseLeave={(e) => setIsExpectedResult(false)}
+              className="lensIcon"
+            >
+              &#x1F50E;&#xFE0F;
+            </span>
+            {isShowExpectedResult && (
+              <div className="expectedResult">
+                <p className="expectedResultTitle">Expected result:</p>
+                <div className=" wrapper">
+                  {questions[3].expectedResult.split("").map((el) => (
+                    <span className="matchElement">{el}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </Form.Label>
         </Col>
         <Col>
-          <Form.Control
-            as="textarea"
-            className="readonly"
-            placeholder="Your result"
-            id="initialTextInput"
-            rows={4}
-            // readOnly={true}
-            value={result}
-          ></Form.Control>
+          <span className="questionsCount">0/{questions.length}</span>
+          <Button>Try next</Button>
         </Col>
       </Row>
-      <Row>
-        <Form.Label>Expected result</Form.Label>
-        <Form.Control
-          as="input"
-          className="readonly"
-          id="expectedResult"
-          readOnly={true}
-          value={questions[10].expectedResult}
-        ></Form.Control>
+      <Row className="no-gutters p-0 m-0">
+        <Col className="p-0 m-0">
+          <TestInput
+            handleChange={handleChange}
+            flags={flags}
+            setFlags={setFlags}
+          ></TestInput>
+        </Col>
+      </Row>
+      <Row className="no-gutters p-0 m-0">
+        <Col className="p-0 m-0">
+          <p className="textArea">{questions[3].text}</p>
+        </Col>
+        <Col className="p-0 m-0">
+          {result == "" ? (
+            <span>No matches</span>
+          ) : (
+            <div className="resultBlock">
+              <div className="wrapper">
+                {result.split("|").map((el) => (
+                  <span className="matchElement">{el}</span>
+                ))}
+              </div>
+            </div>
+          )}
+        </Col>
       </Row>
       {isRightAnswer ? <Popup></Popup> : null}
-      <h1>Don`t know regular expression? Learn here:</h1>
-      <ListGroup>
-        <ListGroupItem>
-          <a
-            href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            MDN web docs
-          </a>
-        </ListGroupItem>
-        <ListGroupItem>
-          <a
-            href="https://www.w3schools.com/jsref/jsref_obj_regexp.asp"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            W3 schools
-          </a>
-        </ListGroupItem>
-        <ListGroupItem>
-          <a
-            href="https://docs.python.org/3/library/re.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Python docs
-          </a>
-        </ListGroupItem>
-      </ListGroup>
     </Form>
   );
 }

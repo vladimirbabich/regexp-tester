@@ -1,0 +1,30 @@
+@use "./../App";
+
+button.selectActivator {
+  position: absolute;
+  background-color: white;
+  color: rgb(0, 95, 0);
+  right: 3px;
+  top: 1px;
+  margin: 0;
+  padding: 10px;
+  height: 38px;
+  // border: 1px solid App.$secondBgColor;
+  border: none;
+  &:hover {
+    cursor: pointer;
+  }
+}
+select.flagsBlock {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  width: 200px;
+  font-size: 0.6em;
+  padding: 1px;
+  overflow-y: auto;
+  * {
+    margin: 2px;
+    height: 100%;
+  }
+}

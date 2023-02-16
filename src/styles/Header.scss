@@ -1,0 +1,41 @@
+@use "./../App";
+
+.header {
+  height: 8vh;
+  background-color: App.$secondBgColor;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  //   align-items: center;
+  justify-content: space-between;
+  font-size: 20px;
+  color: white;
+
+  .logo {
+    align-self: center;
+    padding-left: 5px;
+    // vertical-align: middle;
+  }
+}
+.navigation {
+  display: flex;
+  width: 65vw;
+  justify-content: flex-end;
+  button {
+    // align-self: baseline;
+    background-color: App.$secondBgColor;
+    font-weight: bold;
+    color: App.$linkColor;
+    padding: 3px;
+    margin-left: 10px;
+    height: 100%;
+    border: 0;
+
+    &:hover {
+      color: App.$hoverColor;
+    }
+    &:disabled {
+      color: App.$disabledColor;
+    }
+  }
+}

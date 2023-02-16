@@ -13,5 +13,18 @@ export type DropDownPickerProps = {
 export type TestInputProps = {
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   flags: FlagsType[];
+  value: string;
   setFlags: React.Dispatch<React.SetStateAction<FlagsType[]>>;
 };
+export interface IQuestion {
+  text: string;
+  expectedResult: string;
+  task: string;
+  possibleAnswer: string;
+  difficulty: number;
+  id: number;
+}
+export interface IGameQuestion extends IQuestion {
+  isDone: boolean;
+  userAnswer?: string;
+}

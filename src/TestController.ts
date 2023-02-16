@@ -9,7 +9,7 @@ export function getMatch(text: string, pattern: string, flags?: string) {
   const matchArray = text.match(regExp);
   if (!matchArray) return undefined;
   if (flags && flags.length > 0) {
-    console.log(matchArray);
+    // console.log(matchArray);
     return matchArray
       .filter((el) => {
         if (el) return el;

@@ -1,0 +1,20 @@
+@use "./../App";
+.footer {
+  background-color: App.$secondBgColor;
+  min-height: 10%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  color: white;
+  position: absolute;
+  bottom: 0;
+  span, a {
+    font-size: 15px;
+  }
+  a {
+    color: App.$linkColor;
+    text-decoration: none;
+  }
+}

@@ -1,0 +1,121 @@
+@use "./../App";
+form.testForm {
+  margin-top: 10px;
+  width: 75vw;
+}
+.testInfo {
+  // background-color: red;w
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  .task {
+    margin: 0;
+    font-weight: bold;
+    width: 60%;
+    // background-color: aqua;
+    text-align: center;
+    position: relative;
+  }
+  .expectedBtn {
+    background-color: rgb(187, 187, 187);
+    padding: 3px;
+    font-weight: bold;
+    padding-left: 5px;
+    padding-right: 6px;
+    border: 1px solid rgb(99, 99, 99);
+    border-radius: 50%;
+  }
+  .expectedResult {
+    background-color: rgba(22, 22, 22, 0.7);
+    transform: translate(-50%, 0%);
+    width: 50%;
+    padding: 5px 1px 5px 1px;
+    margin: 0 auto;
+    justify-content: center;
+    z-index: 100;
+    top: 30px;
+    left: 50%;
+    position: absolute;
+  }
+  .expectedResultTitle {
+    color: white;
+    text-align: center;
+    // display: block;
+    margin: 0;
+    font-size: 1em;
+    padding-bottom: 3px;
+  }
+}
+div.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 4px;
+  flex-wrap: wrap;
+}
+// span.matchElement:first-child {
+//   margin-left: inherit;
+// }
+span.matchElement {
+  background-color: rgb(226, 226, 226);
+  font-size: 0.86em;
+  min-width: 30px;
+  // margin-left: 3px;
+  height: 30px;
+  border-top: 1px solid rgb(153, 153, 153);
+  border-left: 1px solid rgb(153, 153, 153);
+  border-right: 1px solid rgb(255, 255, 255);
+  border-bottom: 1px solid rgb(255, 255, 255);
+  box-shadow: -1px -1px black;
+  box-shadow: 1px 1px black;
+  padding: 1px 3px 1px 3px;
+  margin: 0 0 4px 0;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  vertical-align: text-top;
+}
+.texts {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+p.textBlock {
+  width: 50%;
+  background-color: rgb(255, 255, 255);
+//   font-size: 0.7em;
+  min-height: 100px;
+  text-align: left;
+  padding: 6px;
+  border: 1px solid rgb(139, 139, 139);
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+.resultBlock {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  padding: 3px 0 3px 0;
+  border: 1px solid rgb(139, 139, 139);
+  background-color: rgb(255, 255, 255);
+}
+button.skipBtn {
+  background-color: App.$secondBgColor;
+  color: white;
+  padding: 4px;
+  border: none;
+  border-radius: 4px;
+  &:hover {
+    background-color: App.$linkColor;
+    color: App.$secondBgColor;
+  }
+  &:active {
+    background-color: App.$activeColor;
+  }
+}

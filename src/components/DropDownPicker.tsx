@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
 import { DropDownPickerProps, FlagsType } from "./../types";
-
+import "./../styles/DropDownPicker.scss";
 
 export default function DropDownPicker({
   open,
@@ -21,21 +20,21 @@ export default function DropDownPicker({
       });
     });
   };
-  const handleClickSelectActivator = () => {
+  const handleClickSelectActivator = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
     setOpen(!open);
   };
-
-  const handleClickDropDownPicker = () => {};
-
   return (
     <>
-      <Button
+      <button
         className="selectActivator"
         id="selectActivator"
-        onClick={handleClickSelectActivator}
+        onClick={(e) => handleClickSelectActivator(e)}
       >
         /{children}
-      </Button>
+      </button>
       {open && (
         <select className="flagsBlock" id="flagsSelect" multiple={true}>
           {list.map((el) => {

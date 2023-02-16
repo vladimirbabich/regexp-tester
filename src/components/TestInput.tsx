@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./../App.css";
-import { Button, Form } from "react-bootstrap";
+import "./../App.scss";
+import "./../styles/TestInput.scss";
 import DropDownPicker from "./DropDownPicker";
 import { GlobalContext } from "./../App";
 import { TestInputProps, FlagsType } from "./../types";
@@ -10,6 +9,7 @@ import { getFlagsString } from "./../utils";
 export default function TestInput({
   handleChange,
   flags,
+  value,
   setFlags,
 }: TestInputProps) {
   const globalContext = useContext(GlobalContext);
@@ -39,15 +39,6 @@ export default function TestInput({
 
   return (
     <div className="testInput">
-      <Form.Control
-        style={{ marginBottom: "5px" }}
-        as="input"
-        autoComplete="off"
-        id="regexpInput"
-        autoFocus={true}
-        placeholder="Type regular expression"
-        onChange={handleChange}
-      ></Form.Control>
       <DropDownPicker
         open={isActiveFlagsBlock}
         setOpen={setIsActiveFlagsBlock}
@@ -56,6 +47,15 @@ export default function TestInput({
       >
         {getFlagsString(flags)}
       </DropDownPicker>
+      <input
+        style={{ marginBottom: "5px" }}
+        autoComplete="off"
+        id="regexpInput"
+        value={value}
+        autoFocus={true}
+        placeholder="Type regular expression and choose flags ->"
+        onChange={handleChange}
+      ></input>
     </div>
   );
 }

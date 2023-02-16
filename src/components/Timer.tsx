@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./../App.css";
+import "./../App.scss";
 function getFormattedTime(timestamp: number) {
   if (timestamp < 0) timestamp = 0;
   const date = new Date(timestamp * 1000);
@@ -8,18 +8,16 @@ function getFormattedTime(timestamp: number) {
   const minutes = "0" + date.getMinutes();
   const seconds = "0" + date.getSeconds();
 
-  let formattedTime: string = "";
   if (hours === 0)
-    formattedTime = `${hours}:${minutes.substring(
+    return `${minutes.substring(
       minutes.length - 2,
       minutes.length
     )}:${seconds.substring(seconds.length - 2, seconds.length)}`;
   else
-    formattedTime = `${minutes.substring(
+    return `${hours}:${minutes.substring(
       minutes.length - 2,
       minutes.length
     )}:${seconds.substring(seconds.length - 2, seconds.length)}`;
-  return formattedTime;
 }
 
 type TimerProps = {

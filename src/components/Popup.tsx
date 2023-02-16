@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './../App.css';
+import './../App.scss';
 export default function Popup() {
     return (
         <div className='position-absolute mt-5 start-50 translate-middle zindex-popover'>

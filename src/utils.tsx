@@ -1,6 +1,6 @@
-import { FlagsType } from "./types";
+import { IDropDownPickerList } from "./types";
 
-export function getFlagsString(array: Array<FlagsType>) {
+export function getFlagsString(array: Array<IDropDownPickerList>) {
   let str = array
     .filter((el) => {
       // console.log(el.status);

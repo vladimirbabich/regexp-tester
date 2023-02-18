@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { DropDownPickerProps, FlagsType } from "./../types";
+import { DropDownPickerFlagsPropsType } from "./../types";
 import "./../styles/DropDownPicker.scss";
 
 export default function DropDownPicker({
+  isMultiple,
   open,
   setOpen,
   list,
   setList,
   children,
-}: DropDownPickerProps) {
+}: DropDownPickerFlagsPropsType) {
   const handleClickOption = (
     e: React.MouseEvent<HTMLOptionElement, MouseEvent>
   ) => {
@@ -32,19 +33,24 @@ export default function DropDownPicker({
         className="selectActivator"
         id="selectActivator"
         onClick={(e) => handleClickSelectActivator(e)}
+        style={{ color: open ? "rgb(2, 44, 136)" : "rgb(0, 95, 0)" }}
       >
         /{children}
       </button>
       {open && (
-        <select className="flagsBlock" id="flagsSelect" multiple={true}>
+        <select className="flagsBlock" id="flagsSelect" multiple={isMultiple}>
           {list.map((el) => {
             return (
               <option
                 value={el.name}
                 id="flagsOption"
+                style={{
+                  fontWeight: el.status ? "bold" : "normal",
+                }}
                 onClick={(e) => handleClickOption(e)}
               >
-                {el.name} ({el.description}) {el.status && "✓"}
+                {el.name} ({"description" in el && el.description})
+                {el.status && "\u2713"}
               </option>
             );
           })}

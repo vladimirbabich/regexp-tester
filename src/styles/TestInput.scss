@@ -11,6 +11,8 @@ div.testInput {
     border: 1px solid App.$secondBgColor;
     padding: 3px;
     border-radius: 5px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
     &:focus {
       outline: none;
       border: 1px solid App.$linkColor;

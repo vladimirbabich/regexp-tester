@@ -4,7 +4,6 @@ form.testForm {
   width: 75vw;
 }
 .testInfo {
-  // background-color: red;w
   display: flex;
   position: relative;
   flex-direction: row;
@@ -26,26 +25,6 @@ form.testForm {
     padding-right: 6px;
     border: 1px solid rgb(99, 99, 99);
     border-radius: 50%;
-  }
-  .expectedResult {
-    background-color: rgba(22, 22, 22, 0.7);
-    transform: translate(-50%, 0%);
-    width: 50%;
-    padding: 5px 1px 5px 1px;
-    margin: 0 auto;
-    justify-content: center;
-    z-index: 100;
-    top: 30px;
-    left: 50%;
-    position: absolute;
-  }
-  .expectedResultTitle {
-    color: white;
-    text-align: center;
-    // display: block;
-    margin: 0;
-    font-size: 1em;
-    padding-bottom: 3px;
   }
 }
 div.wrapper {
@@ -77,13 +56,13 @@ span.matchElement {
   justify-content: center;
   vertical-align: text-top;
 }
-.texts {
+.results {
   width: 100%;
   display: flex;
   flex-direction: row;
 }
 p.textBlock {
-  width: 50%;
+  width: 100%;
   background-color: rgb(255, 255, 255);
 //   font-size: 0.7em;
   min-height: 100px;
@@ -93,11 +72,15 @@ p.textBlock {
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
 }
+.labels{
+  width: 100%;
+}
 .resultBlock {
   width: 50%;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   min-height: 100%;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;

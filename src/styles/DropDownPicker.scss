@@ -13,6 +13,7 @@ button.selectActivator {
   border: none;
   &:hover {
     cursor: pointer;
+    color: red;
   }
 }
 select.flagsBlock {
@@ -20,11 +21,25 @@ select.flagsBlock {
   top: 40px;
   right: 0;
   width: 200px;
-  font-size: 0.6em;
+  // height: inherit;
+  // font-size: 0.6em;
   padding: 1px;
   overflow-y: auto;
   * {
-    margin: 2px;
-    height: 100%;
+    padding: 3px;
+    height: 2em;
+    padding: auto;
+    // min-height: 1.5em;
   }
+  :hover {
+    background-color: App.$linkColor;
+  }
+
+  :active {
+    background-color: red;
+  }
+}
+#flagsOption {
+  display: flex;
+  justify-content: space-between;
 }

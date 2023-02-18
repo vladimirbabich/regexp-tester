@@ -6,13 +6,13 @@ import { expectedResult, getMatch } from "../TestController";
 import allQuestions from "./../questions";
 import Timer from "./Timer";
 import TestInput from "./TestInput";
-import { FlagsType, IGameQuestion, IQuestion } from "./../types";
+import { IDropDownPickerList, IGameQuestion, IQuestion } from "./../types";
 import { getFlagsString } from "../utils";
 
 console.log("outside");
 
 export default function TestForm() {
-  const [flags, setFlags] = useState<FlagsType[]>([
+  const [flags, setFlags] = useState<IDropDownPickerList[]>([
     {
       name: "g",
       description: "all matches",
@@ -29,14 +29,16 @@ export default function TestForm() {
       status: true,
     },
   ]);
+
+  const regExpFunctions = ["match", "substitute"];
+  const [currentFunction, setCurrentFunction] = useState<string>("match");
+
   const [questions, setQuestions] = useState<IQuestion[] | null>(allQuestions);
   const [currentQuestion, setCurrentQuestion] = useState<IQuestion | null>(
     null
   );
-  const [pattern, setPattern] = useState<string>("");
 
-  const [isShowExpectedResult, setIsShowExpectedResult] =
-    useState<boolean>(false);
+  const [pattern, setPattern] = useState<string>("");
   const [isRightAnswer, setIsRightAnswer] = useState<boolean>(false);
 
   const questionsOfCurTest: Array<IGameQuestion> = [];
@@ -96,6 +98,7 @@ export default function TestForm() {
     setCurrentQuestion({ ...allQuestions[randomIndex] });
     console.log("allQuestions[randomIndex].possibleAnswer");
     console.log(allQuestions[randomIndex].possibleAnswer);
+    setCurrentFunction(allQuestions[randomIndex].functionName)
     setPattern(allQuestions[randomIndex].possibleAnswer);
   }
   useEffect(() => {
@@ -133,6 +136,8 @@ export default function TestForm() {
 
   function handleClickSkip(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.preventDefault();
+    // if(functionRef)
+    console.log(currentFunction);
   }
 
   return (
@@ -144,32 +149,11 @@ export default function TestForm() {
           isTimerActive={isTimerActive}
           setIsTimerActive={setIsTimerActive}
         ></Timer>
-        <h2
-          className="task"
-          // onMouseEnter={(e) => setIsShowExpectedResult(true)}
-        >
+        <h2 className="task">
           {currentQuestion
             ? currentQuestion.task
             : "error: question not found!"}
-          &nbsp;
-          <button
-            onMouseEnter={(e) => setIsShowExpectedResult(true)}
-            onMouseLeave={(e) => setIsShowExpectedResult(false)}
-            className="expectedBtn"
-          >
-            ?
-          </button>
         </h2>
-        {isShowExpectedResult && currentQuestion && (
-          <div className="expectedResult">
-            <p className="expectedResultTitle">Expected result:</p>
-            <div className="wrapper">
-              {currentQuestion.expectedResult.split("").map((el) => (
-                <span className="matchElement">{el}</span>
-              ))}
-            </div>
-          </div>
-        )}
         <div>
           <span className="questionsCount">0/{allQuestions.length}</span>
           <button onClick={handleClickSkip} className="skipBtn">
@@ -179,13 +163,26 @@ export default function TestForm() {
       </div>
       <TestInput
         value={pattern}
+        currentFunction={currentFunction}
         handleChange={handleChange}
         flags={flags}
         setFlags={setFlags}
+        regExpFunctions={regExpFunctions}
+        setCurrentFunction={setCurrentFunction}
       ></TestInput>
-      <div className="texts">
-        <p className="textBlock">{currentQuestion && currentQuestion.text}</p>
+      <p className="textBlock">{currentQuestion && currentQuestion.text}</p>
+      <div className="results">
         <div className="resultBlock">
+          <div className="resultLabel">Expected result</div>
+          <div className="wrapper">
+            {currentQuestion &&
+              currentQuestion.expectedResult
+                .split("|")
+                .map((el) => <span className="matchElement">{el}</span>)}
+          </div>
+        </div>
+        <div className="resultBlock">
+          <div className="resultLabel">Your result</div>
           {result == "" ? (
             <span>No matches</span>
           ) : (

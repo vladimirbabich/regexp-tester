@@ -3,14 +3,18 @@ import "./../App.scss";
 import "./../styles/TestInput.scss";
 import DropDownPicker from "./DropDownPicker";
 import { GlobalContext } from "./../App";
-import { TestInputProps, FlagsType } from "./../types";
+import { TestInputProps } from "./../types";
 import { getFlagsString } from "./../utils";
+import { Select } from "./Select";
 
 export default function TestInput({
   handleChange,
   flags,
   value,
   setFlags,
+  regExpFunctions,
+  currentFunction,
+  setCurrentFunction,
 }: TestInputProps) {
   const globalContext = useContext(GlobalContext);
   const [isActiveFlagsBlock, setIsActiveFlagsBlock] = useState(false);
@@ -39,7 +43,16 @@ export default function TestInput({
 
   return (
     <div className="testInput">
+      <Select
+        isMultiple={false}
+        list={regExpFunctions}
+        currentFunction={currentFunction}
+        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+          setCurrentFunction(e.target.value);
+        }}
+      ></Select>
       <DropDownPicker
+        isMultiple={true}
         open={isActiveFlagsBlock}
         setOpen={setIsActiveFlagsBlock}
         list={flags}

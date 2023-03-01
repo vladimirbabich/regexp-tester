@@ -1,48 +1,56 @@
-import React, { createContext, useEffect, useState } from "react";
-import "./App.scss";
-import TestForm from "./components/TestForm";
-import Information from "./components/Information";
-import { Footer } from "./components/Footer";
-import Header from "./components/Header";
-
-export const GlobalContext = createContext<{ clickedElementId: string }>({
-  clickedElementId: "",
-});
+import React, { createContext, useEffect, useState } from 'react';
+import './App.scss';
+import TestForm from './components/TestForm';
+import Footer from './components/Footer';
+import Header from './components/Header';
+import { useAppDispatch } from './app/hooks';
+import store from './app/store';
+import { setIsFlagsBlockOpen } from './features/testInput/testInputSlice';
 
 function App() {
-  const [isTestMode, setIsTestMode] = useState(true);
-  const [clickedElementId, setclickedElementId] = useState<string>("");
-
-  function handleClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-    const elementId = (e.target as HTMLElement).id;
-    if (
-      elementId.indexOf("flagsSelect") > -1 ||
-      elementId.indexOf("flagsOption") > -1 ||
-      elementId.indexOf("selectActivator") > -1
-    ) {
-      setclickedElementId(elementId);
-      return;
-    }
-    if (clickedElementId.length > 0) {
-      setclickedElementId("");
-    }
-  }
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    console.log(`clickedElementId: ${clickedElementId}`);
-  }, [clickedElementId]);
-
+    console.log('tick');
+  }, []);
+  function handleClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    const testInputState = store.getState().testInput;
+    const elementId = (e.target as HTMLElement).id;
+    if (
+      elementId.indexOf('flagsSelect') > -1 ||
+      elementId.indexOf('flagsOption') > -1
+    ) {
+      if (!testInputState.isFlagsBlockOpen) {
+        dispatch(setIsFlagsBlockOpen(true));
+        return;
+      }
+      return;
+    }
+    if (elementId.indexOf('selectActivator') > -1) {
+      dispatch(
+        setIsFlagsBlockOpen(!store.getState().testInput.isFlagsBlockOpen)
+      );
+      return;
+    }
+    if (testInputState.isFlagsBlockOpen) {
+      dispatch(setIsFlagsBlockOpen(false));
+    }
+  }
   return (
-    <GlobalContext.Provider value={{ clickedElementId }}>
-      <div className="app" onClick={handleClick}>
-        <Header />
-        <div className="main">
-          <h1 className="title">Test your RegExp knowledge!</h1>
-          <TestForm />
-        </div>
-        <Footer />
+    <div className="app" onClick={handleClick}>
+      {/* <button onClick={() => dispatch(removeClickedElementId())}>
+        TESTREM
+      </button>
+      <button onClick={() => dispatch(setClickedElementId('testset'))}>
+        TESTSET
+      </button> */}
+      <Header />
+      <div className="main">
+        <h1 className="title">Test your RegExp knowledge!</h1>
+        <TestForm />
       </div>
-    </GlobalContext.Provider>
+      <Footer />
+    </div>
   );
 }
 

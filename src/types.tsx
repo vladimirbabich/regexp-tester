@@ -7,8 +7,6 @@ export interface IDropDownPickerList {
 }
 export type DropDownPickerFlagsPropsType = {
   isMultiple: boolean;
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   list: Array<IDropDownPickerList>;
   setList: React.Dispatch<React.SetStateAction<IDropDownPickerList[]>>;
   children: string;

@@ -4,7 +4,7 @@ import "./../App.scss";
 import "./../styles/Footer.scss";
 import Information from "./Information";
 // import './../styles/'
-export function Footer() {
+export default function Footer() {
   return (
     <div className="footer">
       <Information></Information>

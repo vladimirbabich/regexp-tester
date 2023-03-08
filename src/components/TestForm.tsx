@@ -1,78 +1,89 @@
-import React, { useEffect, useRef, useState } from "react";
-import "./../App.scss";
-import "./../styles/TestForm.scss";
-import Popup from "./Popup";
-import { expectedResult, getMatch } from "../TestController";
-import allQuestions from "./../questions";
-import Timer from "./Timer";
-import TestInput from "./TestInput";
-import { IDropDownPickerList, IGameQuestion, IQuestion } from "./../types";
-import { getFlagsString } from "../utils";
-
-console.log("outside");
+import React, { useEffect, useRef, useState } from 'react';
+import './../App.scss';
+import './../styles/TestForm.scss';
+import Popup from './Popup';
+import { expectedResult, getResult } from '../TestController';
+import allQuestions from './../questions';
+import Timer from './Timer';
+import TestInput from './TestInput';
+import { IDropDownPickerList, ISolvedQuestion, IQuestion } from './../types';
+import { getFlagsString } from '../utils';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import {
+  resetFlags,
+  setCurrentQuestion,
+  setSelectedFunction,
+} from '../features/testForm/testFormSlice';
+import TestScore from './TestScore';
 
 export default function TestForm() {
-  const [flags, setFlags] = useState<IDropDownPickerList[]>([
-    {
-      name: "g",
-      description: "all matches",
-      status: false,
-    },
-    {
-      name: "i",
-      description: "case insensitive",
-      status: true,
-    },
-    {
-      name: "m",
-      description: "multiline",
-      status: true,
-    },
+  const dispatch = useAppDispatch();
+  const flags = useAppSelector((state) => state.testForm.flags);
+  const questionsLength = allQuestions.length;
+  const [questions, setQuestions] = useState<IQuestion[] | null>([
+    ...allQuestions,
   ]);
-
-  const regExpFunctions = ["match", "substitute"];
-  const [currentFunction, setCurrentFunction] = useState<string>("match");
-
-  const [questions, setQuestions] = useState<IQuestion[] | null>(allQuestions);
-  const [currentQuestion, setCurrentQuestion] = useState<IQuestion | null>(
-    null
+  const currentQuestion = useAppSelector(
+    (state) => state.testForm.currentQuestion
   );
-
-  const [pattern, setPattern] = useState<string>("");
+  const selectedFunction = useAppSelector(
+    (state) => state.testForm.selectedFunction
+  );
+  const [pattern, setPattern] = useState<string>('');
   const [isRightAnswer, setIsRightAnswer] = useState<boolean>(false);
 
-  const questionsOfCurTest: Array<IGameQuestion> = [];
+  const [solvedQuestions, setSolvedQuestions] = useState<
+    Array<ISolvedQuestion>
+  >([]);
+  const [skippedQuestions, setSkippedQuestions] = useState<Array<IQuestion>>(
+    []
+  );
 
   const [isTimerActive, setIsTimerActive] = useState<boolean>(false);
-  const [timeAmount, setTimeAmount] = useState<number>(300);
+  const [timeAmount, setTimeAmount] = useState<number>(333);
+  const [isTestOver, setIsTestOver] = useState<boolean>(true);
 
   useEffect(() => {
     updateResult();
-  }, [flags, pattern]);
+    // console.log(flags);
+  }, [flags, pattern, selectedFunction]);
 
   useEffect(() => {
-    console.log("here: " + questions);
+    // console.log('questions');
+    // console.log(questions);
     setRandomQuestion();
+    return () => {
+      setQuestions(allQuestions);
+    };
   }, [questions]);
 
-  const [result, setResult] = useState<string>(
-    "a|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d|v|d"
-  );
+  useEffect(() => {
+    if (timeAmount < 1) {
+      console.log('over');
+      setIsTestOver(true);
+      //finish test trigger
+    }
+  }, [timeAmount]);
+
+  const [result, setResult] = useState<string>('');
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setPattern((prev) => e.target.value);
+    setPattern((prev) => {
+      console.log(e.target.value);
+      return e.target.value;
+    });
   }
   function updateResult() {
     if (!isTimerActive) setIsTimerActive(true);
     if (!currentQuestion) return;
     if (pattern.length == 0) {
-      if (result) setResult("");
+      if (result) setResult('');
       return;
     }
-
-    const match: string | undefined = getMatch(
+    const match: string | undefined = getResult(
       currentQuestion.text,
       pattern,
+      selectedFunction,
       getFlagsString(flags)
     );
     if (match) {
@@ -80,7 +91,7 @@ export default function TestForm() {
       return;
     }
     //else {
-    setResult("");
+    setResult('');
   }
 
   useEffect(() => {
@@ -90,42 +101,50 @@ export default function TestForm() {
     }
   }, [result]);
 
-  useEffect(() => {
-    console.log("effect");
-  }, []);
   function setRandomQuestion() {
-    const randomIndex = Math.round(Math.random() * (allQuestions.length - 1));
-    setCurrentQuestion({ ...allQuestions[randomIndex] });
-    console.log("allQuestions[randomIndex].possibleAnswer");
-    console.log(allQuestions[randomIndex].possibleAnswer);
-    setCurrentFunction(allQuestions[randomIndex].functionName)
-    setPattern(allQuestions[randomIndex].possibleAnswer);
+    // console.log('RAND');
+    if (!questions) return;
+    if (questions.length < 1) {
+      console.log('over');
+      setIsTestOver(true);
+      return;
+    }
+    const randomIndex = Math.round(Math.random() * (questions.length - 1));
+    const chosenQuestion = questions.splice(randomIndex, 1)[0];
+    console.log(questions);
+    console.log(chosenQuestion);
+    dispatch(setCurrentQuestion(chosenQuestion));
+
+    dispatch(resetFlags());
+    setPattern(chosenQuestion.possibleAnswer);
   }
   useEffect(() => {
-    console.log("currentQuestion");
-    console.log(currentQuestion);
+    // console.log('currentQuestion');
+    // console.log(currentQuestion);
   }, [currentQuestion]);
   /**
    * ! Does not abort current timeout
    * TODO fix return
    */
   useEffect(() => {
-    console.log("isRightAnswer: " + isRightAnswer);
+    // console.log('isRightAnswer: ' + isRightAnswer);
     if (isRightAnswer) {
-      questionsOfCurTest.push({
-        isDone: true,
-        userAnswer: pattern,
+      let completedQuestion = {
+        userAnswer: `${pattern}/${getFlagsString(flags)}`,
         ...currentQuestion,
-      } as IGameQuestion);
-      console.log("tuta");
-      console.log(questionsOfCurTest);
+      } as ISolvedQuestion;
+      console.log(solvedQuestions);
+      setSolvedQuestions((prev) => {
+        return [...prev, completedQuestion];
+      });
+      console.log('tuta');
+      console.log(solvedQuestions);
+      console.log(completedQuestion);
       const timeout = setTimeout(() => {
         // console.log("time");
         setIsRightAnswer(false);
       }, 1000);
-      //TODO reset testform
-
-      //TODO get new question
+      setRandomQuestion();
 
       return () => {
         //not working for some reason, TODO fix later
@@ -134,61 +153,81 @@ export default function TestForm() {
     }
   }, [isRightAnswer]);
 
-  function handleClickSkip(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+  function handleClickGiveUp(
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) {
     e.preventDefault();
-    // if(functionRef)
-    console.log(currentFunction);
+    setIsTestOver(true);
   }
 
+  function handleClickSkip(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    e.preventDefault();
+    //finish test trigger
+    setSkippedQuestions((prev) => {
+      return [...prev, { ...currentQuestion } as IQuestion];
+    });
+    setRandomQuestion();
+  }
   return (
     <form className="testForm">
+      {isTestOver && (
+        <TestScore
+          skippedAmount={skippedQuestions.length}
+          solvedAmount={solvedQuestions.length}></TestScore>
+      )}
       <div className="testInfo">
         <Timer
           timeAmount={timeAmount}
           setTimeAmount={setTimeAmount}
           isTimerActive={isTimerActive}
-          setIsTimerActive={setIsTimerActive}
-        ></Timer>
+          setIsTimerActive={setIsTimerActive}></Timer>
         <h2 className="task">
           {currentQuestion
             ? currentQuestion.task
-            : "error: question not found!"}
+            : 'error: question not found!'}
         </h2>
         <div>
-          <span className="questionsCount">0/{allQuestions.length}</span>
-          <button onClick={handleClickSkip} className="skipBtn">
+          <span className="questionsCount">
+            {solvedQuestions?.length}({skippedQuestions?.length})/
+            {questionsLength}
+          </span>
+          <button onClick={handleClickSkip} className="formBtn">
             Skip
+          </button>
+          <button onClick={handleClickGiveUp} className="formBtn">
+            Give Up
           </button>
         </div>
       </div>
-      <TestInput
-        value={pattern}
-        currentFunction={currentFunction}
-        handleChange={handleChange}
-        flags={flags}
-        setFlags={setFlags}
-        regExpFunctions={regExpFunctions}
-        setCurrentFunction={setCurrentFunction}
-      ></TestInput>
-      <p className="textBlock">{currentQuestion && currentQuestion.text}</p>
+      <TestInput value={pattern} handleChange={handleChange}></TestInput>
+      <textarea
+        className="textBlock"
+        disabled={true}
+        value={currentQuestion?.text}>
+        {currentQuestion && currentQuestion.text}
+      </textarea>
       <div className="results">
         <div className="resultBlock">
           <div className="resultLabel">Expected result</div>
           <div className="wrapper">
             {currentQuestion &&
-              currentQuestion.expectedResult
-                .split("|")
-                .map((el) => <span className="matchElement">{el}</span>)}
+              currentQuestion.expectedResult.split('|').map((el, i) => (
+                <span key={i} className="matchElement">
+                  {el}
+                </span>
+              ))}
           </div>
         </div>
         <div className="resultBlock">
           <div className="resultLabel">Your result</div>
-          {result == "" ? (
+          {result == '' ? (
             <span>No matches</span>
           ) : (
             <div className="wrapper">
-              {result.split("|").map((el) => (
-                <span className="matchElement">{el}</span>
+              {result.split('|').map((el, i) => (
+                <span className="matchElement" key={i}>
+                  {el}
+                </span>
               ))}
             </div>
           )}

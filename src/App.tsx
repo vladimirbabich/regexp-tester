@@ -11,7 +11,7 @@ function App() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    console.log('tick');
+    // console.log('tick');
   }, []);
   function handleClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     const testInputState = store.getState().testInput;

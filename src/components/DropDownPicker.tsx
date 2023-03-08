@@ -2,28 +2,22 @@ import React, { useEffect, useRef, useState } from 'react';
 import { DropDownPickerFlagsPropsType } from './../types';
 import './../styles/DropDownPicker.scss';
 import store from '../app/store';
-import { useAppDispatch } from '../app/hooks';
-import { setIsFlagsBlockOpen } from '../features/testInput/testInputSlice';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { updateFlag } from '../features/testForm/testFormSlice';
 export default function DropDownPicker({
   isMultiple,
-  list,
-  setList,
   children,
 }: DropDownPickerFlagsPropsType) {
   const [isOpen, setIsOpen] = useState(false);
-  const currentState = store.getState().testInput.isFlagsBlockOpen;
-  useEffect(() => {}, [currentState]);
+  const flags = useAppSelector((state) => state.testForm.flags);
   const dispatch = useAppDispatch();
+
   const handleClickOption = (
     e: React.MouseEvent<HTMLOptionElement, MouseEvent>
   ) => {
     const optionValue: string = (e.target as HTMLInputElement).value;
-    setList((prev) => {
-      return prev.map((el) => {
-        if (el.name == optionValue) return { ...el, status: !el.status };
-        return el;
-      });
-    });
+
+    dispatch(updateFlag(optionValue));
   };
   const handleClickSelectActivator = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -47,7 +41,7 @@ export default function DropDownPicker({
   }, [wrapperRef]);
 
   useEffect(() => {
-    console.log(isOpen);
+    // console.log(isOpen);
   }, [isOpen]);
 
   return (
@@ -63,7 +57,7 @@ export default function DropDownPicker({
       </button>
       {isOpen && (
         <select className="flagsBlock" id="flagsSelect" multiple={isMultiple}>
-          {list.map((el) => {
+          {flags.map((el) => {
             return (
               <option
                 value={el.name}

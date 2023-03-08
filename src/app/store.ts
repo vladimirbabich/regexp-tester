@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import globalSlice from '../features/global/globalSlice';
+import testFormSlice from '../features/testForm/testFormSlice';
 import testInputSlice from '../features/testInput/testInputSlice';
 const store = configureStore({
   reducer: {
     global: globalSlice,
     testInput: testInputSlice,
+    testForm: testFormSlice,
   },
 });
 export default store;

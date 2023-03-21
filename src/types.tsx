@@ -21,7 +21,45 @@ export interface IQuestion {
   difficulty: number;
   id: number;
   functionName: string;
+  userAnswer?: string;
 }
-export interface ISolvedQuestion extends IQuestion {
-  userAnswer: string;
+export interface IResultMatch {
+  match: string;
+  isUnique: boolean;
+  isTest?: boolean;
+}
+export interface IRecordData {
+  // [key: string]: ITestData[];
+  all: IAllData[];
+  min5: IMin5Data[];
+  noflags: INoflagsData[];
+}
+
+export interface IMin5Data {
+  id: number;
+  userName: string;
+  solvedAmount: number;
+  skippedAmount: number;
+}
+export interface IAllData {
+  id: number;
+  userName: string;
+  solvedAmount: number;
+  skippedAmount: number;
+  timeSpent: number;
+}
+export interface INoflagsData {
+  id: number;
+  userName: string;
+  solvedAmount: number;
+  skippedAmount: number;
+  timeSpent: number;
+}
+
+export interface ITestData {
+  id: number;
+  userName: string;
+  solvedAmount: number;
+  skippedAmount: number;
+  timeSpent?: number;
 }

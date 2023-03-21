@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 type InitialState = {
   isFlagsBlockOpen: boolean;
 };
-const initialState = {
+const initialState: InitialState = {
   isFlagsBlockOpen: false,
 };
 const testInputSlice = createSlice({

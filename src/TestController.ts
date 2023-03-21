@@ -9,25 +9,36 @@ export function getResult(
   functionName: string,
   flags?: string
 ) {
-  const regExp = new RegExp(pattern, flags);
-  if (pattern.length === 0) return undefined;
+  try {
+    const regExp = new RegExp(pattern, flags);
+    if (pattern.length === 0) return undefined;
 
-  if (functionName == 'substitution') {
-    return text.replace(regExp, '');
-  }
-  const matchArray = text.match(regExp);
-  if (!matchArray) return undefined;
-  if (flags && flags.length > 0) {
-    // console.log(matchArray);
-    return matchArray
-      .filter((el) => {
-        if (el) return el;
-      })
-      .join('|');
-  } else {
-    if (matchArray[0] ?? false) {
-      //if matchArray !=null/undefined
-      return matchArray[0];
+    if (functionName == 'substitution') {
+      return text.replace(regExp, '');
+    }
+    const matchArray = text.match(regExp);
+    if (!matchArray) return undefined;
+    if (flags && flags.length > 0) {
+      // console.log(matchArray);
+      return matchArray
+        .filter((el) => {
+          if (el) return el;
+        })
+        .join('|');
+    } else {
+      if (matchArray[0] ?? false) {
+        //if matchArray !=null/undefined
+        return matchArray[0];
+      }
+    }
+  } catch (e) {
+    if (typeof e === 'string') {
+      console.log(typeof e); // works, `e` narrowed to string
+      console.log(e); // works, `e` narrowed to string
+      // return e;
+    } else if (e instanceof Error) {
+      console.error(e.message); // works, `e` narrowed to Error
+      // return e.message;
     }
   }
 }

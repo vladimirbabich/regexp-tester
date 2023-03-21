@@ -6,6 +6,8 @@ import Header from './components/Header';
 import { useAppDispatch } from './app/hooks';
 import store from './app/store';
 import { setIsFlagsBlockOpen } from './features/testInput/testInputSlice';
+import Leaderboard from './components/Leaderboard';
+import Analyzer from './components/Analyzer';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -37,19 +39,26 @@ function App() {
     }
   }
   return (
-    <div className="app" onClick={handleClick}>
-      {/* <button onClick={() => dispatch(removeClickedElementId())}>
+    <div className="global">
+      <div className="app" onClick={handleClick}>
+        {/* <button onClick={() => dispatch(removeClickedElementId())}>
         TESTREM
       </button>
       <button onClick={() => dispatch(setClickedElementId('testset'))}>
         TESTSET
       </button> */}
-      <Header />
-      <div className="main">
-        <h1 className="title">Test your RegExp knowledge!</h1>
-        <TestForm />
+        <div className="main">
+          <Header />
+          <Analyzer
+            title="Test results"
+            // skippedQuestions={}
+            // solvedQuestions={}
+            ></Analyzer>
+          <Leaderboard title="Leaderboard" defaultMode="min5"></Leaderboard>
+          <TestForm title="Test your RegExp knowledge!" />
+          <Footer />
+        </div>
       </div>
-      <Footer />
     </div>
   );
 }

@@ -4,18 +4,12 @@ type InitialState = {
   currentQuestion: IQuestion | null;
   flags: IDropDownPickerList[];
   selectedFunction: string;
+  isTestOver: boolean;
+  isTestRestarted: boolean;
+  askedQuestions: Object[];
 };
 const initialState: InitialState = {
   currentQuestion: null,
-  //   {
-  //     text: '',
-  //     expectedResult: '',
-  //     task: '',
-  //     possibleAnswer: '',
-  //     difficulty: -1,
-  //     id: -1,
-  //     functionName: '',
-  //   }
   flags: [
     {
       name: 'g',
@@ -34,6 +28,9 @@ const initialState: InitialState = {
     },
   ],
   selectedFunction: 'match',
+  isTestOver: false,
+  isTestRestarted: false,
+  askedQuestions: [],
 };
 
 const testFormSlice = createSlice({
@@ -55,6 +52,20 @@ const testFormSlice = createSlice({
     setSelectedFunction: (state, action) => {
       state.selectedFunction = action.payload;
     },
+    setIsTestOver: (state, action) => {
+      state.isTestOver = action.payload;
+    },
+    setAskedQuestions: (state, action) => {
+      state.askedQuestions = action.payload;
+    },
+    restartTest: (state) => {
+      state.isTestOver = false;
+      state.flags = [...initialState.flags];
+      state.isTestRestarted = true;
+    },
+    setIsTestRestarted: (state, action) => {
+      state.isTestRestarted = action.payload;
+    },
   },
 });
 export const {
@@ -62,5 +73,9 @@ export const {
   updateFlag,
   resetFlags,
   setSelectedFunction,
+  setIsTestOver,
+  restartTest,
+  setIsTestRestarted,
+  setAskedQuestions,
 } = testFormSlice.actions;
 export default testFormSlice.reducer;

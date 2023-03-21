@@ -1,5 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
-const initialState = {
+type InitialState = {
+  // isFlagsBlockOpen: boolean;
+};
+const initialState: InitialState = {
   //for future reasons
 };
 const globalSlice = createSlice({

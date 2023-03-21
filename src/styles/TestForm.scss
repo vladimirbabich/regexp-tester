@@ -1,10 +1,14 @@
-@use "./../App";
+@use './../App';
 form.testForm {
   margin-top: 10px;
-  width: 75vw;
+  width: 100%;
+}
+h1.title {
+  margin-top: 10px;
 }
 .testInfo {
   display: flex;
+  width: inherit;
   position: relative;
   flex-direction: row;
   justify-content: space-between;
@@ -12,7 +16,7 @@ form.testForm {
   .task {
     margin: 0;
     font-weight: bold;
-    width: 60%;
+    // width: 60%;
     // background-color: aqua;
     text-align: center;
     position: relative;
@@ -56,6 +60,25 @@ span.matchElement {
   justify-content: center;
   vertical-align: text-top;
 }
+span.matchElementWrong {
+  background-color: rgb(240, 75, 75);
+  font-size: 0.86em;
+  min-width: 30px;
+  // margin-left: 3px;
+  height: 30px;
+  border-top: 1px solid rgb(153, 153, 153);
+  border-left: 1px solid rgb(153, 153, 153);
+  border-right: 1px solid rgb(255, 255, 255);
+  border-bottom: 1px solid rgb(255, 255, 255);
+  box-shadow: -1px -1px black;
+  box-shadow: 1px 1px black;
+  padding: 1px 3px 1px 3px;
+  margin: 0 0 4px 0;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  vertical-align: text-top;
+}
 .results {
   width: 100%;
   display: flex;
@@ -74,7 +97,7 @@ textarea.textBlock {
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
 }
-.labels{
+.labels {
   width: 100%;
 }
 .resultBlock {

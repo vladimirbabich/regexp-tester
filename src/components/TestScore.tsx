@@ -5,12 +5,20 @@ import DropDownPicker from './DropDownPicker';
 import { TestInputProps } from '../types';
 import { getFlagsString } from '../utils';
 import { Select } from './Select';
+import { useAppDispatch } from '../app/hooks';
+import { restartTest } from '../features/testForm/testFormSlice';
 
 export default function TestScore({ skippedAmount, solvedAmount }: any) {
   const [solvedPercent, setSolvedPercent] = useState<number>(
-    (solvedAmount / (solvedAmount + skippedAmount)) * 100
+    parseInt(((solvedAmount / (solvedAmount + skippedAmount)) * 100).toFixed(0))
   );
-  console.log(solvedPercent)
+  const dispatch = useAppDispatch();
+
+  function handleStartTest(e: any) {
+    e.preventDefault();
+    dispatch(restartTest());
+    return 1;
+  }
   return (
     <div className="testScore">
       <span className="title">Test completed!</span>
@@ -30,6 +38,9 @@ export default function TestScore({ skippedAmount, solvedAmount }: any) {
       </div>
       <div className="rowBtns">
         <button className="btn">Leaderboard</button>
+        <button className="btn" onClick={handleStartTest}>
+          Start again
+        </button>
         <button className="btn">Watch answers</button>
       </div>
     </div>

@@ -1,0 +1,12 @@
+@use './../App';
+
+.analyzer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .block {
+    width: 100px;
+    background-color: yellow;
+  }
+}

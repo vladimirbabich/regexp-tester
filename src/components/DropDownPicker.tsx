@@ -10,15 +10,18 @@ export default function DropDownPicker({
 }: DropDownPickerFlagsPropsType) {
   const [isOpen, setIsOpen] = useState(false);
   const flags = useAppSelector((state) => state.testForm.flags);
+  const isTestOver = useAppSelector((state) => state.testForm.isTestOver);
   const dispatch = useAppDispatch();
+
+  if (isTestOver && isOpen) setIsOpen(false);
 
   const handleClickOption = (
     e: React.MouseEvent<HTMLOptionElement, MouseEvent>
   ) => {
     const optionValue: string = (e.target as HTMLInputElement).value;
-
     dispatch(updateFlag(optionValue));
   };
+  
   const handleClickSelectActivator = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
@@ -47,6 +50,7 @@ export default function DropDownPicker({
   return (
     <div ref={wrapperRef}>
       <button
+        disabled={isTestOver}
         className="selectActivator"
         id="selectActivator"
         onClick={(e) => handleClickSelectActivator(e)}

@@ -1,0 +1,17 @@
+table.leaderboardTable {
+  border: 1px solid black;
+  width:60%;
+  * {
+    border: 1px solid red;
+    padding: 3px;
+  }
+  > thead {
+    padding: 3px;
+    // background-color: blue;
+    > tr {
+      padding: 3px;
+      background-color: green;
+      border: 3px solid purple;
+    }
+  }
+}

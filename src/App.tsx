@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import './App.scss';
+import { Routes, Route, Link } from 'react-router-dom';
 import TestForm from './components/TestForm';
 import Footer from './components/Footer';
 import Header from './components/Header';
@@ -12,9 +13,6 @@ import Analyzer from './components/Analyzer';
 function App() {
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    // console.log('tick');
-  }, []);
   function handleClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     const testInputState = store.getState().testInput;
     const elementId = (e.target as HTMLElement).id;
@@ -41,21 +39,43 @@ function App() {
   return (
     <div className="global">
       <div className="app" onClick={handleClick}>
-        {/* <button onClick={() => dispatch(removeClickedElementId())}>
-        TESTREM
-      </button>
-      <button onClick={() => dispatch(setClickedElementId('testset'))}>
-        TESTSET
-      </button> */}
         <div className="main">
           <Header />
-          <Analyzer
-            title="Test results"
-            // skippedQuestions={}
-            // solvedQuestions={}
-            ></Analyzer>
-          <Leaderboard title="Leaderboard" defaultMode="min5"></Leaderboard>
-          <TestForm title="Test your RegExp knowledge!" />
+          <div className="content">
+            <Routes>
+              <Route
+                path="/all"
+                element={
+                  <TestForm mode="allQuestions" title="allQuestions" />
+                }></Route>
+              <Route
+                path="/"
+                element={<TestForm mode="min5" title="min5" />}></Route>
+              <Route
+                path="/flags"
+                element={<TestForm mode="flags" title="flags" />}></Route>
+              <Route
+                path="/leaderboard"
+                element={
+                  <Leaderboard
+                    title="Leaderboard"
+                    defaultMode="min5"></Leaderboard>
+                }></Route>
+              <Route
+                path="/test"
+                element={
+                  <>
+                    <TestForm mode="min5" title="min5" />
+                    {/* Test your RegExp knowledge! */}
+                    <TestForm mode="allQuestions" title="all" />
+                    <TestForm mode="flags" title="only flags" />
+                  </>
+                }></Route>
+              <Route
+                path="/results"
+                element={<Analyzer title="Test results" />}></Route>
+            </Routes>
+          </div>
           <Footer />
         </div>
       </div>

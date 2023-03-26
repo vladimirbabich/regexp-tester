@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
-import "./../App.scss";
+import React, { useEffect, useState } from 'react';
+import { useAppDispatch } from '../app/hooks';
+import { setIsTestOver } from '../features/testForm/testFormSlice';
+import './../App.scss';
 function getFormattedTime(timestamp: number) {
   if (timestamp < 0) timestamp = 0;
   const date = new Date(timestamp * 1000);
   const offsetHours = date.getTimezoneOffset() / 60;
   const hours = date.getHours() + offsetHours;
-  const minutes = "0" + date.getMinutes();
-  const seconds = "0" + date.getSeconds();
+  const minutes = '0' + date.getMinutes();
+  const seconds = '0' + date.getSeconds();
 
   if (hours === 0)
     return `${minutes.substring(
@@ -25,6 +27,7 @@ type TimerProps = {
   setIsTimerActive: React.Dispatch<React.SetStateAction<boolean>>;
   timeAmount: number;
   setTimeAmount: React.Dispatch<React.SetStateAction<number>>;
+  isCountDown?: boolean;
 };
 
 export default function Timer({
@@ -32,15 +35,17 @@ export default function Timer({
   setIsTimerActive,
   timeAmount,
   setTimeAmount,
+  isCountDown,
 }: TimerProps) {
   //   const [timeAmount, setTimeAmount] = useState<number>(5); //300sec
   const [startTime, setStartTime] = useState<number | undefined>(undefined);
+  const dispatch = useAppDispatch();
   //   let startTime: undefined | number = undefined;
   useEffect(() => {
     let timeInterval: NodeJS.Timer | undefined = undefined;
     if (!isTimerActive) {
       if (timeInterval) {
-        console.log("here");
+        console.log('here');
         return () => {
           clearInterval(timeInterval);
         };
@@ -48,37 +53,29 @@ export default function Timer({
       return;
     }
     timeInterval = setInterval(() => {
-      // console.log(timeAmount);
-      setTimeAmount((prev) => (prev -= 1));
-      //   console.log(isTimerActive);
+      console.warn(1);
+      const timerTick = isCountDown ? -1 : 1;
+      setTimeAmount((prev) => (prev += timerTick));
     }, 1000);
     return () => {
       clearInterval(timeInterval);
     };
-  }, [isTimerActive]);
+  }, [isTimerActive, isCountDown]);
+
   useEffect(() => {
-    if (timeAmount < 1) setIsTimerActive(false);
+    if (isCountDown && timeAmount < 1) {
+      setIsTimerActive(false);
+      dispatch(setIsTestOver(true));
+    }
   }, [timeAmount]);
-  //   useEffect(() => {
-  //     console.log(0);
-  //     if (isTimerActive === false) return;
-  //     if (startTime === undefined) return;
-  //     console.log(1);
-  //     const currentTime = Date.now();
-  //     const difference = currentTime - startTime;
-  //     if (difference < 1) return;
-  //     setStartTime(currentTime);
-  //     setTimeAmount((prev) => (prev -= difference));
-  //   });
 
   return (
     <div
       onClick={(e) => {
-        console.log("ok");
-        if (timeAmount > 0) setIsTimerActive(!isTimerActive);
-      }}
-    >
-      Time left: {getFormattedTime(timeAmount)}
+        // console.log('ok');
+        // if (timeAmount > 0) setIsTimerActive(!isTimerActive);
+      }}>
+      Time{isCountDown && ' left'}: {getFormattedTime(timeAmount)}
     </div>
   );
 }

@@ -1,0 +1,135 @@
+$slideTime: 1s;
+$animIteration: 1;
+$horEnd: 35px;
+$vertEnd: 35px;
+div.popup {
+  color: white;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  span.popupText {
+    position: absolute;
+    z-index: 10;
+    display: inline;
+    transform-origin: left;
+    animation-duration: $slideTime;
+    animation-name: scaleText;
+    animation-iteration-count: $animIteration;
+    transform: translate(-50%, -50%);
+    // transform-origin: center;
+    // top:25px;
+  }
+  & span {
+    // border: 3px solid black;
+    text-shadow: 2px 0 #ff6315, -2px 0 #ff6315, 0 2px #ff6315, 0 -2px #ff6315,
+      1px 1px #582700, -1px -1px #582700, 1px -1px #582700, -1px 1px #582700;
+  }
+  .star {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    // top:50px;
+  }
+  .LT {
+    left: -5px;
+    animation-duration: $slideTime;
+    animation-name: slideLT;
+    animation-iteration-count: $animIteration;
+  }
+  .T {
+    top: 0px;
+    animation-duration: $slideTime;
+    animation-name: slideT;
+    animation-iteration-count: $animIteration;
+  }
+  .RT {
+    left: 5px;
+    animation-duration: $slideTime;
+    animation-name: slideRT;
+    animation-iteration-count: $animIteration;
+  }
+  .L {
+    left: -5px;
+    animation-duration: $slideTime;
+    animation-name: slideL;
+    animation-iteration-count: $animIteration;
+  }
+  .R {
+    left: 5px;
+    animation-duration: $slideTime;
+    animation-name: slideR;
+    animation-iteration-count: $animIteration;
+  }
+}
+@keyframes slideLT {
+  from {
+    left: 0px;
+    top: 0px;
+  }
+
+  to {
+    top: -1 * $vertEnd + 10;
+    left: -1 * $horEnd + 5;
+    color: #ffff79;
+  }
+}
+@keyframes slideT {
+  from {
+    top: 0px;
+  }
+
+  to {
+    top: $vertEnd * -1;
+    color: #ffff79;
+  }
+}
+@keyframes slideRT {
+  from {
+    top: 0px;
+    left: 0px;
+  }
+
+  to {
+    top: $vertEnd * -1 +10;
+    left: $horEnd - 5;
+    color: #ffff79;
+  }
+}
+
+@keyframes slideR {
+  from {
+    top: 0px;
+    left: 0px;
+  }
+
+  to {
+    top: -5px;
+    left: $horEnd;
+    color: #ffff79;
+  }
+}
+@keyframes slideL {
+  from {
+    top: 0px;
+    left: 0px;
+  }
+
+  to {
+    top: -5px;
+    left: $horEnd * -1;
+    color: #ffff79;
+  }
+}
+@keyframes scaleText {
+  from {
+    // transform: translate(-50%,-35%);
+    scale: 0.5;
+  }
+  to {
+    // transform: translate(-50%,-35%);
+    scale: 1.2;
+    // text-shadow: 2px 0 white, -2px 0 white, 0 2px white, 0 -2px white,
+    //   1px 1px white, -1px -1px white, 1px -1px white, -1px 1px white;
+    color: yellow;
+  }
+}

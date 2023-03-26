@@ -14,13 +14,12 @@ import {
   setAskedQuestions,
   setCurrentQuestion,
   setIsTestOver,
-  setIsTestRestarted,
   setSelectedFunction,
 } from '../features/testForm/testFormSlice';
 import TestScore from './TestScore';
+import { setFlagsFromString } from 'v8';
 
-export default function TestForm({ title }: any) {
-  let firstMount = true;
+export default function TestForm({ title, mode }: any) {
   const dispatch = useAppDispatch();
   const flags = useAppSelector((state) => state.testForm.flags);
   const askedQuestions = useAppSelector(
@@ -45,11 +44,17 @@ export default function TestForm({ title }: any) {
   const [isRightAnswer, setIsRightAnswer] = useState<boolean>(false);
 
   const [isTimerActive, setIsTimerActive] = useState<boolean>(false);
-  const [timeAmount, setTimeAmount] = useState<number>(22222);
-
+  const [timeAmount, setTimeAmount] = useState<number>(
+    getDefaultTimeAmount(mode)
+  );
+  function getDefaultTimeAmount(mode: string) {
+    return mode == 'allQuestions' ? 0 : mode == 'flags' ? 60 : 300;
+  }
   useEffect(() => {
     console.log('currentQuestion update');
     console.log(currentQuestion?.expectedResult);
+    if (mode == 'flags' && currentQuestion && currentQuestion.expectedResult)
+      setPattern(currentQuestion.expectedResult.split('/')[0]);
     console.log(expectedResult);
     if (!currentQuestion) return;
   }, [currentQuestion]);
@@ -58,24 +63,15 @@ export default function TestForm({ title }: any) {
     console.warn(expectedResult);
   }, [expectedResult]);
 
-  const isTestRestarted = useAppSelector(
-    (state) => state.testForm.isTestRestarted
-  );
-
-  useEffect(() => {
-    if (isTestRestarted) {
-      console.log('ISTESTREST: ' + isTestRestarted);
-      restartTest();
-      dispatch(setIsTestRestarted(false));
-    }
-  }, [isTestRestarted]);
   function restartTest() {
     console.log('ALL:');
     console.log(allQuestions);
     setQuestions([...allQuestions]);
-    setTimeAmount(defaultTimeAmount);
+    setTimeAmount(getDefaultTimeAmount(mode));
     console.log(defaultTimeAmount);
-    setPattern('');
+    // setPattern(
+    //   mode == 'flags' ? currentQuestion?.possibleAnswer.split('/')[0] : ''
+    // );
     dispatch(setAskedQuestions([]));
   }
   const isTestOver = useAppSelector((state) => state.testForm.isTestOver);
@@ -85,30 +81,11 @@ export default function TestForm({ title }: any) {
   }, [flags, pattern, selectedFunction]);
 
   useEffect(() => {
-    // console.log('questions');
-    // console.log(questions);
-    if (firstMount) {
-      firstMount = false;
-      return;
-    }
-
     setRandomQuestion();
   }, [questions]);
 
-  useEffect(() => {
-    // console.log('timeAmount: ' + timeAmount);
-    if (timeAmount < 1) {
-      // console.log('over');
-
-      setIsTimerActive(false);
-      dispatch(setIsTestOver(true));
-      //finish test trigger
-    }
-  }, [timeAmount]);
-
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setPattern((prev) => {
-      console.log(e.target.value);
       return e.target.value;
     });
   }
@@ -122,14 +99,9 @@ export default function TestForm({ title }: any) {
       const indexOfEl = expectedResultCopy
         .map((expEl) => expEl.match)
         .indexOf(el);
-      console.log('indexOfEl: ' + indexOfEl);
       if (indexOfEl > -1) {
         notUniqueIndexes.push(+expectedResultCopy[indexOfEl].initialIndex);
-        console.log('before');
-        console.log(expectedResultCopy);
         expectedResultCopy.splice(indexOfEl, 1);
-        console.log('after');
-        console.log(expectedResultCopy);
       }
       const isUnique = indexOfEl < 0;
       return { match: el, isUnique };
@@ -154,7 +126,7 @@ export default function TestForm({ title }: any) {
   }
 
   function updateResults() {
-    if (!isTimerActive) setIsTimerActive(true);
+    if (!isTimerActive) setIsTimerActive(true); //mb need to add &&timeAmount>0
     if (!currentQuestion) return;
     if (pattern.length == 0) {
       updateExpectedResult();
@@ -183,14 +155,9 @@ export default function TestForm({ title }: any) {
       setIsRightAnswer(true);
     }
     if (expectedResult.length < 1) {
-      console.log('Error! expected result not found.');
+      console.error('Error! expected result not found.');
       return;
     }
-    // updateUniqueness(userResult, expectedResult);
-
-    // function updateUniqueness(arr1: IResultMatch[], arr2: IResultMatch[]) {
-    //   set;
-    // }
   }, [userResult]);
 
   useEffect(() => {
@@ -204,6 +171,8 @@ export default function TestForm({ title }: any) {
 
     const randomIndex = Math.round(Math.random() * (questions.length - 1));
     const chosenQuestion = questions.splice(randomIndex, 1)[0];
+    console.log('chosenQuestion');
+    console.log(chosenQuestion);
 
     if (questions.length < 1 && chosenQuestion === undefined) {
       setIsTimerActive(false);
@@ -211,15 +180,29 @@ export default function TestForm({ title }: any) {
       return;
     }
     dispatch(setCurrentQuestion(chosenQuestion));
-
     dispatch(resetFlags());
-
-    // setPattern(chosenQuestion.possibleAnswer);
   }
+  useEffect(() => {
+    //resetTestForm
+    if (!isTestOver) restartTest();
+    console.log('isTestOver: ' + isTestOver);
+  }, [isTestOver]);
+
+  useEffect(() => {
+    //restart test after mode change
+    restartTest();
+    if (isTestOver) {
+      dispatch(setIsTestOver(false));
+    }
+    setIsTimerActive(true);
+    dispatch(resetFlags());
+  }, [mode]);
 
   useEffect(() => {
     if (currentQuestion && currentQuestion.expectedResult) {
-      // alert('here)');
+      if (mode == 'flags') {
+        setPattern(currentQuestion.expectedResult.split('/')[0]);
+      } else setPattern('');
       setExpectedResult(
         currentQuestion?.expectedResult
           .split('|')
@@ -232,7 +215,6 @@ export default function TestForm({ title }: any) {
    * TODO fix return
    */
   useEffect(() => {
-    // console.log('isRightAnswer: ' + isRightAnswer);
     if (isRightAnswer) {
       let completedQuestion = {
         userAnswer: `${pattern}/${getFlagsString(flags)}`,
@@ -246,7 +228,6 @@ export default function TestForm({ title }: any) {
       setRandomQuestion();
 
       return () => {
-        //not working for some reason, TODO fix later
         clearTimeout(timeout);
       };
     }
@@ -269,18 +250,10 @@ export default function TestForm({ title }: any) {
     setRandomQuestion();
   }
 
-  useEffect(() => {
-    if (currentQuestion) {
-      // console.log(userResult);
-      // console.log(expectedResult);
-    }
-  });
-
   const skippedQuestionsAmount = askedQuestions.filter((el) => {
     return 'userAnswer' in el ? 0 : 1;
   }).length;
-  console.log(skippedQuestionsAmount);
-  console.log(askedQuestions);
+
   return (
     <>
       <h1 className="title">{title}</h1>
@@ -297,7 +270,8 @@ export default function TestForm({ title }: any) {
             timeAmount={timeAmount}
             setTimeAmount={setTimeAmount}
             isTimerActive={isTimerActive}
-            setIsTimerActive={setIsTimerActive}></Timer>
+            setIsTimerActive={setIsTimerActive}
+            isCountDown={mode == 'allQuestions' ? false : true}></Timer>
           <h2 className="task">
             {currentQuestion
               ? currentQuestion.task
@@ -323,7 +297,10 @@ export default function TestForm({ title }: any) {
             </button>
           </div>
         </div>
-        <TestInput value={pattern} handleChange={handleChange}></TestInput>
+        <TestInput
+          value={pattern}
+          handleChange={handleChange}
+          mode={mode}></TestInput>
         <textarea
           className="textBlock"
           disabled={true}
@@ -365,6 +342,7 @@ export default function TestForm({ title }: any) {
             )}
           </div>
         </div>
+        {/* {true ? <Popup></Popup> : null} */}
         {isRightAnswer ? <Popup></Popup> : null}
       </form>
     </>

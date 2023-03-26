@@ -5,7 +5,6 @@ type InitialState = {
   flags: IDropDownPickerList[];
   selectedFunction: string;
   isTestOver: boolean;
-  isTestRestarted: boolean;
   askedQuestions: Object[];
 };
 const initialState: InitialState = {
@@ -29,7 +28,6 @@ const initialState: InitialState = {
   ],
   selectedFunction: 'match',
   isTestOver: false,
-  isTestRestarted: false,
   askedQuestions: [],
 };
 
@@ -61,10 +59,6 @@ const testFormSlice = createSlice({
     restartTest: (state) => {
       state.isTestOver = false;
       state.flags = [...initialState.flags];
-      state.isTestRestarted = true;
-    },
-    setIsTestRestarted: (state, action) => {
-      state.isTestRestarted = action.payload;
     },
   },
 });
@@ -75,7 +69,6 @@ export const {
   setSelectedFunction,
   setIsTestOver,
   restartTest,
-  setIsTestRestarted,
   setAskedQuestions,
 } = testFormSlice.actions;
 export default testFormSlice.reducer;

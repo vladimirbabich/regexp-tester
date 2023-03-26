@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { DropDownPickerFlagsPropsType } from './../types';
+import './../App.scss';
 import './../styles/DropDownPicker.scss';
 import store from '../app/store';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { updateFlag } from '../features/testForm/testFormSlice';
+import { getFlagsString } from '../utils';
 export default function DropDownPicker({
   isMultiple,
   children,
@@ -21,7 +23,7 @@ export default function DropDownPicker({
     const optionValue: string = (e.target as HTMLInputElement).value;
     dispatch(updateFlag(optionValue));
   };
-  
+
   const handleClickSelectActivator = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
@@ -33,7 +35,13 @@ export default function DropDownPicker({
   useEffect(() => {
     //close flagsBlock if click outside of dropdownpicker
     function handleClickOutside(event: any) {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+      console.log(wrapperRef.current);
+      console.log(event.target.className);
+      console.log(event.target.className.indexOf('flagsHint') > -1);
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target)
+      ) {
         setIsOpen(false);
       }
     }
@@ -49,16 +57,28 @@ export default function DropDownPicker({
 
   return (
     <div ref={wrapperRef}>
-      <button
-        disabled={isTestOver}
-        className="selectActivator"
-        id="selectActivator"
-        onClick={(e) => handleClickSelectActivator(e)}
-        style={{
-          color: isOpen ? 'rgb(2, 44, 136)' : 'rgb(0, 95, 0)',
-        }}>
-        /{children}
-      </button>
+      <div className="selectFlagsInput">
+        <span
+          className="flagsHint"
+          onClick={() => setIsOpen(!isOpen)}
+          style={{
+            display: getFlagsString(flags).length > 0 ? 'none' : 'block',
+          }}>
+          Select flags:
+        </span>
+        <button
+          disabled={isTestOver}
+          className="selectActivator"
+          id="selectActivator"
+          onClick={(e) => handleClickSelectActivator(e)}
+          style={{
+            paddingRight: '10px',
+            paddingLeft: '10px',
+            color: isOpen ? 'rgb(2, 44, 136)' : 'rgb(0, 95, 0)',
+          }}>
+          /{children}
+        </button>
+      </div>
       {isOpen && (
         <select className="flagsBlock" id="flagsSelect" multiple={isMultiple}>
           {flags.map((el) => {

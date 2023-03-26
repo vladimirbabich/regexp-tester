@@ -1,4 +1,4 @@
-@use "./../App";
+@use './../App';
 
 .header {
   height: 8vh;
@@ -14,6 +14,8 @@
   .logo {
     align-self: center;
     padding-left: 5px;
+    color:App.$bgColor;
+    text-decoration: none;
     // vertical-align: middle;
   }
 }
@@ -21,8 +23,19 @@
   display: flex;
   width: 65vw;
   justify-content: flex-end;
+  align-items: center;
+  a.link {
+    color: App.$linkColor;
+    text-decoration: none;
+    margin-left: 15px;
+    &:hover {
+      color: App.$hoverColor;
+    }
+  }
+  a.active {
+    color: red;
+  }
   button {
-    // align-self: baseline;
     background-color: App.$secondBgColor;
     font-weight: bold;
     color: App.$linkColor;
@@ -31,11 +44,8 @@
     height: 100%;
     border: 0;
 
-    &:hover {
-      color: App.$hoverColor;
-    }
-    &:disabled {
-      color: App.$disabledColor;
-    }
   }
+}
+.testStuff{
+  background-color: pink;
 }

@@ -1,16 +1,40 @@
-@use "./../App";
+@use './../App';
 
-button.selectActivator {
+span.flagsHint {
+  // background-color: red;
+  color: grey;
+  align-self: center;
+  // height: 38px;
+  // align-items: center;
+  // position: absolute;
+    top: -1px;
+    position: relative;
+}
+div.selectFlagsInput {
   position: absolute;
+  display: flex;
+  flex-direction: row;
+  line-height: 20px;
+  height: 40px;
+  vertical-align: middle;
+  user-select: none;
+  justify-content: center;
+  align-items: center;
+  right: 1px;
+  // padding-right: 15px;
+  // top: 1px;
+}
+button.selectActivator {
   background-color: white;
   color: rgb(0, 95, 0);
-  right: 3px;
-  top: 1px;
   margin: 0;
   padding: 10px;
+  min-width: 25px;
   height: 38px;
-  // border: 1px solid App.$secondBgColor;
-  border: none;
+  vertical-align: bottom;
+  // background-color: rgba(213, 247, 24, 0.411);
+  border: 0px;
+  border-radius: 5px;
   &:hover {
     cursor: pointer;
     color: red;
@@ -36,7 +60,7 @@ select.flagsBlock {
   }
 
   :active {
-    background-color: red;
+    // background-color: red;
   }
 }
 #flagsOption {

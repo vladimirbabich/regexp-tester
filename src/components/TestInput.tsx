@@ -8,13 +8,21 @@ import { Select } from './Select';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import store from '../app/store';
 
-export default function TestInput({ handleChange, value }: TestInputProps) {
+export default function TestInput({
+  handleChange,
+  value,
+  mode,
+}: TestInputProps) {
   const dispatch = useAppDispatch();
   const flags = useAppSelector((state) => state.testForm.flags);
   const isTestOver = useAppSelector((state) => state.testForm.isTestOver);
 
   return (
-    <div className="testInput">
+    <div
+      className="testInput"
+      style={{
+        marginTop: '5px',
+      }}>
       <Select isMultiple={false}></Select>
       <DropDownPicker isMultiple={true}>{getFlagsString(flags)}</DropDownPicker>
       <input
@@ -23,8 +31,8 @@ export default function TestInput({ handleChange, value }: TestInputProps) {
         id="regexpInput"
         value={value}
         autoFocus={true}
-        disabled={isTestOver}
-        placeholder="Type regular expression and choose flags ->"
+        disabled={isTestOver || mode == 'flags'}
+        placeholder="Type regular expression pattern"
         onChange={handleChange}></input>
     </div>
   );

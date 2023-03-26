@@ -2,10 +2,11 @@ import React, { useContext, useEffect, useState } from 'react';
 import './../App.scss';
 import './../styles/TestScore.scss';
 import DropDownPicker from './DropDownPicker';
+import { Link } from 'react-router-dom';
 import { TestInputProps } from '../types';
 import { getFlagsString } from '../utils';
 import { Select } from './Select';
-import { useAppDispatch } from '../app/hooks';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { restartTest } from '../features/testForm/testFormSlice';
 
 export default function TestScore({ skippedAmount, solvedAmount }: any) {
@@ -13,9 +14,10 @@ export default function TestScore({ skippedAmount, solvedAmount }: any) {
     parseInt(((solvedAmount / (solvedAmount + skippedAmount)) * 100).toFixed(0))
   );
   const dispatch = useAppDispatch();
-
+  const isTestOver = useAppSelector((state) => state.testForm.isTestOver);
   function handleStartTest(e: any) {
     e.preventDefault();
+    console.log(isTestOver);
     dispatch(restartTest());
     return 1;
   }
@@ -37,11 +39,15 @@ export default function TestScore({ skippedAmount, solvedAmount }: any) {
         <span className="resultValue">{skippedAmount}</span>
       </div>
       <div className="rowBtns">
-        <button className="btn">Leaderboard</button>
+        <Link to="/leaderboard" className="link">
+          Leaderboard
+        </Link>
         <button className="btn" onClick={handleStartTest}>
           Start again
         </button>
-        <button className="btn">Watch answers</button>
+        <Link to="/results" className="link">
+          Watch answers
+        </Link>
       </div>
     </div>
   );

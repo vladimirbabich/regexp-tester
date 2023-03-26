@@ -12,6 +12,7 @@ export type DropDownPickerFlagsPropsType = {
 export type TestInputProps = {
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   value: string;
+  mode?: string;
 };
 export interface IQuestion {
   text: string;

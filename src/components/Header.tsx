@@ -1,12 +1,30 @@
-import "./../styles/Header.scss";
+import { NavLink, Link } from 'react-router-dom';
+import './../styles/Header.scss';
+
 export default function Header() {
   return (
     <header className="header">
-      <span className="logo">RegExp TESTER</span>
+      <Link to='/' className="logo">RegExp TESTER</Link>
       <div className="navigation">
-        <button >ALL questions test</button>
-        <button disabled>5 minutes test</button>
-        <button disabled>leaderboard</button>
+        <NavLink className="link" to="/all">
+          All questions
+        </NavLink>
+        <NavLink className="link" to="/">
+          5 minutes test
+        </NavLink>
+        <NavLink className="link" to="/flags">
+          Flags test
+        </NavLink>
+        <NavLink className="link testStuff" to="/test">
+          TEST!!!
+        </NavLink>
+        <NavLink className="link" to="/leaderboard">
+          Leaderboard
+        </NavLink>
+        <NavLink className="link" to="/time"></NavLink>
+        <NavLink className="link testStuff" to="/results">
+          results
+        </NavLink>
       </div>
     </header>
   );

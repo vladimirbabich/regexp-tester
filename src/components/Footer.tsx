@@ -1,24 +1,23 @@
-import React, { useEffect, useRef, useState } from "react";
-import "./../App.scss";
+import React, { useEffect, useRef, useState } from 'react';
+import './../App.scss';
 // import './s.css'
-import "./../styles/Footer.scss";
-import Information from "./Information";
+import './../styles/Footer.scss';
+import Information from './Information';
 // import './../styles/'
 export default function Footer() {
   return (
     <div className="footer">
       <Information></Information>
       <span className="about">
-        2023&copy;&nbsp;
+        2023&copy;&nbsp; vladimirbabich (
         <a
           href="https://github.com/vladimirbabich"
           target="_blank"
           rel="noopener noreferrer"
-          className="link"
-        >
-          vladimirbabich
+          className="link">
+          Github
         </a>
-        (Github)
+        )
       </span>
     </div>
   );

@@ -1,20 +1,22 @@
 @use './../App';
 .footer {
-  background-color: App.$secondBgColor;
-  height: 10vh;
+  background-color: App.$layoutBgColor;
+  height: 71px;
   // width: 900px;
   width: 100%;
+  margin-top: 10px;
   overflow: none;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
-  color: white;
-  // position: sticky;
+  color: #919191;
   bottom: 0;
   a.link {
     color: App.$linkColor;
-    // font-size: 15px;
     text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }

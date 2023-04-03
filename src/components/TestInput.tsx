@@ -24,9 +24,12 @@ export default function TestInput({
         marginTop: '5px',
       }}>
       <Select isMultiple={false}></Select>
+      <button className="startPtrn" disabled>
+        /
+      </button>
       <DropDownPicker isMultiple={true}>{getFlagsString(flags)}</DropDownPicker>
+
       <input
-        style={{ marginBottom: '5px' }}
         autoComplete="off"
         id="regexpInput"
         value={value}

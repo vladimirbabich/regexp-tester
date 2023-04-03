@@ -33,7 +33,13 @@ export interface IRecordData {
   // [key: string]: ITestData[];
   all: IAllData[];
   min5: IMin5Data[];
-  noflags: INoflagsData[];
+  flags: INoflagsData[];
+}
+
+export interface IRecordData2 {
+  all: IAllData[];
+  min5: IMin5Data2[];
+  flags: INoflagsData[];
 }
 
 export interface IMin5Data {
@@ -41,6 +47,18 @@ export interface IMin5Data {
   userName: string;
   solvedAmount: number;
   skippedAmount: number;
+}
+export interface IMin5Data2 {
+  id: number;
+  userName: string;
+  solvedAmount: number;
+  skippedAmount: number;
+  field1: number;
+  field2: number;
+  field3: number;
+  field4: number;
+  field5: number;
+  field6: number;
 }
 export interface IAllData {
   id: number;

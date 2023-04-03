@@ -1,22 +1,27 @@
 @use './../App';
 
 .header {
-  height: 8vh;
-  background-color: App.$secondBgColor;
-  width: 100%;
+  height: 57px;
+  background-color: App.$layoutBgColor;
+  width: 970px;
   display: flex;
+  position: fixed;
+  top: 0px;
   flex-direction: row;
-  //   align-items: center;
   justify-content: space-between;
   font-size: 20px;
+  box-shadow: 0 0 0 1px #e0e0e0;
   color: white;
+  z-index: 800;
 
   .logo {
     align-self: center;
-    padding-left: 5px;
-    color:App.$bgColor;
+    padding-left: 10px;
+    color: App.$linkColor;
     text-decoration: none;
-    // vertical-align: middle;
+    &:hover {
+      color: App.$hoverColor;
+    }
   }
 }
 .navigation {
@@ -27,25 +32,31 @@
   a.link {
     color: App.$linkColor;
     text-decoration: none;
-    margin-left: 15px;
+    height: 100%;
+    vertical-align: middle;
+    padding-top: 14px;
+    padding-left: 5px;
+    padding-right: 5px;
+    border: 1px App.$layoutBgColor solid;
     &:hover {
-      color: App.$hoverColor;
+      // color: App.$hoverColor;
+      text-decoration: underline;
+      // border: 1px App.$mainBgColor solid;
     }
   }
   a.active {
-    color: red;
-  }
-  button {
-    background-color: App.$secondBgColor;
-    font-weight: bold;
-    color: App.$linkColor;
-    padding: 3px;
-    margin-left: 10px;
-    height: 100%;
-    border: 0;
-
+    background-color: App.$mainBgColor;
+    color: App.$layoutBgColor;
+    border: 1px App.$activeColor solid;
+    &:hover {
+      background-color: App.$mainBgColor;
+      color: App.$layoutBgColor;
+      border: 1px App.$activeColor solid;
+      text-decoration: none;
+      cursor: default;
+    }
   }
 }
-.testStuff{
+.testStuff {
   background-color: pink;
 }

@@ -38,13 +38,13 @@ export default function TestScore({ skippedAmount, solvedAmount }: any) {
         <span className="resultKey">skipped questions:</span>
         <span className="resultValue">{skippedAmount}</span>
       </div>
-      <div className="rowBtns">
+      <div className="rowHandlers">
         <Link to="/leaderboard" className="link">
           Leaderboard
         </Link>
-        <button className="btn" onClick={handleStartTest}>
+        <a className="link" onClick={handleStartTest}>
           Start again
-        </button>
+        </a>
         <Link to="/results" className="link">
           Watch answers
         </Link>

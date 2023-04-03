@@ -1,6 +1,7 @@
 import './../styles/Leaderboard.scss';
-import { testData } from '../leaderboard';
+import { testData, testData2 } from '../leaderboard';
 import LeaderboardTable from './LeaderboardTable';
+import { Link } from 'react-router-dom';
 import { FormEvent, SyntheticEvent, useEffect, useState } from 'react';
 
 export default function Leaderboard({
@@ -11,27 +12,30 @@ export default function Leaderboard({
   defaultMode: string;
 }) {
   const [data, setData] = useState<Object[]>([
-    ...testData[defaultMode as keyof typeof testData],
+    ...testData2[defaultMode as keyof typeof testData],
   ]);
+
   const [activeMode, setActiveMode] = useState<string>(defaultMode);
 
   useEffect(() => {
     console.log(data);
   }, [data]);
 
+  const restartRoute = activeMode == 'min5' ? '/' : `/${activeMode}`;
   return (
     <div className="leaderboard">
-      <h1 className="title">{title}</h1>
+      <h1 className="h1Title">{title}</h1>
       <div className="leaderboardContent">
         <div
           className="leaderboardSettings"
           onChange={(e: FormEvent<HTMLDivElement>) => {
             const mode = (e.target as HTMLButtonElement).value;
             setActiveMode((prev) => {
-              setData(testData[mode as keyof typeof testData]);
+              setData(testData2[mode as keyof typeof testData]);
               return mode;
             });
           }}>
+          <span className="settingsTitle">Modes:</span>
           <div className="radioItem">
             <input
               className="radioBtn"
@@ -57,13 +61,13 @@ export default function Leaderboard({
           <div className="radioItem">
             <input
               className="radioBtn"
-              id="noflags"
+              id="flags"
               type="radio"
               name="radio"
-              value="noflags"
-              checked={activeMode === 'noflags'}
+              value="flags"
+              checked={activeMode === 'flags'}
             />
-            <label htmlFor="noflags">no flags</label>
+            <label htmlFor="flags">flags</label>
           </div>
         </div>
         {data?.length > 0 ? (
@@ -71,6 +75,9 @@ export default function Leaderboard({
         ) : (
           <p className="loading">Loading...</p>
         )}
+      </div>
+      <div className="restartBlock">
+        <Link to={restartRoute}>Restart test</Link>
       </div>
     </div>
   );

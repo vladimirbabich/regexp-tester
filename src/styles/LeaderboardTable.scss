@@ -1,17 +1,88 @@
+@use './../App';
+
 table.leaderboardTable {
-  border: 1px solid black;
-  width:60%;
+  // border: 2px solid black;
+  border-left: none;
+  width: 300px;
+  max-width: 300px;
+  border-collapse: collapse;
+  // border-style: hidden;
   * {
-    border: 1px solid red;
+    // border: 1px solid black;
     padding: 3px;
   }
-  > thead {
+  td,
+  th {
+    // border-left: 1px solid black;
+    // border-left: 10px solid black;
+  }
+  td:first-child,
+  th:first-child {
+    border-left: none;
+    // border-left: 10px solid black;
+  }
+
+  > thead tr {
     padding: 3px;
-    // background-color: blue;
-    > tr {
-      padding: 3px;
-      background-color: green;
-      border: 3px solid purple;
-    }
+    background-color: App.$mainBgColor;
+  }
+  > tr {
+    padding: 3px;
+    // background-color: green;
+    background-color: App.$mainBgColor;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    border-left: none;
+  }
+  > tr:last-child{
+    // border-bottom: none;
+  }
+  > tr:nth-child(even) {
+    background-color: #c5c5c5;
+  }
+  > * th:first-child {
+    width: 30px;
+    position: absolute;
+    z-index: 10;
+  }
+  > * th:nth-child(2) {
+    padding: 3px;
+    padding-left: 30px;
+    width: 130px;
+    position: absolute;
+    background-color: inherit;
+    border-right: 1px solid black;
+  }
+  > * th:nth-child(3) {
+    padding: 3px;
+    padding-left: 130px;
+    // border: 1px solid black;
+  }
+  > * th:last-child {
+    border-right: none;
+  }
+}
+
+//example
+#tableWrapper {
+  position: relative;
+  overflow-x: auto;
+  overflow-y: auto;
+  max-width: 700px;
+}
+#tableScroll {
+  border: 1px solid black;
+  overflow: auto;
+  &::-webkit-scrollbar {
+    background: black;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #c5c5c5;
+    border-radius: 7px;
+    // border: 1px solid #000;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: App.$mainBgColor;
   }
 }

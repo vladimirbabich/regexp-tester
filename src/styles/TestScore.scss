@@ -1,15 +1,17 @@
 @use './../App';
 div.testScore {
   margin-top: 5px;
-  background-color: rgba(0, 0, 0, 0.562);
-  width: 30%;
+  background-color: rgba(255, 255, 255, 0.9);
+  width: 300px;
   transform: translate(-50%, -50%);
   left: 50%;
   top: 25%;
   position: absolute;
+  border: 1px App.$layoutBgColor solid;
+  border-radius: 5px;
   display: flex;
-  padding: 7px;
-  z-index: 999;
+  padding: 10px;
+  z-index: 888;
   flex-direction: column;
   justify-content: space-between;
   span.title {
@@ -24,23 +26,35 @@ div.testScore {
     flex-direction: row;
     justify-content: space-between;
   }
-  div.rowBtns {
+  div.rowHandlers {
     margin-top: 3px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    color: App.$linkColor;
+    * {
+      display: block;
+      border: 1px App.$layoutBgColor solid;
+      color: 1px App.$layoutBgColor solid;
+      background-color: App.$layoutBgColor;
+      font-size: 14px;
+      text-align: center;
+      padding: 5px;
+      text-decoration: none;
+      cursor: pointer;
+      margin-left: 3px;
+      border-radius: 5px;
+      &:visited {
+        color: App.$linkColor;
+      }
+      &:hover {
+        color: App.$layoutBgColor;
+        background-color: App.$mainBgColor;
+      }
+    }
+    *:first-child {
+      margin-left: 0px;
+      padding-top: 5px;
+    }
   }
-  //   input {
-  //     width: 100%;
-  //     height: 40px;
-  //     border: 1px solid App.$secondBgColor;
-  //     padding: 3px;
-  //     border-radius: 5px;
-  //     border-top-left-radius: 0;
-  //     border-bottom-left-radius: 0;
-  //     &:focus {
-  //       outline: none;
-  //       border: 1px solid App.$linkColor;
-  //     }
-  //   }
 }

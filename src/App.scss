@@ -1,43 +1,60 @@
-$linkColor: rgb(72, 126, 243);
+// $linkColor: rgb(72, 126, 243);
+$hoverColor: #00d5cb;
+$hintColor: grey;
+$mainBgColor: rgb(255, 255, 255);
+$linkColor: rgb(255, 255, 255);
 $activeColor: rgb(2, 44, 136);
-$hintColor: rgb(214, 252, 80);
-$bgColor: rgb(201, 201, 201);
-$hoverColor: rgb(241, 245, 255);
+$focusColor: rgb(197, 0, 33);
 $disabledColor: rgba(72, 126, 243, 0.281);
-$secondBgColor: rgb(22, 22, 22);
+$layoutBgColor: #003c81;
 
+//layout
+$headerHeight: 57px;
 body {
   background-color: rgb(34, 34, 34);
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  * {
+    box-sizing: border-box;
+  }
+}
+div.root {
+  height: 100%;
 }
 div.global {
   width: 100%;
-  min-height: 100%;
+  min-height: 100vh;
+  background-color: rgba(255, 255, 255, 0.7);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
   overflow: visible;
 }
 div.app {
-  // height: 100vh;
   width: 970px;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   flex-direction: column;
   margin: auto;
   overflow: none;
-  // background-color: $bgColor;
   * {
     box-sizing: border-box;
     font-size: 18px;
-    margin: 0;
-    padding: 0;
+    // margin: 0;
+    // padding: 0;
   }
 }
 div.main {
   display: flex;
+  box-shadow: 0 0 0 1px #e0e0e0;
   width: 100%;
   flex-direction: column;
   align-items: center;
   padding: 0;
   min-height: 100vh;
-  background-color: $bgColor;
+  overflow: hidden;
+  background-color: $mainBgColor;
   //
 
   display: 'flex';
@@ -47,4 +64,10 @@ div.content {
   width: 100%;
   padding: 4px 4px 0 4px;
   flex: 1;
+}
+
+h1.h1Title {
+  text-align: center;
+  margin-top: 10 + $headerHeight;
+  margin-bottom: 0px;
 }

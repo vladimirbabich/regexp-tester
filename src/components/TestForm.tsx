@@ -47,27 +47,45 @@ export default function TestForm({ title, mode }: any) {
   const [timeAmount, setTimeAmount] = useState<number>(
     getDefaultTimeAmount(mode)
   );
+  const [timerDuration, setTimerDuration] = useState(0);
+  const [isActiveTimerDuration, setIsActiveTimerDuration] = useState(true);
   function getDefaultTimeAmount(mode: string) {
     return mode == 'allQuestions' ? 0 : mode == 'flags' ? 60 : 300;
   }
   useEffect(() => {
-    console.log('currentQuestion update');
-    console.log(currentQuestion?.expectedResult);
-    if (mode == 'flags' && currentQuestion && currentQuestion.expectedResult)
-      setPattern(currentQuestion.expectedResult.split('/')[0]);
-    console.log(expectedResult);
-    if (!currentQuestion) return;
-  }, [currentQuestion]);
+    console.log(isTimerActive);
+    console.log(isActiveTimerDuration);
+  });
   useEffect(() => {
-    // alert(expectedResult.join('|'));
-    console.warn(expectedResult);
-  }, [expectedResult]);
+    let timeInterval: NodeJS.Timer;
+    if (isActiveTimerDuration) {
+      timeInterval = setInterval(() => {
+        setTimerDuration((prev) => prev + 1);
+      }, 1000);
+      return () => {
+        clearInterval(timeInterval);
+      };
+    } else {
+      return () => {
+        clearInterval(timeInterval);
+      };
+    }
+  }, []);
+  useEffect(() => {
+    console.log(timerDuration);
+    if (timerDuration > 3) {
+      setIsActiveTimerDuration(false);
+      // setTimerDuration(0);
+    }
+  }, [timerDuration]);
 
   function restartTest() {
     console.log('ALL:');
     console.log(allQuestions);
     setQuestions([...allQuestions]);
     setTimeAmount(getDefaultTimeAmount(mode));
+    setTimerDuration(0);
+    setIsActiveTimerDuration(true);
     console.log(defaultTimeAmount);
     // setPattern(
     //   mode == 'flags' ? currentQuestion?.possibleAnswer.split('/')[0] : ''
@@ -160,28 +178,22 @@ export default function TestForm({ title, mode }: any) {
     }
   }, [userResult]);
 
-  useEffect(() => {
-    if (expectedResult.length < 1) return;
-    console.log('no need for expectedResult: ');
-    console.log(expectedResult);
-  }, [expectedResult]);
-
   function setRandomQuestion() {
     if (!questions) return;
 
     const randomIndex = Math.round(Math.random() * (questions.length - 1));
     const chosenQuestion = questions.splice(randomIndex, 1)[0];
-    console.log('chosenQuestion');
-    console.log(chosenQuestion);
 
     if (questions.length < 1 && chosenQuestion === undefined) {
       setIsTimerActive(false);
       dispatch(setIsTestOver(true));
       return;
     }
+    dispatch(setSelectedFunction(chosenQuestion.functionName));
     dispatch(setCurrentQuestion(chosenQuestion));
     dispatch(resetFlags());
   }
+
   useEffect(() => {
     //resetTestForm
     if (!isTestOver) restartTest();
@@ -221,6 +233,8 @@ export default function TestForm({ title, mode }: any) {
         ...currentQuestion,
       } as IQuestion;
       dispatch(setAskedQuestions([...askedQuestions, completedQuestion]));
+      setTimerDuration(0);
+      setIsActiveTimerDuration(true);
       const timeout = setTimeout(() => {
         // console.log("time");
         setIsRightAnswer(false);
@@ -240,6 +254,8 @@ export default function TestForm({ title, mode }: any) {
     setIsTimerActive(false);
     dispatch(setIsTestOver(true));
     dispatch(setAskedQuestions([...askedQuestions, { ...currentQuestion }]));
+    setTimerDuration(0);
+    setIsActiveTimerDuration(true);
   }
 
   function handleClickSkip(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
@@ -248,6 +264,8 @@ export default function TestForm({ title, mode }: any) {
     dispatch(setAskedQuestions([...askedQuestions, { ...currentQuestion }]));
     setPattern('');
     setRandomQuestion();
+    setTimerDuration(0);
+    setIsActiveTimerDuration(true);
   }
 
   const skippedQuestionsAmount = askedQuestions.filter((el) => {
@@ -256,7 +274,7 @@ export default function TestForm({ title, mode }: any) {
 
   return (
     <>
-      <h1 className="title">{title}</h1>
+      <h1 className="h1Title">{title}</h1>
       <form className="testForm">
         {isTestOver && (
           <TestScore
@@ -279,14 +297,30 @@ export default function TestForm({ title, mode }: any) {
           </h2>
           <div>
             <span className="questionsCount">
-              {askedQuestions.length - skippedQuestionsAmount}(
-              {skippedQuestionsAmount})/
-              {questionsLength}
+              <span
+                className="hint--top hint--info"
+                aria-label="solved questions">
+                {askedQuestions.length - skippedQuestionsAmount}
+              </span>
+              (
+              <span
+                className="hint--top hint--info"
+                aria-label="skipped questions">
+                {skippedQuestionsAmount}
+              </span>
+              )/
+              <span className="hint--top hint--info" aria-label="all questions">
+                {questionsLength}
+              </span>
             </span>
             <button
               onClick={handleClickSkip}
               disabled={isTestOver}
-              className="formBtn">
+              className={
+                !isActiveTimerDuration && isTimerActive
+                  ? 'formBtn animated'
+                  : 'formBtn'
+              }>
               Skip
             </button>
             <button
@@ -312,15 +346,21 @@ export default function TestForm({ title, mode }: any) {
             <div className="resultLabel">Expected result</div>
             <div className="wrapper">
               {currentQuestion &&
-                expectedResult.map((el, i) => (
-                  <span
-                    key={i}
-                    className={
-                      el.isUnique ? 'matchElementWrong' : 'matchElement'
-                    }>
-                    {el.match}
-                  </span>
-                ))}
+                expectedResult.map((el, i) => {
+                  let classes = 'matchElement';
+                  if (el.isUnique) classes += ' wrong hint--top hint--error';
+
+                  return (
+                    <span
+                      key={i}
+                      className={classes}
+                      aria-label={
+                        el.isUnique ? 'Not found in your result!' : ''
+                      }>
+                      {el.match}
+                    </span>
+                  );
+                })}
             </div>
           </div>
           <div className="resultBlock">
@@ -329,21 +369,24 @@ export default function TestForm({ title, mode }: any) {
               <span>No matches</span>
             ) : (
               <div className="wrapper">
-                {userResult.map((el, i) => (
-                  <span
-                    className={
-                      el.isUnique ? 'matchElementWrong' : 'matchElement'
-                    }
-                    key={i}>
-                    {el.match}
-                  </span>
-                ))}
+                {userResult.map((el, i) => {
+                  let classes = 'matchElement';
+                  if (el.isUnique) classes += ' wrong hint--top hint--error';
+                  return (
+                    <span
+                      className={classes}
+                      key={i}
+                      aria-label={el.isUnique ? 'Not expected match!' : ''}>
+                      {el.match}
+                    </span>
+                  );
+                })}
               </div>
             )}
           </div>
         </div>
-        {/* {true ? <Popup></Popup> : null} */}
-        {isRightAnswer ? <Popup></Popup> : null}
+        {/* {true && <Popup></Popup>} */}
+        {isRightAnswer && <Popup></Popup>}
       </form>
     </>
   );

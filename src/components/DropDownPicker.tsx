@@ -87,9 +87,6 @@ export default function DropDownPicker({
                 value={el.name}
                 id="flagsOption"
                 key={el.name}
-                style={{
-                  fontWeight: el.status ? 'bold' : 'normal',
-                }}
                 onClick={(e) => handleClickOption(e)}>
                 {el.name} ({'description' in el && el.description})
                 {el.status && '\u2713'}

@@ -6,6 +6,12 @@ export default function Header() {
     <header className="header">
       <Link to='/' className="logo">RegExp TESTER</Link>
       <div className="navigation">
+        {/* <NavLink className="link testStuff" to="/test">
+          TEST!!!
+        </NavLink>
+        <NavLink className="link testStuff" to="/results">
+          results
+        </NavLink> */}
         <NavLink className="link" to="/all">
           All questions
         </NavLink>
@@ -15,15 +21,8 @@ export default function Header() {
         <NavLink className="link" to="/flags">
           Flags test
         </NavLink>
-        <NavLink className="link testStuff" to="/test">
-          TEST!!!
-        </NavLink>
         <NavLink className="link" to="/leaderboard">
           Leaderboard
-        </NavLink>
-        <NavLink className="link" to="/time"></NavLink>
-        <NavLink className="link testStuff" to="/results">
-          results
         </NavLink>
       </div>
     </header>

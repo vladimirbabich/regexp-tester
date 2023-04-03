@@ -1,37 +1,73 @@
+@use './../App';
+
 .leaderboard {
   width: 100%;
   display: flex;
   flex-direction: column;
 }
 
-h1.title {
-  text-align: center;
-  margin-top: 10px;
-}
 .leaderboardContent {
+  margin-top: 10px;
   display: flex;
   //   justify-content: space-between;
   flex-direction: row;
 }
 .leaderboardSettings {
-  width: 20%;
+  width: 200px;
   display: flex;
   flex-direction: column;
+  span.settingsTitle {
+    margin-left: 5px;
+  }
 }
 .radioItem {
-  border: 2px salmon dashed;
+  // border: 2px salmon dashed;
   user-select: none;
 }
 input.radioBtn {
   padding-left: 5px;
   appearance: none;
   &:hover ~ label {
-    color: rgb(0, 250, 146);
+    text-decoration: underline;
+    cursor: pointer;
   }
   &:checked ~ label {
-    color: rgb(0, 194, 0);
+    text-decoration: underline;
+    color: App.$activeColor;
+  }
+  &:checked:hover ~ label {
+    cursor: default;
   }
 }
 // .radio-custom:checked ~ label {
 //     color: blue;
 //   }
+.restartBlock {
+  width: 200px;
+  height: 100px;
+  margin-top: 10px;
+  text-align: center;
+  // display: flex;
+  // background-color: red;
+  // justify-content: center;
+  align-self: center;
+  a {
+    background-color: App.$layoutBgColor;
+    color: App.$linkColor;
+    text-decoration: none;
+    margin: 0 auto;
+    // height: 20px;
+    padding: 5px;
+    border: 1px solid App.$layoutBgColor;
+    border-radius: 4px;
+    &:hover {
+      background-color: App.$linkColor;
+      border: 1px solid App.$layoutBgColor;
+      color: App.$layoutBgColor;
+      cursor: pointer;
+    }
+    &:active {
+      background-color: App.$activeColor;
+    }
+  }
+}

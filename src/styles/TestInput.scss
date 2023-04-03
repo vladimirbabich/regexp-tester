@@ -1,21 +1,53 @@
-@use "./../App";
+@use './../App';
 div.testInput {
   margin-top: 5px;
   width: 100%;
   position: relative;
   display: flex;
   justify-content: space-between;
+  // align-items: center;
+  button.startPtrn {
+    position: absolute;
+    display: flex;
+    color: App.$layoutBgColor;
+    user-select: none;
+    justify-content: center;
+    align-items: center;
+    height: 38px; //34px;
+    top: 1px;
+    border: none;
+    margin: 0;
+    margin-left: 121px;
+    align-self: center;
+    padding: 3px 10px 0 10px;
+    background-color: App.$mainBgColor;
+    vertical-align: bottom;
+    // background-color: red;
+    // vertical-align: bottom;
+    // vertical-align: top;
+    // font-size: 20px;
+  }
   input {
     width: 100%;
     height: 40px;
-    border: 1px solid App.$secondBgColor;
+    margin-bottom: '5px';
     padding: 3px;
+    padding-left: 30px;
     border-radius: 5px;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
+    border: 1px solid App.$layoutBgColor;
+    &::placeholder {
+      /* Chrome, Firefox, Opera, Safari 10.1+ */
+      color: #1b00b1a2;
+      opacity: 1; /* Firefox */
+    }
     &:focus {
       outline: none;
-      border: 1px solid App.$linkColor;
+      border: 1px solid App.$focusColor;
+    }
+    &:disabled {
+      background-color: App.$mainBgColor;
     }
   }
 }

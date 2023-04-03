@@ -11,10 +11,10 @@ import { useAppSelector } from '../app/hooks';
 import './../App.scss';
 import './../styles/QuestionBlock.scss';
 enum Colors {
-  RED = '#b90404',
-  BGRED = 'rgb(185, 4, 4, 0.1)',
-  GREEN = '#126d00',
-  BGGREEN = 'rgb(18, 109, 0, 0.1)',
+  RED = 'rgb(255,2,0)',
+  BGRED = 'rgb(255,2,0, 0.05)',
+  GREEN = 'rgb(32, 193, 0)',
+  BGGREEN = 'rgb(32,193,0,0.05)',
 }
 
 export default function QuestionBlock({ question, questionId }: any) {
@@ -60,13 +60,14 @@ export default function QuestionBlock({ question, questionId }: any) {
         className="questionCart"
         style={{
           borderColor: question.userAnswer ? Colors.GREEN : Colors.RED,
+          backgroundColor: question.userAnswer ? Colors.BGGREEN : Colors.BGRED,
         }}>
         <div className="row">
           <div className="textBlock">
             <span className="task">{question.task}</span>
             <textarea
               className="text"
-              contentEditable={true}
+              // contentEditable={true}
               ref={textRef}
               onLoad={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 console.log(e)
@@ -76,8 +77,7 @@ export default function QuestionBlock({ question, questionId }: any) {
                 setTextAreaHeight(e.target);
               }}
               disabled={true}
-              value={question.text}
-              ></textarea>
+              value={question.text}></textarea>
           </div>
           <div className="expectedBlock">
             <span className="key">Expected result:</span>
@@ -101,16 +101,16 @@ export default function QuestionBlock({ question, questionId }: any) {
             </span>
           </div>
         </div>
-        <div className="row">
-          {userPattern && (
+        {userPattern && (
+          <div className="row">
             <div className="answerBlock">
               <span className="answerKey">
                 Your answer: /<span className="answerText">{userPattern}</span>/
                 <span className="answerText">{userFlags}</span>
               </span>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

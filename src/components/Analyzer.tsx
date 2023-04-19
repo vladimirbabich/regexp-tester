@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useAppSelector } from '../app/hooks';
-import { IQuestion } from '../types';
+import { IQuestion } from '../Models';
 import './../App.scss';
 import './../styles/Analyzer.scss';
 import QuestionBlock from './QuestionBlock';
@@ -8,7 +8,7 @@ export default function Analyzer({ title }: any) {
   const askedQuestions = useAppSelector(
     (state) => state.testForm.askedQuestions
   );
-
+  console.log(askedQuestions);
   const testData: IQuestion[] = [
     //     {
     //       difficulty: 5,

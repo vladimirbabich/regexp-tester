@@ -2,12 +2,18 @@ import { configureStore } from '@reduxjs/toolkit';
 import globalSlice from '../features/global/globalSlice';
 import testFormSlice from '../features/testForm/testFormSlice';
 import testInputSlice from '../features/testInput/testInputSlice';
+import { apiSlice } from '../features/api/apiSlice';
+import { setupListeners } from '@reduxjs/toolkit/query';
 const store = configureStore({
   reducer: {
     global: globalSlice,
     testInput: testInputSlice,
     testForm: testFormSlice,
+    [apiSlice.reducerPath]: apiSlice.reducer,
   },
+
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(apiSlice.middleware),
 });
 export default store;
 export type RootState = ReturnType<typeof store.getState>;

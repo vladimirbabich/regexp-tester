@@ -1,6 +1,5 @@
-@use './../App';
+@use './../styles/colors';
 form.testForm {
-  margin-top: 10px;
   width: 100%;
 }
 .testInfo {
@@ -70,9 +69,13 @@ textarea.textBlock {
   background-color: rgb(255, 255, 255);
   text-align: left;
   padding: 6px;
-  border: 1px solid App.$layoutBgColor;
+  border: 1px solid colors.$layoutBgColor;
   border-radius: 5px;
   // border-bottom-left-radius: 5px;
+}
+.questionsCount {
+  user-select: none;
+  margin-right: 6px;
 }
 .labels {
   width: 100%;
@@ -94,7 +97,7 @@ textarea.textBlock {
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
     padding: 3px 0 3px 0;
-    border: 1px solid App.$layoutBgColor;
+    border: 1px solid colors.$layoutBgColor;
     background-color: rgb(255, 255, 255);
   }
   .resultBlock:first-child {
@@ -105,30 +108,7 @@ textarea.textBlock {
     border-right: none;
   }
 }
-button.formBtn {
-  background-color: App.$layoutBgColor;
-  color: App.$linkColor;
-  padding: 5px;
-  border: 1px solid App.$layoutBgColor;
-  border-radius: 4px;
-  margin-left: 3px;
-  &:hover {
-    background-color: App.$linkColor;
-    color: App.$layoutBgColor;
-    cursor: pointer;
-  }
-  &:active {
-    background-color: App.$activeColor;
-  }
-  &:disabled {
-    background-color: App.$disabledColor;
-    cursor: default;
-  }
-  &:disabled:hover {
-    background-color: App.$disabledColor;
-    color: App.$linkColor;
-  }
-}
+
 button.animated {
   animation-duration: 1s;
   animation-name: skipReminder;
@@ -137,10 +117,10 @@ button.animated {
 }
 @keyframes skipReminder {
   from {
-    background-color: App.$layoutBgColor;
+    background-color: colors.$layoutBgColor;
   }
 
   to {
-    background-color: App.$focusColor;
+    background-color: colors.$focusColor;
   }
 }

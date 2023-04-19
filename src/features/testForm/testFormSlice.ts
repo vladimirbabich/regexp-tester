@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { IDropDownPickerList, IQuestion } from '../../types';
+import { IDropDownPickerList, IQuestion } from '../../Models';
 type InitialState = {
   currentQuestion: IQuestion | null;
   flags: IDropDownPickerList[];

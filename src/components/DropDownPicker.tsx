@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { DropDownPickerFlagsPropsType } from './../types';
+import { DropDownPickerFlagsPropsType } from '../Models';
 import './../App.scss';
 import './../styles/DropDownPicker.scss';
 import store from '../app/store';

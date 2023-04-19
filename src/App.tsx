@@ -1,45 +1,58 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  MouseEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import './App.scss';
 import { Routes, Route, Link } from 'react-router-dom';
 import TestForm from './components/TestForm';
 import Footer from './components/Footer';
 import Header from './components/Header';
-import { useAppDispatch } from './app/hooks';
 import store from './app/store';
 import { setIsFlagsBlockOpen } from './features/testInput/testInputSlice';
 import Leaderboard from './components/Leaderboard';
 import Analyzer from './components/Analyzer';
+import SignPage from './components/SignPage';
+import { useGetNewNickNameQuery } from './features/api/apiSlice';
+import { useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from './app/hooks';
+import { setDefaultNickname } from './features/global/globalSlice';
+import Notification from './components/Notification';
 
 function App() {
+  //should be only if not
+  const { data, error, isLoading } = useGetNewNickNameQuery('all');
+  useEffect(() => {
+    // console.log('ggggg');
+    // console.log(isLoading);
+    if (isLoading == false) dispatch(setDefaultNickname(data.nickname));
+  }, [isLoading]);
   const dispatch = useAppDispatch();
+  // if
+  const tableRef = useRef<HTMLDivElement>(null);
+  const notificationText = useAppSelector(
+    (state) => state.global.notificationText
+  );
+  const [notificationPosition, setNotificationPosition] = useState<{
+    x: number;
+    y: number;
+  }>({
+    x: 0,
+    y: 0,
+  });
+  const handleMouseMove = (event: MouseEvent) => {
+    setNotificationPosition({
+      x: event.clientX,
+      y: event.clientY,
+    });
+  };
 
-  function handleClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-    const testInputState = store.getState().testInput;
-    const elementId = (e.target as HTMLElement).id;
-    if (
-      elementId.indexOf('flagsSelect') > -1 ||
-      elementId.indexOf('flagsOption') > -1
-    ) {
-      if (!testInputState.isFlagsBlockOpen) {
-        dispatch(setIsFlagsBlockOpen(true));
-        return;
-      }
-      return;
-    }
-    if (elementId.indexOf('selectActivator') > -1) {
-      dispatch(
-        setIsFlagsBlockOpen(!store.getState().testInput.isFlagsBlockOpen)
-      );
-      return;
-    }
-    if (testInputState.isFlagsBlockOpen) {
-      dispatch(setIsFlagsBlockOpen(false));
-    }
-  }
   return (
     <div className="global">
-      <div className="app" onClick={handleClick}>
-        <div className="main">
+      <div className="app">
+        <div className="main" onMouseMove={handleMouseMove}>
           <Header />
           <div className="content">
             <Routes>
@@ -57,9 +70,7 @@ function App() {
               <Route
                 path="/leaderboard"
                 element={
-                  <Leaderboard
-                    title="Leaderboard"
-                    defaultMode="min5"></Leaderboard>
+                  <Leaderboard title="Leaderboard" mode="min5"></Leaderboard>
                 }></Route>
               <Route
                 path="/test"
@@ -74,9 +85,13 @@ function App() {
               <Route
                 path="/results"
                 element={<Analyzer title="Test results" />}></Route>
+              <Route path="/sign" element={<SignPage />}></Route>
             </Routes>
           </div>
           <Footer />
+          {notificationText?.length > 0 && (
+            <Notification position={notificationPosition}></Notification>
+          )}
         </div>
       </div>
     </div>

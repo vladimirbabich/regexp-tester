@@ -1,5 +1,17 @@
 import { MutableRefObject } from 'react';
 
+export interface TestResult {
+  id: number;
+  timeSpent: string;
+  score: number;
+  createdAt: string;
+  ansCount: number;
+  ansDiff: string;
+  skpCount: number;
+  skpDiff: string;
+  username: string;
+  version: string;
+}
 export interface IDropDownPickerList {
   name: string;
   description: string;

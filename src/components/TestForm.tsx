@@ -6,7 +6,7 @@ import { expectedResult, getResult } from '../TestController';
 import allQuestions from './../questions';
 import Timer from './Timer';
 import TestInput from './TestInput';
-import { IDropDownPickerList, IQuestion, IResultMatch } from './../types';
+import { IDropDownPickerList, IQuestion, IResultMatch } from '../Models';
 import { defaultTimeAmount, getDiverseMatches, getFlagsString } from '../utils';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import {
@@ -18,6 +18,9 @@ import {
 } from '../features/testForm/testFormSlice';
 import TestScore from './TestScore';
 import { setFlagsFromString } from 'v8';
+import { setNotificationText } from '../features/global/globalSlice';
+
+const SKIP_ANIMATION_TIME_AMOUNT = 25; //seconds
 
 export default function TestForm({ title, mode }: any) {
   const dispatch = useAppDispatch();
@@ -47,45 +50,43 @@ export default function TestForm({ title, mode }: any) {
   const [timeAmount, setTimeAmount] = useState<number>(
     getDefaultTimeAmount(mode)
   );
-  const [timerDuration, setTimerDuration] = useState(0);
-  const [isActiveTimerDuration, setIsActiveTimerDuration] = useState(true);
+  const [skipAnimationDuration, setSkipAnimationDuration] = useState(0);
+  const [isActiveSkipAnimation, setIsActiveSkipAnimation] = useState(false);
   function getDefaultTimeAmount(mode: string) {
     return mode == 'allQuestions' ? 0 : mode == 'flags' ? 60 : 300;
   }
   useEffect(() => {
-    console.log(isTimerActive);
-    console.log(isActiveTimerDuration);
+    // console.log(isTimerActive);
+    // console.log(isActiveSkipAnimation);
   });
   useEffect(() => {
     let timeInterval: NodeJS.Timer;
-    if (isActiveTimerDuration) {
+    if (!isActiveSkipAnimation) {
       timeInterval = setInterval(() => {
-        setTimerDuration((prev) => prev + 1);
+        // if (skipAnimationDuration <= SKIP_ANIMATION_TIME_AMOUNT+1)
+        setSkipAnimationDuration((prev) =>
+          prev < SKIP_ANIMATION_TIME_AMOUNT ? prev + 1 : prev
+        );
       }, 1000);
-      return () => {
-        clearInterval(timeInterval);
-      };
-    } else {
       return () => {
         clearInterval(timeInterval);
       };
     }
   }, []);
   useEffect(() => {
-    console.log(timerDuration);
-    if (timerDuration > 3) {
-      setIsActiveTimerDuration(false);
-      // setTimerDuration(0);
+    // console.log(skipAnimationDuration);
+    if (skipAnimationDuration == SKIP_ANIMATION_TIME_AMOUNT) {
+      setIsActiveSkipAnimation(true);
     }
-  }, [timerDuration]);
+  }, [skipAnimationDuration]);
 
   function restartTest() {
     console.log('ALL:');
     console.log(allQuestions);
     setQuestions([...allQuestions]);
     setTimeAmount(getDefaultTimeAmount(mode));
-    setTimerDuration(0);
-    setIsActiveTimerDuration(true);
+    setSkipAnimationDuration(0);
+    setIsActiveSkipAnimation(false);
     console.log(defaultTimeAmount);
     // setPattern(
     //   mode == 'flags' ? currentQuestion?.possibleAnswer.split('/')[0] : ''
@@ -233,8 +234,8 @@ export default function TestForm({ title, mode }: any) {
         ...currentQuestion,
       } as IQuestion;
       dispatch(setAskedQuestions([...askedQuestions, completedQuestion]));
-      setTimerDuration(0);
-      setIsActiveTimerDuration(true);
+      setSkipAnimationDuration(0);
+      setIsActiveSkipAnimation(false);
       const timeout = setTimeout(() => {
         // console.log("time");
         setIsRightAnswer(false);
@@ -254,8 +255,8 @@ export default function TestForm({ title, mode }: any) {
     setIsTimerActive(false);
     dispatch(setIsTestOver(true));
     dispatch(setAskedQuestions([...askedQuestions, { ...currentQuestion }]));
-    setTimerDuration(0);
-    setIsActiveTimerDuration(true);
+    setSkipAnimationDuration(0);
+    setIsActiveSkipAnimation(false);
   }
 
   function handleClickSkip(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
@@ -264,8 +265,8 @@ export default function TestForm({ title, mode }: any) {
     dispatch(setAskedQuestions([...askedQuestions, { ...currentQuestion }]));
     setPattern('');
     setRandomQuestion();
-    setTimerDuration(0);
-    setIsActiveTimerDuration(true);
+    setSkipAnimationDuration(0);
+    setIsActiveSkipAnimation(false);
   }
 
   const skippedQuestionsAmount = askedQuestions.filter((el) => {
@@ -298,18 +299,37 @@ export default function TestForm({ title, mode }: any) {
           <div>
             <span className="questionsCount">
               <span
-                className="hint--top hint--info"
-                aria-label="solved questions">
+                onMouseEnter={() => {
+                  dispatch(setNotificationText('Number of answered questions'));
+                }}
+                onMouseLeave={() => {
+                  dispatch(setNotificationText(''));
+                }}>
                 {askedQuestions.length - skippedQuestionsAmount}
               </span>
               (
               <span
-                className="hint--top hint--info"
-                aria-label="skipped questions">
+                onMouseEnter={() => {
+                  dispatch(setNotificationText('Number of skipped questions'));
+                }}
+                onMouseLeave={() => {
+                  dispatch(setNotificationText(''));
+                }}>
                 {skippedQuestionsAmount}
               </span>
               )/
-              <span className="hint--top hint--info" aria-label="all questions">
+              <span
+                style={{ display: 'inline-block' }}
+                onMouseEnter={() => {
+                  dispatch(
+                    setNotificationText(
+                      `This test contains ${questionsLength} questions`
+                    )
+                  );
+                }}
+                onMouseLeave={() => {
+                  dispatch(setNotificationText(''));
+                }}>
                 {questionsLength}
               </span>
             </span>
@@ -317,7 +337,7 @@ export default function TestForm({ title, mode }: any) {
               onClick={handleClickSkip}
               disabled={isTestOver}
               className={
-                !isActiveTimerDuration && isTimerActive
+                isActiveSkipAnimation && isTimerActive
                   ? 'formBtn animated'
                   : 'formBtn'
               }>
@@ -348,15 +368,21 @@ export default function TestForm({ title, mode }: any) {
               {currentQuestion &&
                 expectedResult.map((el, i) => {
                   let classes = 'matchElement';
-                  if (el.isUnique) classes += ' wrong hint--top hint--error';
+                  if (el.isUnique) classes += ' wrong';
 
                   return (
                     <span
                       key={i}
-                      className={classes}
-                      aria-label={
-                        el.isUnique ? 'Not found in your result!' : ''
-                      }>
+                      onMouseEnter={() => {
+                        if (el.isUnique)
+                          dispatch(
+                            setNotificationText(`Not found in your result`)
+                          );
+                      }}
+                      onMouseLeave={() => {
+                        if (el.isUnique) dispatch(setNotificationText(''));
+                      }}
+                      className={classes}>
                       {el.match}
                     </span>
                   );
@@ -371,12 +397,18 @@ export default function TestForm({ title, mode }: any) {
               <div className="wrapper">
                 {userResult.map((el, i) => {
                   let classes = 'matchElement';
-                  if (el.isUnique) classes += ' wrong hint--top hint--error';
+                  if (el.isUnique) classes += ' wrong';
                   return (
                     <span
                       className={classes}
                       key={i}
-                      aria-label={el.isUnique ? 'Not expected match!' : ''}>
+                      onMouseEnter={() => {
+                        if (el.isUnique)
+                          dispatch(setNotificationText(`Not expected match`));
+                      }}
+                      onMouseLeave={() => {
+                        if (el.isUnique) dispatch(setNotificationText(''));
+                      }}>
                       {el.match}
                     </span>
                   );

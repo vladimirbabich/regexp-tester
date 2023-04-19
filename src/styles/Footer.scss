@@ -1,6 +1,6 @@
-@use './../App';
+@use './../styles/colors';
 .footer {
-  background-color: App.$layoutBgColor;
+  background-color: colors.$layoutBgColor;
   height: 71px;
   // width: 900px;
   width: 100%;
@@ -13,7 +13,7 @@
   color: #919191;
   bottom: 0;
   a.link {
-    color: App.$linkColor;
+    color: colors.$linkColor;
     text-decoration: none;
     &:hover {
       text-decoration: underline;

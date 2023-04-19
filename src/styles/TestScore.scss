@@ -1,13 +1,13 @@
-@use './../App';
+@use './../styles/colors';
 div.testScore {
   margin-top: 5px;
   background-color: rgba(255, 255, 255, 0.9);
-  width: 300px;
+  width: 330px;
   transform: translate(-50%, -50%);
   left: 50%;
   top: 25%;
   position: absolute;
-  border: 1px App.$layoutBgColor solid;
+  border: 1px colors.$layoutBgColor solid;
   border-radius: 5px;
   display: flex;
   padding: 10px;
@@ -31,12 +31,12 @@ div.testScore {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    color: App.$linkColor;
+    color: colors.$linkColor;
     * {
       display: block;
-      border: 1px App.$layoutBgColor solid;
-      color: 1px App.$layoutBgColor solid;
-      background-color: App.$layoutBgColor;
+      border: 1px colors.$layoutBgColor solid;
+      color: 1px colors.$layoutBgColor solid;
+      background-color: colors.$layoutBgColor;
       font-size: 14px;
       text-align: center;
       padding: 5px;
@@ -45,16 +45,31 @@ div.testScore {
       margin-left: 3px;
       border-radius: 5px;
       &:visited {
-        color: App.$linkColor;
+        color: colors.$linkColor;
       }
       &:hover {
-        color: App.$layoutBgColor;
-        background-color: App.$mainBgColor;
+        color: colors.$layoutBgColor;
+        background-color: colors.$mainBgColor;
       }
     }
     *:first-child {
       margin-left: 0px;
       padding-top: 5px;
+    }
+  }
+  .saveNotification {
+    margin-top: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    .nickChanger {
+      vertical-align: top;
+      border: 1px solid colors.$layoutBgColor;
+      margin-left: 3px;
+      width: 100px;
+      // &:hover {
+      //   text-decoration: none;
+      // }
     }
   }
 }

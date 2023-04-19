@@ -1,4 +1,4 @@
-import { IQuestion } from './types';
+import { IQuestion } from './Models';
 
 const shortText = `Lorem ipsumLLLL LLLL LLL sLLLLLLLLL ipsum dolor sit amet, consectetur adipiscing elit.`;
 const shortdigitsText = `Lorem1 2ipsum 3 ipsum -43 dolor sit 0 am3t`;
@@ -46,7 +46,7 @@ const allQuestions: IQuestion[] = [
   {
     text: 'Lorem 1234 @$#! ipSuM',
     expectedResult: 'L|o|r|e|m|i|p|S|u|M',
-    task: "get all letters by using flag 'i'",
+    task: "get all letters",
     possibleAnswer: '[a-z]',
     difficulty: 1,
     id: 4,

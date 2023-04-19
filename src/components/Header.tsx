@@ -1,10 +1,13 @@
 import { NavLink, Link } from 'react-router-dom';
 import './../styles/Header.scss';
+import { SignLink } from './SignLink';
 
 export default function Header() {
   return (
     <header className="header">
-      <Link to='/' className="logo">RegExp TESTER</Link>
+      <Link to="/" className="logo">
+        RegExp TESTER
+      </Link>
       <div className="navigation">
         {/* <NavLink className="link testStuff" to="/test">
           TEST!!!
@@ -24,6 +27,7 @@ export default function Header() {
         <NavLink className="link" to="/leaderboard">
           Leaderboard
         </NavLink>
+        <SignLink />
       </div>
     </header>
   );

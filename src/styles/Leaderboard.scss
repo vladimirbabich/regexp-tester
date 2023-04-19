@@ -1,4 +1,4 @@
-@use './../App';
+@use './../styles/colors';
 
 .leaderboard {
   width: 100%;
@@ -33,7 +33,7 @@ input.radioBtn {
   }
   &:checked ~ label {
     text-decoration: underline;
-    color: App.$activeColor;
+    color: colors.$activeColor;
   }
   &:checked:hover ~ label {
     cursor: default;
@@ -42,6 +42,9 @@ input.radioBtn {
 // .radio-custom:checked ~ label {
 //     color: blue;
 //   }
+.leaderboardNotification {
+  margin: 5px;
+}
 .restartBlock {
   width: 200px;
   height: 100px;
@@ -52,22 +55,23 @@ input.radioBtn {
   // justify-content: center;
   align-self: center;
   a {
-    background-color: App.$layoutBgColor;
-    color: App.$linkColor;
+    background-color: colors.$layoutBgColor;
+    color: colors.$linkColor;
+    height: 25px;
     text-decoration: none;
     margin: 0 auto;
     // height: 20px;
     padding: 5px;
-    border: 1px solid App.$layoutBgColor;
+    border: 1px solid colors.$layoutBgColor;
     border-radius: 4px;
     &:hover {
-      background-color: App.$linkColor;
-      border: 1px solid App.$layoutBgColor;
-      color: App.$layoutBgColor;
+      background-color: colors.$linkColor;
+      border: 1px solid colors.$layoutBgColor;
+      color: colors.$layoutBgColor;
       cursor: pointer;
     }
     &:active {
-      background-color: App.$activeColor;
+      background-color: colors.$activeColor;
     }
   }
 }

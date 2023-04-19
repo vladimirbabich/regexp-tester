@@ -3,23 +3,67 @@ import { testData, testData2 } from '../leaderboard';
 import LeaderboardTable from './LeaderboardTable';
 import { Link } from 'react-router-dom';
 import { FormEvent, SyntheticEvent, useEffect, useState } from 'react';
+import {
+  useGetAllTestsForModeQuery,
+  useLazyGetAllTestsForModeQuery,
+} from '../features/api/apiSlice';
+import { TestResult } from '../Models';
 
 export default function Leaderboard({
   title,
-  defaultMode = 'min5',
+  mode = 'min5',
 }: {
   title: string;
-  defaultMode: string;
+  mode: string;
 }) {
-  const [data, setData] = useState<Object[]>([
-    ...testData2[defaultMode as keyof typeof testData],
-  ]);
-
-  const [activeMode, setActiveMode] = useState<string>(defaultMode);
-
+  const [activeMode, setActiveMode] = useState<string>(mode);
+  const {
+    data: fetchedData,
+    error: fetchedDataError,
+    isLoading: fetchedDataIsLoading,
+  } = useGetAllTestsForModeQuery(activeMode);
+  const [results, setResults] = useState<TestResult[]>([]);
   useEffect(() => {
-    console.log(data);
-  }, [data]);
+    // setData(fetchedData);
+    console.log(fetchedData);
+    if (fetchedData && fetchedData.length > 0) {
+      const sortedData: TestResult[] = [...fetchedData];
+      sortedData.sort((a: any, b: any) => {
+        console.log(a, b);
+        return a.score > b.score ? -1 : 1;
+      });
+      console.log(sortedData);
+      console.log(fetchedData);
+      setResults([
+        ...sortedData.map((el: any) => {
+          const ansDiff = parseFloat(el.ansDiff).toFixed(2);
+          const skpDiff =
+            el.skpDiff == null ? '-' : parseFloat(el.skpDiff).toFixed(2);
+          console.log(el);
+          const createdAt = el.createdAt.split('T')[0];
+          console.log(el.skpDiff == null);
+          console.log(el.skpDiff);
+          const testResult: TestResult = {
+            id: el.id,
+            username: el.username,
+            score: el.score,
+            createdAt,
+            timeSpent: el.timeSpent,
+            ansCount: el.ansCount,
+            ansDiff,
+            skpCount: el.skpCount,
+            skpDiff,
+            version: el.version,
+          };
+          return testResult;
+        }),
+      ]);
+    }
+  }, [fetchedData]);
+  useEffect(() => {
+    console.log('activeMode: ' + activeMode);
+    console.log(fetchedData);
+  }, [activeMode]);
 
   const restartRoute = activeMode == 'min5' ? '/' : `/${activeMode}`;
   return (
@@ -28,10 +72,12 @@ export default function Leaderboard({
       <div className="leaderboardContent">
         <div
           className="leaderboardSettings"
-          onChange={(e: FormEvent<HTMLDivElement>) => {
+          onChange={async (e: FormEvent<HTMLDivElement>) => {
             const mode = (e.target as HTMLButtonElement).value;
+
             setActiveMode((prev) => {
-              setData(testData2[mode as keyof typeof testData]);
+              // setData(fetchedData);
+
               return mode;
             });
           }}>
@@ -43,7 +89,7 @@ export default function Leaderboard({
               type="radio"
               name="radio"
               value="min5"
-              checked={activeMode === 'min5'}
+              defaultChecked={activeMode === 'min5'}
             />
             <label htmlFor="min5">5 minutes</label>
           </div>
@@ -54,7 +100,7 @@ export default function Leaderboard({
               type="radio"
               name="radio"
               value="all"
-              checked={activeMode === 'all'}
+              defaultChecked={activeMode === 'all'}
             />
             <label htmlFor="all">all questions</label>
           </div>
@@ -65,15 +111,27 @@ export default function Leaderboard({
               type="radio"
               name="radio"
               value="flags"
-              checked={activeMode === 'flags'}
+              defaultChecked={activeMode === 'flags'}
             />
             <label htmlFor="flags">flags</label>
           </div>
         </div>
-        {data?.length > 0 ? (
-          <LeaderboardTable data={data}></LeaderboardTable>
+        {fetchedDataIsLoading && (
+          <p className="leaderboardNotification">
+            Loading...{`${fetchedDataIsLoading} - ${fetchedDataError}`}
+          </p>
+        )}
+        {!fetchedDataIsLoading && fetchedDataError && (
+          <p className="leaderboardNotification">
+            Connection error, try again!
+          </p>
+        )}
+        {results?.length > 0 && !fetchedDataError ? (
+          <LeaderboardTable data={results}></LeaderboardTable>
         ) : (
-          <p className="loading">Loading...</p>
+          !fetchedDataError && (
+            <p className="leaderboardNotification">No results were found!</p>
+          )
         )}
       </div>
       <div className="restartBlock">

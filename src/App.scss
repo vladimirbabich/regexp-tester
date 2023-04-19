@@ -62,12 +62,37 @@ div.main {
 }
 div.content {
   width: 100%;
+  margin-top: 57px;
   padding: 4px 4px 0 4px;
   flex: 1;
 }
 
 h1.h1Title {
   text-align: center;
-  margin-top: 10 + $headerHeight;
+  margin-top: 10;
   margin-bottom: 0px;
+}
+button.formBtn {
+  background-color: $layoutBgColor;
+  color: $linkColor;
+  padding: 5px;
+  border: 1px solid $layoutBgColor;
+  border-radius: 4px;
+  margin-top: 3px;
+  &:hover {
+    background-color: $linkColor;
+    color: $layoutBgColor;
+    cursor: pointer;
+  }
+  &:active {
+    background-color: $activeColor;
+  }
+  &:disabled {
+    background-color: $disabledColor;
+    cursor: default;
+  }
+  &:disabled:hover {
+    background-color: $disabledColor;
+    color: $linkColor;
+  }
 }

@@ -1,4 +1,4 @@
-@use './../App';
+@use './../styles/colors';
 div.testInput {
   margin-top: 5px;
   width: 100%;
@@ -9,7 +9,7 @@ div.testInput {
   button.startPtrn {
     position: absolute;
     display: flex;
-    color: App.$layoutBgColor;
+    color: colors.$layoutBgColor;
     user-select: none;
     justify-content: center;
     align-items: center;
@@ -17,10 +17,10 @@ div.testInput {
     top: 1px;
     border: none;
     margin: 0;
-    margin-left: 121px;
+    margin-left: 122px;
     align-self: center;
     padding: 3px 10px 0 10px;
-    background-color: App.$mainBgColor;
+    background-color: colors.$mainBgColor;
     vertical-align: bottom;
     // background-color: red;
     // vertical-align: bottom;
@@ -36,7 +36,7 @@ div.testInput {
     border-radius: 5px;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
-    border: 1px solid App.$layoutBgColor;
+    border: 1px solid colors.$layoutBgColor;
     &::placeholder {
       /* Chrome, Firefox, Opera, Safari 10.1+ */
       color: #1b00b1a2;
@@ -44,10 +44,10 @@ div.testInput {
     }
     &:focus {
       outline: none;
-      border: 1px solid App.$focusColor;
+      border: 1px solid colors.$focusColor;
     }
     &:disabled {
-      background-color: App.$mainBgColor;
+      background-color: colors.$mainBgColor;
     }
   }
 }

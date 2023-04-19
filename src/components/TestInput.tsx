@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import './../App.scss';
 import './../styles/TestInput.scss';
 import DropDownPicker from './DropDownPicker';
-import { TestInputProps } from './../types';
+import { TestInputProps } from '../Models';
 import { getFlagsString } from '../utils';
 import { Select } from './Select';
 import { useAppDispatch, useAppSelector } from '../app/hooks';

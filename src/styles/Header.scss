@@ -1,8 +1,8 @@
-@use './../App';
+@use './../styles/colors';
 
 .header {
   height: 57px;
-  background-color: App.$layoutBgColor;
+  background-color: colors.$layoutBgColor;
   width: 970px;
   display: flex;
   position: fixed;
@@ -17,10 +17,10 @@
   .logo {
     align-self: center;
     padding-left: 10px;
-    color: App.$linkColor;
+    color: colors.$linkColor;
     text-decoration: none;
     &:hover {
-      color: App.$hoverColor;
+      color: colors.$hoverColor;
     }
   }
 }
@@ -30,28 +30,28 @@
   justify-content: flex-end;
   align-items: center;
   a.link {
-    color: App.$linkColor;
+    color: colors.$linkColor;
     text-decoration: none;
     height: 100%;
     vertical-align: middle;
     padding-top: 14px;
     padding-left: 5px;
     padding-right: 5px;
-    border: 1px App.$layoutBgColor solid;
+    border: 1px colors.$layoutBgColor solid;
     &:hover {
-      // color: App.$hoverColor;
+      // color: colors.$hoverColor;
       text-decoration: underline;
-      // border: 1px App.$mainBgColor solid;
+      // border: 1px colors.$mainBgColor solid;
     }
   }
   a.active {
-    background-color: App.$mainBgColor;
-    color: App.$layoutBgColor;
-    border: 1px App.$activeColor solid;
+    background-color: colors.$mainBgColor;
+    color: colors.$layoutBgColor;
+    border: 1px colors.$activeColor solid;
     &:hover {
-      background-color: App.$mainBgColor;
-      color: App.$layoutBgColor;
-      border: 1px App.$activeColor solid;
+      background-color: colors.$mainBgColor;
+      color: colors.$layoutBgColor;
+      border: 1px colors.$activeColor solid;
       text-decoration: none;
       cursor: default;
     }

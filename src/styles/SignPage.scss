@@ -1,0 +1,49 @@
+@use './../styles/colors';
+
+.signPage {
+  // background-color: red;
+}
+.signForm {
+  width: 300px;
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  // justify-content: center;
+  margin: auto;
+  label {
+    margin-top: 3px;
+    display: flex;
+    text-align: center;
+    flex-direction: column;
+    span {
+      font-size: 0.8em;
+    }
+    input {
+      box-sizing: content-box;
+      height: 27px;
+    }
+  }
+  label.important:not(:last-of-type) {
+    span::after {
+      content: '*';
+      color: red;
+    }
+  }
+  .notification {
+    user-select: none;
+    font-size: 0.7em;
+    text-align: right;
+    .signSwitcher {
+      color: colors.$layoutBgColor;
+      font-size: 1em;
+      text-decoration: underline;
+      &:hover {
+        cursor: pointer;
+        text-decoration: none;
+      }
+    }
+  }
+  .signBtn {
+    background-color: red;
+  }
+}

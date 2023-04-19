@@ -1,7 +1,7 @@
-@use './../App';
+@use './../styles/colors';
 
 span.flagsHint {
-  color: App.$hintColor;
+  color: colors.$hintColor;
   align-self: center;
   top: -1px;
   cursor: pointer;
@@ -20,7 +20,7 @@ div.selectFlagsInput {
   right: 1px;
 }
 button.selectActivator {
-  background-color: App.$mainBgColor;
+  background-color: colors.$mainBgColor;
   color: rgb(0, 95, 0);
   margin: 0;
   padding: 10px;
@@ -47,7 +47,7 @@ select.flagsBlock {
     padding: auto;
   }
   :hover {
-    background-color: App.$linkColor;
+    background-color: colors.$linkColor;
   }
 
   :active {
@@ -57,7 +57,7 @@ select.flagsBlock {
   display: flex;
   justify-content: space-between;
   &:hover {
-    background-color: App.$layoutBgColor;
-    color: App.$linkColor;
+    background-color: colors.$layoutBgColor;
+    color: colors.$linkColor;
   }
 }

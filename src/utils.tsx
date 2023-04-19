@@ -1,4 +1,4 @@
-import { IDropDownPickerList } from './types';
+import { IDropDownPickerList } from './Models';
 
 const defaultTimeAmount = 2;
 

@@ -11,6 +11,7 @@ import { defaultTimeAmount, getDiverseMatches, getFlagsString } from '../utils';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import {
   resetFlags,
+  setActiveMode,
   setAskedQuestions,
   setCurrentQuestion,
   setIsTestOver,
@@ -18,21 +19,51 @@ import {
 } from '../features/testForm/testFormSlice';
 import TestScore from './TestScore';
 import { setFlagsFromString } from 'v8';
-import { setNotificationText } from '../features/global/globalSlice';
+import {
+  setDataOfTest,
+  setNotificationText,
+} from '../features/global/globalSlice';
+import {
+  useGetAllQuestionsForModeQuery,
+  useSendTestMutation,
+} from '../features/api/apiSlice';
+import { useLocation } from 'react-router-dom';
+import { LocalStorageController } from '../StorageController';
 
 const SKIP_ANIMATION_TIME_AMOUNT = 25; //seconds
 
 export default function TestForm({ title, mode }: any) {
+  const {
+    data: questionsDB,
+    error: questionsDBError,
+    isLoading: questionsDBIsLoading,
+  } = useGetAllQuestionsForModeQuery(mode);
+
+  const [timeSpent, setTimeSpent] = useState<number>(0);
+
+  useEffect(() => {
+    if (questionsDBError) {
+      if ('token' in questionsDBError) {
+        localStorage.setItem(
+          'userToken',
+          (questionsDBError.token as any).toString()
+        );
+      }
+      console.log(questionsDBError);
+    }
+  }, [questionsDBError]);
+
+  // useEffect(() => {
+  //   console.log('timeSpent: ' + timeSpent);
+  // }, [timeSpent]);
+
   const dispatch = useAppDispatch();
   const flags = useAppSelector((state) => state.testForm.flags);
   const askedQuestions = useAppSelector(
     (state) => state.testForm.askedQuestions
   );
 
-  const questionsLength = allQuestions.length;
-  const [questions, setQuestions] = useState<IQuestion[] | null>([
-    ...allQuestions,
-  ]);
+  const [questions, setQuestions] = useState<IQuestion[] | null>([]);
   const currentQuestion = useAppSelector(
     (state) => state.testForm.currentQuestion
   );
@@ -43,6 +74,7 @@ export default function TestForm({ title, mode }: any) {
   const selectedFunction = useAppSelector(
     (state) => state.testForm.selectedFunction
   );
+  // const user
   const [pattern, setPattern] = useState<string>('');
   const [isRightAnswer, setIsRightAnswer] = useState<boolean>(false);
 
@@ -50,15 +82,31 @@ export default function TestForm({ title, mode }: any) {
   const [timeAmount, setTimeAmount] = useState<number>(
     getDefaultTimeAmount(mode)
   );
+
+  const [testStart, setTestStart] = useState<number>(
+    new Date().getTime() / 1000
+  );
+
   const [skipAnimationDuration, setSkipAnimationDuration] = useState(0);
   const [isActiveSkipAnimation, setIsActiveSkipAnimation] = useState(false);
+
+  const storedUser = localStorage.getItem('userToken');
+  const localStorageController = new LocalStorageController();
+  const userId = localStorageController.getUsersKey('id');
+
   function getDefaultTimeAmount(mode: string) {
-    return mode == 'allQuestions' ? 0 : mode == 'flags' ? 60 : 300;
+    return mode == 'all' ? 0 : mode == 'flags' ? 60 : 300;
   }
+
   useEffect(() => {
-    // console.log(isTimerActive);
-    // console.log(isActiveSkipAnimation);
-  });
+    // console.log('questionsDB is loaded:');
+    if (!questionsDB) return;
+    console.log(questionsDB);
+    if (questionsDB?.token)
+      localStorage.setItem('userToken', questionsDB.token);
+    setQuestions(questionsDB.questions);
+  }, [questionsDB]);
+
   useEffect(() => {
     let timeInterval: NodeJS.Timer;
     if (!isActiveSkipAnimation) {
@@ -73,6 +121,7 @@ export default function TestForm({ title, mode }: any) {
       };
     }
   }, []);
+
   useEffect(() => {
     // console.log(skipAnimationDuration);
     if (skipAnimationDuration == SKIP_ANIMATION_TIME_AMOUNT) {
@@ -80,18 +129,53 @@ export default function TestForm({ title, mode }: any) {
     }
   }, [skipAnimationDuration]);
 
+  // useEffect(() => {
+  //   console.log('testStart:' + testStart.toString());
+  // }, [testStart]);
+
+  function prepareAndSendEndedTest() {
+    if (!isTestOver) {
+      dispatch(setIsTestOver(true));
+    }
+    if (
+      askedQuestions.length > 0 &&
+      askedQuestions.filter((el) => (el?.userAnswer ? 1 : 0)).length > 0
+    ) {
+      console.log('prepareAndSendEndedTest');
+      const testQuestions = askedQuestions.map((el) => ({
+        questionId: el.id,
+        difficulty: el.difficulty,
+        userAnswer: el.userAnswer ? el.userAnswer : null,
+      }));
+      // if i will decide that default timeAmount is better in time modes - chalge timeSpent into finalTimeSpent
+      // const finalTimeSpent = getDefaultTimeAmount(mode) || timeSpent;
+      setTestStart(new Date().getTime() / 1000);
+      console.log('timeSpent');
+      console.log(timeSpent);
+      const formdata = {
+        testQuestions,
+        timeSpent: Math.round(timeSpent).toString(), // ? how to get it in
+        //App.tsx to update global.dataOfTest and send on the server
+        modeName: mode, //?
+        userId: typeof userId == 'number' ? userId : parseInt(userId),
+      };
+      console.log(formdata);
+      dispatch(setDataOfTest(formdata));
+    }
+  }
+
   function restartTest() {
-    console.log('ALL:');
-    console.log(allQuestions);
-    setQuestions([...allQuestions]);
-    setTimeAmount(getDefaultTimeAmount(mode));
-    setSkipAnimationDuration(0);
-    setIsActiveSkipAnimation(false);
-    console.log(defaultTimeAmount);
-    // setPattern(
-    //   mode == 'flags' ? currentQuestion?.possibleAnswer.split('/')[0] : ''
-    // );
-    dispatch(setAskedQuestions([]));
+    dispatch(setCurrentQuestion(null));
+    // prepareAndSendEndedTest();
+    // console.log(askedQuestions);
+    if (questionsDB) {
+      setQuestions([...questionsDB.questions]);
+      // console.log('rand');
+      setTimeAmount(getDefaultTimeAmount(mode));
+      setSkipAnimationDuration(0);
+      setIsActiveSkipAnimation(false);
+      dispatch(setAskedQuestions([]));
+    }
   }
   const isTestOver = useAppSelector((state) => state.testForm.isTestOver);
   useEffect(() => {
@@ -100,7 +184,12 @@ export default function TestForm({ title, mode }: any) {
   }, [flags, pattern, selectedFunction]);
 
   useEffect(() => {
-    setRandomQuestion();
+    // console.log('qq');
+    // console.log(questions);
+    // console.log(currentQuestion);
+    if (questions && questions?.length > 0) {
+      if (!currentQuestion) setRandomQuestion();
+    }
   }, [questions]);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -145,7 +234,7 @@ export default function TestForm({ title, mode }: any) {
   }
 
   function updateResults() {
-    if (!isTimerActive) setIsTimerActive(true); //mb need to add &&timeAmount>0
+    if (!isTimerActive) setIsTimerActive(true); //mb need to add "&&timeAmount>0"
     if (!currentQuestion) return;
     if (pattern.length == 0) {
       updateExpectedResult();
@@ -180,31 +269,50 @@ export default function TestForm({ title, mode }: any) {
   }, [userResult]);
 
   function setRandomQuestion() {
+    // console.log('questions!');
+    // console.log(questions);
     if (!questions) return;
 
     const randomIndex = Math.round(Math.random() * (questions.length - 1));
-    const chosenQuestion = questions.splice(randomIndex, 1)[0];
+    const splicedQuestions = [...questions];
+    const chosenQuestion = splicedQuestions.splice(randomIndex, 1)[0];
+    setQuestions(splicedQuestions);
 
     if (questions.length < 1 && chosenQuestion === undefined) {
       setIsTimerActive(false);
       dispatch(setIsTestOver(true));
+      dispatch(setCurrentQuestion(null));
       return;
     }
     dispatch(setSelectedFunction(chosenQuestion.functionName));
     dispatch(setCurrentQuestion(chosenQuestion));
     dispatch(resetFlags());
   }
-
+  useEffect(() => {
+    if (timeSpent > 0) prepareAndSendEndedTest(); // if test over - change dataOfTest in globalSlice and send it to the server
+  }, [timeSpent]);
   useEffect(() => {
     //resetTestForm
-    if (!isTestOver) restartTest();
-    console.log('isTestOver: ' + isTestOver);
+    if (isTestOver) {
+      setTimeSpent(new Date().getTime() / 1000 - testStart);
+    }
+    if (!isTestOver) {
+      setTimeSpent(0);
+      restartTest();
+      setTestStart(new Date().getTime() / 1000);
+    }
+    // console.log('isTestOver: ' + isTestOver);
   }, [isTestOver]);
 
   useEffect(() => {
+    dispatch(setActiveMode(mode));
+
     //restart test after mode change
     restartTest();
+    setTimeSpent(0);
+    setTestStart(new Date().getTime() / 1000);
     if (isTestOver) {
+      console.log('isTestOver true');
       dispatch(setIsTestOver(false));
     }
     setIsTimerActive(true);
@@ -254,6 +362,8 @@ export default function TestForm({ title, mode }: any) {
     e.preventDefault();
     setIsTimerActive(false);
     dispatch(setIsTestOver(true));
+
+    dispatch(setCurrentQuestion(null));
     dispatch(setAskedQuestions([...askedQuestions, { ...currentQuestion }]));
     setSkipAnimationDuration(0);
     setIsActiveSkipAnimation(false);
@@ -272,6 +382,12 @@ export default function TestForm({ title, mode }: any) {
   const skippedQuestionsAmount = askedQuestions.filter((el) => {
     return 'userAnswer' in el ? 0 : 1;
   }).length;
+  if (questionsDBIsLoading) {
+    return <h1 className="h1Title">Loading...</h1>;
+  }
+  if (questionsDBError) {
+    return <h1 className="h1Title">Connection problem! try later please</h1>;
+  }
 
   return (
     <>
@@ -290,11 +406,11 @@ export default function TestForm({ title, mode }: any) {
             setTimeAmount={setTimeAmount}
             isTimerActive={isTimerActive}
             setIsTimerActive={setIsTimerActive}
-            isCountDown={mode == 'allQuestions' ? false : true}></Timer>
+            isCountDown={mode == 'all' ? false : true}></Timer>
           <h2 className="task">
-            {currentQuestion
-              ? currentQuestion.task
-              : 'error: question not found!'}
+            {/* {currentQuestion &&
+              currentQuestion.task.length > 0 &&
+              currentQuestion.task} */}
           </h2>
           <div>
             <span className="questionsCount">
@@ -323,14 +439,14 @@ export default function TestForm({ title, mode }: any) {
                 onMouseEnter={() => {
                   dispatch(
                     setNotificationText(
-                      `This test contains ${questionsLength} questions`
+                      `This test contains ${questionsDB?.length} questions`
                     )
                   );
                 }}
                 onMouseLeave={() => {
                   dispatch(setNotificationText(''));
                 }}>
-                {questionsLength}
+                {questionsDB.questions?.length}
               </span>
             </span>
             <button
@@ -358,9 +474,7 @@ export default function TestForm({ title, mode }: any) {
         <textarea
           className="textBlock"
           disabled={true}
-          value={currentQuestion?.text}>
-          {currentQuestion && currentQuestion.text}
-        </textarea>
+          value={currentQuestion?.text || ''}></textarea>
         <div className="results">
           <div className="resultBlock">
             <div className="resultLabel">Expected result</div>

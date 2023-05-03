@@ -13,7 +13,8 @@ export default function Notification({ position }: any) {
 
   let isEnoughSpaceHor = true;
   let isEnoughSpaceVer = true;
-
+  // console.log('position:');
+  // console.log(position);
   const notificationRef = useRef(null);
 
   if (notificationRef && notificationRef.current) {

@@ -29,7 +29,8 @@
   width: 65vw;
   justify-content: flex-end;
   align-items: center;
-  a.link {
+  a.link,
+  div.link {
     color: colors.$linkColor;
     text-decoration: none;
     height: 100%;
@@ -44,7 +45,14 @@
       // border: 1px colors.$mainBgColor solid;
     }
   }
-  a.active {
+  div.link {
+    &:hover {
+      // color: colors.$hoverColor;
+      text-decoration: none;
+      // border: 1px colors.$mainBgColor solid;
+    }
+  }
+  > a.active {
     background-color: colors.$mainBgColor;
     color: colors.$layoutBgColor;
     border: 1px colors.$activeColor solid;
@@ -56,7 +64,56 @@
       cursor: default;
     }
   }
+
+  .navList {
+    background-color: colors.$layoutBgColor;
+    border: 1px colors.$mainBgColor solid;
+    // display: none;
+    position: absolute;
+    margin: 0px;
+    width: 60px;
+    top: 57px;
+    padding: 1px;
+    li {
+      text-align: center;
+      list-style: none;
+      a {
+        width: 100%;
+        color: colors.$mainBgColor;
+        text-decoration: none;
+        background-color: colors.$layoutBgColor;
+        border: none;
+      }
+      &:hover, &:hover a {
+        background-color: colors.$mainBgColor;
+        color: colors.$layoutBgColor;
+      }
+    }
+  }
 }
 .testStuff {
   background-color: pink;
 }
+
+.accLink {
+  // background-color: red;
+  background-color: colors.$layoutBgColor;
+  border: none;
+  color: colors.$linkColor;
+  cursor: pointer;
+  border-radius: 3px;
+}
+// .active button {
+//   // vertical-align: baseline;
+//   // font-size: 0.7em;
+//   margin-left: 3px;
+//   // border: 1px solid colors.$layoutBgColor;
+//   border-radius: 3px;
+//   background-color: colors.$linkColor;
+//   color: colors.$layoutBgColor;
+//   &:hover {
+//     border-radius: 3px;
+//     background-color: colors.$layoutBgColor;
+//     color: colors.$linkColor;
+//   }
+// }

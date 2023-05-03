@@ -1,6 +1,6 @@
 import { MutableRefObject } from 'react';
 
-export interface TestResult {
+export interface ITestResult {
   id: number;
   timeSpent: string;
   score: number;
@@ -12,6 +12,19 @@ export interface TestResult {
   username: string;
   version: string;
 }
+export interface IUserToken {
+  id: number;
+  nickname: string;
+  iat: number;
+  exp: number;
+}
+
+export interface ITestQuestion {
+  questionId: number;
+  difficulty: number;
+  userAnswer?: string;
+}
+
 export interface IDropDownPickerList {
   name: string;
   description: string;
@@ -30,11 +43,11 @@ export interface IQuestion {
   text: string;
   expectedResult: string;
   task: string;
-  possibleAnswer: string;
   difficulty: number;
   id: number;
   functionName: string;
   userAnswer?: string;
+  possibleAnswer?: string;
 }
 export interface IResultMatch {
   match: string;

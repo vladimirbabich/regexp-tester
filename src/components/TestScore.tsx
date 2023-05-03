@@ -16,17 +16,16 @@ export default function TestScore({ skippedAmount, solvedAmount }: any) {
   const [userName, setUserName] = useState('');
   const defaultName = 'user';
   const dispatch = useAppDispatch();
-  const genUserName = useAppSelector((state) => state.global.defaultNickname);
   const isTestOver = useAppSelector((state) => state.testForm.isTestOver);
   function handleStartTest(e: any) {
     e.preventDefault();
-    console.log(isTestOver);
+    // console.log(isTestOver);
     dispatch(restartTest());
     return 1;
   }
   function handleNickChange({ target }: React.ChangeEvent<HTMLInputElement>) {
     setUserName(target.value);
-    console.log(userName);
+    // console.log(userName);
   }
   return (
     <div className="testScore">
@@ -56,14 +55,14 @@ export default function TestScore({ skippedAmount, solvedAmount }: any) {
           Watch answers
         </Link>
       </div>
-      <div className="saveNotification">
+      {/* <div className="saveNotification"> mb later will return it, for now dont wanna do this
         <span>Saving result as: </span>
         <input
           className="nickChanger"
           onChange={handleNickChange}
           value={userName}
           placeholder={genUserName || defaultName}></input>
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -5,7 +5,18 @@ type InitialState = {
   flags: IDropDownPickerList[];
   selectedFunction: string;
   isTestOver: boolean;
-  askedQuestions: Object[];
+  askedQuestions: AskedQuestion[];
+  activeMode: string;
+};
+type AskedQuestion = {
+  difficulty: number;
+  expectedResult: string;
+  functionName: string;
+  id: number;
+  possibleAnswer: string;
+  task: string;
+  text: string;
+  userAnswer?: string;
 };
 const initialState: InitialState = {
   currentQuestion: null,
@@ -29,12 +40,16 @@ const initialState: InitialState = {
   selectedFunction: 'match',
   isTestOver: false,
   askedQuestions: [],
+  activeMode: 'min5',
 };
 
 const testFormSlice = createSlice({
   name: 'testForm',
   initialState,
   reducers: {
+    setActiveMode: (state, action) => {
+      state.activeMode = action.payload;
+    },
     setCurrentQuestion: (state, action) => {
       state.currentQuestion = action.payload;
     },
@@ -63,6 +78,7 @@ const testFormSlice = createSlice({
   },
 });
 export const {
+  setActiveMode,
   setCurrentQuestion,
   updateFlag,
   resetFlags,

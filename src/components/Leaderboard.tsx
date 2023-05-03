@@ -3,11 +3,8 @@ import { testData, testData2 } from '../leaderboard';
 import LeaderboardTable from './LeaderboardTable';
 import { Link } from 'react-router-dom';
 import { FormEvent, SyntheticEvent, useEffect, useState } from 'react';
-import {
-  useGetAllTestsForModeQuery,
-  useLazyGetAllTestsForModeQuery,
-} from '../features/api/apiSlice';
-import { TestResult } from '../Models';
+import { useGetAllTestsForModeQuery } from '../features/api/apiSlice';
+import { ITestResult } from '../Models';
 
 export default function Leaderboard({
   title,
@@ -16,34 +13,50 @@ export default function Leaderboard({
   title: string;
   mode: string;
 }) {
+  const [limit, setLimit] = useState<number>(20);
+  // useEffect(() => {
+  // console.log(limit);
+  // }, [limit]);
+
   const [activeMode, setActiveMode] = useState<string>(mode);
   const {
     data: fetchedData,
     error: fetchedDataError,
     isLoading: fetchedDataIsLoading,
-  } = useGetAllTestsForModeQuery(activeMode);
-  const [results, setResults] = useState<TestResult[]>([]);
+  } = useGetAllTestsForModeQuery({ modeName: activeMode, limit });
+  const [results, setResults] = useState<ITestResult[]>([]);
   useEffect(() => {
-    // setData(fetchedData);
-    console.log(fetchedData);
-    if (fetchedData && fetchedData.length > 0) {
-      const sortedData: TestResult[] = [...fetchedData];
+    // console.log('results');
+    // console.log(results);
+    // console.log(activeMode);
+  }, [results]);
+  const [testsCount, setTestsCount] = useState<number>(0);
+  useEffect(() => {
+    // console.log('fetchedData');
+    // console.log(fetchedData);
+    if (fetchedData && (fetchedData.tests.length == 0 || !fetchedData.tests)) {
+      setResults([]);
+      setTestsCount(0);
+    }
+
+    if (fetchedData && fetchedData?.tests?.length > 0) {
+      console.log(fetchedData.token);
+      if (fetchedData?.token) {
+        //update token
+        localStorage.setItem('userToken', fetchedData?.token);
+      }
+      setTestsCount(fetchedData.count);
+      const sortedData: ITestResult[] = [...fetchedData.tests];
       sortedData.sort((a: any, b: any) => {
-        console.log(a, b);
         return a.score > b.score ? -1 : 1;
       });
-      console.log(sortedData);
-      console.log(fetchedData);
       setResults([
         ...sortedData.map((el: any) => {
           const ansDiff = parseFloat(el.ansDiff).toFixed(2);
           const skpDiff =
             el.skpDiff == null ? '-' : parseFloat(el.skpDiff).toFixed(2);
-          console.log(el);
           const createdAt = el.createdAt.split('T')[0];
-          console.log(el.skpDiff == null);
-          console.log(el.skpDiff);
-          const testResult: TestResult = {
+          const ITestResult: ITestResult = {
             id: el.id,
             username: el.username,
             score: el.score,
@@ -55,14 +68,15 @@ export default function Leaderboard({
             skpDiff,
             version: el.version,
           };
-          return testResult;
+          return ITestResult;
         }),
       ]);
     }
   }, [fetchedData]);
+
   useEffect(() => {
-    console.log('activeMode: ' + activeMode);
-    console.log(fetchedData);
+    // console.log('activeMode: ' + activeMode);
+    // console.log(fetchedData);
   }, [activeMode]);
 
   const restartRoute = activeMode == 'min5' ? '/' : `/${activeMode}`;
@@ -74,6 +88,8 @@ export default function Leaderboard({
           className="leaderboardSettings"
           onChange={async (e: FormEvent<HTMLDivElement>) => {
             const mode = (e.target as HTMLButtonElement).value;
+            console.log('mode');
+            console.log(mode);
 
             setActiveMode((prev) => {
               // setData(fetchedData);
@@ -115,6 +131,9 @@ export default function Leaderboard({
             />
             <label htmlFor="flags">flags</label>
           </div>
+          <div className="restartBlock">
+            <Link to={restartRoute}>Restart test</Link>
+          </div>
         </div>
         {fetchedDataIsLoading && (
           <p className="leaderboardNotification">
@@ -127,15 +146,15 @@ export default function Leaderboard({
           </p>
         )}
         {results?.length > 0 && !fetchedDataError ? (
-          <LeaderboardTable data={results}></LeaderboardTable>
+          <LeaderboardTable
+            data={results}
+            dataOnServerCount={testsCount}
+            setLimit={setLimit}></LeaderboardTable>
         ) : (
           !fetchedDataError && (
             <p className="leaderboardNotification">No results were found!</p>
           )
         )}
-      </div>
-      <div className="restartBlock">
-        <Link to={restartRoute}>Restart test</Link>
       </div>
     </div>
   );

@@ -5,30 +5,108 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import jwtDecode from 'jwt-decode';
 import './App.scss';
-import { Routes, Route, Link } from 'react-router-dom';
-import TestForm from './components/TestForm';
+import { useLocation } from 'react-router-dom';
 import Footer from './components/Footer';
 import Header from './components/Header';
-import store from './app/store';
-import { setIsFlagsBlockOpen } from './features/testInput/testInputSlice';
-import Leaderboard from './components/Leaderboard';
-import Analyzer from './components/Analyzer';
-import SignPage from './components/SignPage';
-import { useGetNewNickNameQuery } from './features/api/apiSlice';
-import { useSelector } from 'react-redux';
+import {
+  useSendTestMutation,
+  apiSlice,
+  useLazyCheckAuthQuery,
+} from './features/api/apiSlice';
 import { useAppDispatch, useAppSelector } from './app/hooks';
-import { setDefaultNickname } from './features/global/globalSlice';
+import { setDataOfTest } from './features/global/globalSlice';
 import Notification from './components/Notification';
+import { setIsTestOver } from './features/testForm/testFormSlice';
+import AppRouter from './components/AppRouter';
 
 function App() {
   //should be only if not
-  const { data, error, isLoading } = useGetNewNickNameQuery('all');
+  const [generateUser, { data: _data, error: _error, isLoading: _isLoading }] =
+    apiSlice.endpoints.getUniqueNickname.useLazyQuery();
+  const [expiredInTest, setExpiredTest] = useState<any>(1000);
+  const [sendTest, response] = useSendTestMutation();
+  const [
+    checkAuth,
+    { data: authData, error: authError, isLoading: authIsLoading },
+  ] = useLazyCheckAuthQuery();
+
+  const askedQuestions = useAppSelector(
+    (state) => state.testForm.askedQuestions
+  );
+  useEffect(() => {}, []);
+
   useEffect(() => {
-    // console.log('ggggg');
-    // console.log(isLoading);
-    if (isLoading == false) dispatch(setDefaultNickname(data.nickname));
-  }, [isLoading]);
+    // this code here to generate User data if not authorized and not found genUserId
+    const storedToken = localStorage.getItem('userToken');
+
+    if (!storedToken && !localStorage.getItem('genUserId')) {
+      generateUser('test').then((res) => {
+        console.log('generateUser response');
+        if (res?.data) {
+          localStorage.setItem('genUserId', res.data.id);
+          localStorage.setItem('genUserNickname', res.data.nickname);
+        } else {
+          localStorage.setItem('genUserId', '-1');
+          localStorage.setItem('genUserNickname', 'You');
+        }
+      });
+    }
+
+    if (storedToken) {
+      //checkAuth each 23 hours just because some users can get on site and do nothing for 24h,
+      //then they will send test or new question, but it will not be added to their ID,
+      //because token would be expired
+      const authInterval = setInterval(() => {
+        // console.log('ckechAuth');
+        checkAuth('123S').then((res) => {
+          if ('data' in res)
+            if (res.data?.token)
+              localStorage.setItem('userToken', res.data.token);
+          // console.log(res);
+        });
+      }, 82800000);
+
+      return () => {
+        clearInterval(authInterval);
+      };
+    }
+  }, []); //idk why it was without dependency array, should work like that
+
+  const dataOfTest = useAppSelector((state) => state.global.dataOfTest);
+
+  useEffect(() => {
+    // console.log('POST API CALL useEffect');
+    if (dataOfTest != null) {
+      alert('POST API CALL');
+      console.log(dataOfTest);
+      sendTest(dataOfTest).then((res) => {
+        console.log(res);
+        if ('data' in res) {
+          if (res.data?.token) {
+            console.log(res.data.token);
+            localStorage.setItem('userToken', res.data.token);
+          }
+        }
+        // if(res?.data?.token)
+      });
+      dispatch(setDataOfTest(null));
+    }
+  }, [dataOfTest]);
+
+  useEffect(() => {
+    function handleBeforeUnload(ev: BeforeUnloadEvent) {
+      ev.preventDefault();
+      // prepareAndSendEndedTest();
+      // return (ev.returnValue = 'Are you sure you want to close?');
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  });
+
   const dispatch = useAppDispatch();
   // if
   const tableRef = useRef<HTMLDivElement>(null);
@@ -42,57 +120,49 @@ function App() {
     x: 0,
     y: 0,
   });
+
   const handleMouseMove = (event: MouseEvent) => {
+    const scrollLeft =
+      window.pageXOffset || document.documentElement.scrollLeft;
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
     setNotificationPosition({
-      x: event.clientX,
-      y: event.clientY,
+      x: event.clientX + scrollLeft,
+      y: event.clientY + scrollTop,
     });
   };
 
+  const location = useLocation();
+  const paths = ['/', '/flags', '/all'];
+  useEffect(() => {
+    if (!paths.includes(location.pathname)) {
+      //one of testForm are open
+      dispatch(setIsTestOver(false));
+      console.log('paths.includes:');
+      console.log(paths.includes(location.pathname));
+      // dispatch(setDataOfTest())
+    }
+  }, [location.pathname]);
+  useEffect(() => {
+    console.log('expiredInTest');
+    console.log(expiredInTest);
+  }, [expiredInTest]);
   return (
     <div className="global">
       <div className="app">
         <div className="main" onMouseMove={handleMouseMove}>
           <Header />
           <div className="content">
-            <Routes>
-              <Route
-                path="/all"
-                element={
-                  <TestForm mode="allQuestions" title="allQuestions" />
-                }></Route>
-              <Route
-                path="/"
-                element={<TestForm mode="min5" title="min5" />}></Route>
-              <Route
-                path="/flags"
-                element={<TestForm mode="flags" title="flags" />}></Route>
-              <Route
-                path="/leaderboard"
-                element={
-                  <Leaderboard title="Leaderboard" mode="min5"></Leaderboard>
-                }></Route>
-              <Route
-                path="/test"
-                element={
-                  <>
-                    <TestForm mode="min5" title="min5" />
-                    {/* Test your RegExp knowledge! */}
-                    <TestForm mode="allQuestions" title="all" />
-                    <TestForm mode="flags" title="only flags" />
-                  </>
-                }></Route>
-              <Route
-                path="/results"
-                element={<Analyzer title="Test results" />}></Route>
-              <Route path="/sign" element={<SignPage />}></Route>
-            </Routes>
+            <AppRouter></AppRouter>
           </div>
           <Footer />
           {notificationText?.length > 0 && (
             <Notification position={notificationPosition}></Notification>
           )}
         </div>
+        {/* <button onClick={() => setExpiredTest((prev: any) => prev + 10000)}>
+          CLICK
+        </button> */}
       </div>
     </div>
   );

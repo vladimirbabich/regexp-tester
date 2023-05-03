@@ -45,7 +45,6 @@ export default function Timer({
     let timeInterval: NodeJS.Timer | undefined = undefined;
     if (!isTimerActive) {
       if (timeInterval) {
-        console.log('here');
         return () => {
           clearInterval(timeInterval);
         };

@@ -6,6 +6,8 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAppSelector } from '../app/hooks';
 import './../App.scss';
 import './../styles/SignPage.scss';
 import SignIn from './SignIn';
@@ -13,45 +15,18 @@ import SignUp from './SignUp';
 
 export default function SignPage() {
   const [isSignUp, setIsSignUp] = useState(true);
-  const [isActiveSubmit, setIsActiveSubmit] = useState<boolean>(false);
-  const nickRef = useRef<any>();
-  const passRef = useRef<any>();
-  const emailRef = useRef<any>();
+  const storedUser = localStorage.getItem('userToken');
+  if (storedUser) return <Navigate to="/" replace={true} />;
+  const nickname = localStorage.getItem('genUserNickname');
   // useEffect(() => {
   //   console.log(passRef);
   // }, [passRef, nickRef.current?.value, emailRef]);
-  function handleChange({ target }: any) {
-    console.log(target.value);
-    if (nickRef.current.value && passRef.current.value) {
-      setIsActiveSubmit(true);
-    } else {
-      setIsActiveSubmit(false);
-    }
-    console.log(nickRef.current?.value.length);
-  }
+  // console.log(isSignUp);
   function handleSwitchClick(e: any) {
     setIsSignUp(!isSignUp);
   }
 
   if (isSignUp)
-    return (
-      <SignUp
-        setIsActiveSubmit={setIsActiveSubmit}
-        isActiveSubmit={isActiveSubmit}
-        nickRef={nickRef}
-        passRef={passRef}
-        emailRef={emailRef}
-        handleSwitchClick={handleSwitchClick}
-      />
-    );
-  return (
-    <SignIn
-      setIsActiveSubmit={setIsActiveSubmit}
-      isActiveSubmit={isActiveSubmit}
-      nickRef={nickRef}
-      passRef={passRef}
-      emailRef={emailRef}
-      handleSwitchClick={handleSwitchClick}
-    />
-  );
+    return <SignUp nickname={nickname} handleSwitchClick={handleSwitchClick} />;
+  return <SignIn nickname={nickname} handleSwitchClick={handleSwitchClick} />;
 }

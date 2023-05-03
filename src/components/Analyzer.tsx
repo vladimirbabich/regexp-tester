@@ -8,7 +8,7 @@ export default function Analyzer({ title }: any) {
   const askedQuestions = useAppSelector(
     (state) => state.testForm.askedQuestions
   );
-  console.log(askedQuestions);
+  // console.log(askedQuestions);
   const testData: IQuestion[] = [
     //     {
     //       difficulty: 5,
@@ -50,14 +50,14 @@ export default function Analyzer({ title }: any) {
         askedQuestions.map((question, i) => (
           <QuestionBlock question={question} questionId={i + 1}></QuestionBlock>
         ))}
-      {askedQuestions.length > 0 &&
+      {/* {askedQuestions.length > 0 &&
         askedQuestions.map((question, i) => (
           <QuestionBlock question={question} questionId={i + 1}></QuestionBlock>
         ))}
       {askedQuestions.length > 0 &&
         askedQuestions.map((question, i) => (
           <QuestionBlock question={question} questionId={i + 1}></QuestionBlock>
-        ))}
+        ))} */}
     </div>
   );
 }

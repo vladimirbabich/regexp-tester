@@ -86,8 +86,15 @@ table.leaderboardTable {
 .layoutedTH:hover span.colDescription {
   display: block;
 }
-
-//example
+tr.recordOwner > th {
+  // color: red;
+  background-color: #bad1ff !important;
+}
+span.notificationTip {
+  vertical-align: text-top;
+  padding: 0;
+  font-size: 0.65em;
+}
 #tableWrapper {
   position: relative;
   overflow-x: auto;

@@ -22,9 +22,15 @@
       box-sizing: content-box;
       height: 27px;
     }
+    input.wrongInput {
+      border-color: colors.$focusColor;
+    }
+    span.errorNotification {
+      color: colors.$focusColor;
+    }
   }
   label.important:not(:last-of-type) {
-    span::after {
+    span.field::after {
       content: '*';
       color: red;
     }

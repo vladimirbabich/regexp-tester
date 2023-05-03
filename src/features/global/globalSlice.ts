@@ -1,32 +1,28 @@
 import { createSlice } from '@reduxjs/toolkit';
-type InitialState = {
-  defaultNickname: string;
-  notificationText: string;
-  isNotificationActive: boolean;
-};
+import jwtDecode from 'jwt-decode';
+import { ITestQuestion } from '../../Models';
+import { InitialState } from './globalModels';
+
 const initialState: InitialState = {
-  defaultNickname: 'user',
-  notificationText: 'Average difficulty of answered questionsverage difficulty of answered questionsverage difficulty of answered questionsverage difficulty of answered questionsverage difficulty of answered questionsverage difficulty of answered questions',
-  isNotificationActive: false,
+  notificationText: '',
+  dataOfTest: null,
+  userSessionDelay: 0,
 };
 const globalSlice = createSlice({
   name: 'global',
   initialState,
   reducers: {
-    setDefaultNickname: (state, action) => {
-      state.defaultNickname = action.payload;
-    },
     setNotificationText: (state, action) => {
       state.notificationText = action.payload;
     },
-    setIsNotificationActive: (state, action) => {
-      state.isNotificationActive = action.payload;
+    setDataOfTest: (state, action) => {
+      state.dataOfTest = action.payload;
+    },
+    setUserSessionDelay: (state, action: { payload: number; type: string }) => {
+      state.userSessionDelay = action.payload;
     },
   },
 });
-export const {
-  setDefaultNickname,
-  setIsNotificationActive,
-  setNotificationText,
-} = globalSlice.actions;
+export const { setDataOfTest, setNotificationText, setUserSessionDelay } =
+  globalSlice.actions;
 export default globalSlice.reducer;

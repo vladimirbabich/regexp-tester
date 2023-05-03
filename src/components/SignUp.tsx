@@ -7,97 +7,174 @@ import React, {
   useState,
 } from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import {
-  useCreateTestMutation,
-  useGetAllTestsForModeQuery,
-} from '../features/api/apiSlice';
+import jwtDecode from 'jwt-decode';
+import { useRegUserMutation } from '../features/api/apiSlice';
 import './../App.scss';
 import './../styles/SignPage.scss';
+import SignNotification from './SignNotification';
+import { setUserSessionDelay } from '../features/global/globalSlice';
 
-export default function SignUp({
-  isActiveSubmit,
-  setIsActiveSubmit,
-  nickRef,
-  passRef,
-  emailRef,
-  handleSwitchClick,
-}: any) {
-  // const { data, error, isLoading } = useGetAllTestsForModeQuery('all');
-  const [createTest, response] = useCreateTestMutation();
+export default function SignUp({ nickname, handleSwitchClick }: any) {
+  const nickRef = useRef<any>();
+  const passRef = useRef<any>();
+  const emailRef = useRef<any>();
+  const [isActiveSubmit, setIsActiveSubmit] = useState<boolean>(true);
+  const [regUser, response] = useRegUserMutation();
+  const notificationText = useAppSelector(
+    (state) => state.global.notificationText
+  );
+
+  const [nickErrorText, setNickErrorText] = useState<string>('');
+  const [passErrorText, setPassErrorText] = useState<string>('');
+
   const dispatch = useAppDispatch();
+  const userSessionDelay = useAppSelector(
+    (state) => state.global.userSessionDelay
+  );
+
   function handleChange({ target }: any) {
-    console.log(target.value);
-    if (nickRef.current.value && passRef.current.value) {
+    // console.log(target.value);
+    if (passRef.current.value) {
       setIsActiveSubmit(true);
     } else {
       setIsActiveSubmit(false);
     }
-    console.log(nickRef.current?.value.length);
+    // console.log(nickRef.current?.value.length);
+  }
+  function checkAuth() {
+    console.log('start checkAuth');
+    const token = localStorage.getItem('userToken');
+    if (!token) {
+      console.log('Token was not found');
+      return;
+    }
+    const decodedUser: any = jwtDecode(token);
+    var delay = (decodedUser.exp - decodedUser.iat) * 1000;
+    if (delay < 1000) {
+      console.log('Session timed out');
+      return;
+    }
+    setTimeout(() => {
+      console.log('delay ends');
+      //     if(!token) return;
+      //     get delay
+      //     if(delay>1000)
+      checkAuth();
+    }, delay);
   }
 
-  function test(e: React.MouseEvent<HTMLSpanElement>) {
+  function handleSubmitClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
-    // createTest({
-    //   userId: 2,
-    //   modeId: 2,
-    //   timeSpent: '2222',
-    //   testQuestions: [
-    //     {
-    //       questionId: 7,
-    //       difficulty: 2,
-    //       userAnswer: 'ABDC',
-    //     },
-    //     {
-    //       questionId: 5,
-    //       difficulty: 2,
-    //       // userAnswer: '[A-Z]/gi',
-    //     },
-    //     {
-    //       questionId: 6,
-    //       difficulty: 2,
-    //       // userAnswer: '[0-9]',
-    //     },
-    //   ],
-    // })
-    // .then((res) => {
-    //   console.log(response);
-    // })
-    // .catch((error: Error) => {
-    //   console.log(error);
-    // });
-    // console.log(data);
-    // console.log(error);
-    // console.log(isLoading);
 
-    console.log(nickname);
+    //clear errors
+    nickRef.current.className = '';
+    passRef.current.className = '';
+    setNickErrorText('');
+    setPassErrorText('');
+
+    //check client errors
+    if (nickRef?.current.value.length < 1) {
+      nickRef.current.className = 'wrongInput';
+      setNickErrorText('Type your nickname');
+    }
+    if (nickRef?.current.value.length < 3) {
+      nickRef.current.className = 'wrongInput';
+      setNickErrorText('Nickname should have atleast 3 symbols');
+    }
+    if (passRef?.current.value < 6) {
+      passRef.current.className = 'wrongInput';
+      setPassErrorText('Password should have atleast 6 symbols');
+      return;
+    }
+    if (nickRef?.current.value.length < 3 || passRef?.current.value < 1) {
+      return;
+    }
+
+    regUser({
+      nickname: nickRef?.current.value || nickname,
+      email: emailRef?.current.value || null,
+      pass: passRef?.current.value,
+    })
+      .then((response) => {
+        if ('data' in response) {
+          //check server errors
+          if ('nickError' in response.data) {
+            nickRef.current.className = 'wrongInput';
+            setNickErrorText(response.data.nickError);
+          } else if ('passError' in response.data) {
+            passRef.current.className = 'wrongInput';
+            setPassErrorText(response.data.passError);
+          } else {
+            //reg is completed, login user
+            // console.log({
+            //   nickname: nickRef?.current.value || nickname,
+            //   email: emailRef?.current.value || null,
+            //   pass: passRef?.current.value,
+            // });
+            if (!response.data.token)
+              setNickErrorText('Problem with registration, try later please');
+
+            const decodedUser: any = jwtDecode(response.data.token);
+            const delay = (decodedUser.exp - decodedUser.iat) * 1000;
+            if (delay < 2000) {
+              setNickErrorText('Session timed out, sign in instead');
+              return;
+            }
+            dispatch(setUserSessionDelay(delay));
+            console.log(`delay: ${delay}`);
+            localStorage.setItem('userToken', response.data.token);
+            checkAuth();
+          }
+        }
+        if ('error' in response) alert(response.error);
+      })
+      .catch((reason: any) => console.log(reason));
   }
 
-  const nickname = useAppSelector((state) => state.global.defaultNickname);
   return (
     <div className="signPage">
-      <h1 className="h1Title">{nickname} Sign up</h1>
+      <h1 className="h1Title"> Sign up</h1>
       <form className="signForm">
         <label className="important">
-          <span>Nickname</span>
+          <span className="field">Nickname</span>
           <input type="text" ref={nickRef} onChange={handleChange} />
+          {nickErrorText.length > 0 && (
+            <SignNotification
+              className="errorNotification"
+              text={nickErrorText}></SignNotification>
+          )}
         </label>
         <label className="important">
-          <span>Password</span>
+          <span className="field">Password</span>
           <input type="password" ref={passRef} onChange={handleChange} />
+          {passErrorText.length > 0 && (
+            <SignNotification
+              className="errorNotification"
+              text={passErrorText}></SignNotification>
+          )}
         </label>
+        <button
+          onClick={() => {
+            const delay = 5;
+            console.log(`delay: ${delay}`);
+            setTimeout(() => {
+              console.log(`time is out`);
+            }, delay);
+          }}></button>
         <label className="">
           <span>Email</span>
           <input type="email" ref={emailRef} onChange={handleChange} />
         </label>
         <button
           className={'formBtn ' + (isActiveSubmit ? ' disabled' : '')}
-          // className={isActiveSubmit ? 'formBtn' : 'formBtn disabled'}
-          disabled={!isActiveSubmit}>
+          style={{ marginTop: '9px' }}
+          disabled={!isActiveSubmit}
+          onClick={handleSubmitClick}>
           Submit
         </button>
         <div className="notification">
           Have an account?{' '}
-          <span className="signSwitcher" onClick={test}>
+          <span className="signSwitcher" onClick={handleSwitchClick}>
             Sign in
           </span>
         </div>

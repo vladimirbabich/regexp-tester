@@ -1,8 +1,18 @@
+import { useEffect, useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import './../styles/Header.scss';
+import { AccLink } from './AccLink';
 import { SignLink } from './SignLink';
 
 export default function Header() {
+  const [userToken, setUserToken] = useState<string | null>(
+    localStorage.getItem('userToken')
+  );
+  // console.log(userToken);
+  useEffect(() => {
+    const storedToken = localStorage.getItem('userToken');
+    if (userToken != storedToken) setUserToken(storedToken);
+  });
   return (
     <header className="header">
       <Link to="/" className="logo">
@@ -27,7 +37,7 @@ export default function Header() {
         <NavLink className="link" to="/leaderboard">
           Leaderboard
         </NavLink>
-        <SignLink />
+        {userToken ? <AccLink /> : <SignLink />}
       </div>
     </header>
   );

@@ -35,9 +35,9 @@ export default function DropDownPicker({
   useEffect(() => {
     //close flagsBlock if click outside of dropdownpicker
     function handleClickOutside(event: any) {
-      console.log(wrapperRef.current);
-      console.log(event.target.className);
-      console.log(event.target.className.indexOf('flagsHint') > -1);
+      // console.log(wrapperRef.current);
+      // console.log(event.target.className);
+      // console.log(event.target.className.indexOf('flagsHint') > -1);
       if (
         wrapperRef.current &&
         !wrapperRef.current.contains(event.target)

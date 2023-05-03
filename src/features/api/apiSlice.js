@@ -4,18 +4,36 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 // Define a service using a base URL and expected endpoints
 export const apiSlice = createApi({
   reducerPath: 'api',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:7000/api/' }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: 'http://localhost:7000/api/',
+    prepareHeaders: (headers, { getState }) => {
+      // Read the token from localStorage
+      const token = localStorage.getItem('userToken');
+
+      if (token) {
+        // Add the token to the Authorization header
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+
+      return headers;
+    },
+  }),
+  tagTypes: ['Test'],
   endpoints: (builder) => ({
     //test
-    createTest: builder.mutation({
+    sendTest: builder.mutation({
       query: (payload) => ({
         url: 'test/create',
         method: 'POST',
+        // headers:{}
         body: payload,
       }),
+      invalidatesTags: ['Test'],
     }),
     getAllTestsForMode: builder.query({
-      query: (modeName) => `test/getallformode?modeName=${modeName}`,
+      query: ({ modeName, limit }) =>
+        `test/getallformode?modeName=${modeName}&limit=${limit}`,
+      providesTags: (result) => ['Test'],
     }),
     //user
     regUser: builder.mutation({
@@ -25,18 +43,27 @@ export const apiSlice = createApi({
         body: payload,
       }),
     }),
-    updateUser: builder.mutation({
+    loginUser: builder.mutation({
       query: (payload) => ({
-        url: 'user/update',
+        url: 'user/login',
         method: 'POST',
         body: payload,
       }),
     }),
-    getNewNickName: builder.query({
-      query: () => `user/getnewnickname`,
+    getUniqueNickname: builder.query({
+      query: () => `user/getuniquenickname`,
+    }),
+    checkAuth: builder.query({
+      query: (token) => ({
+        url: 'user/auth',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
     }),
     //question
-    updateUser: builder.mutation({
+    createQuestion: builder.mutation({
+      //later
       query: (payload) => ({
         url: 'question/create',
         method: 'POST',
@@ -44,7 +71,7 @@ export const apiSlice = createApi({
       }),
     }),
     getAllQuestionsForMode: builder.query({
-      query: (modeName) => `user/getallformode?modeName=${modeName}`,
+      query: (modeName) => `question/getallformode?modeName=${modeName}`,
     }),
   }),
 });
@@ -52,9 +79,11 @@ export const apiSlice = createApi({
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
 export const {
-  useCreateTestMutation,
+  useSendTestMutation,
   useGetAllTestsForModeQuery,
-  useLazyGetAllTestsForModeQuery,
-  useGetNewNickNameQuery,
+  useRegUserMutation,
+  useLoginUserMutation,
+  useGetUniqueNicknameQuery,
+  useLazyCheckAuthQuery,
   useGetAllQuestionsForModeQuery,
 } = apiSlice;

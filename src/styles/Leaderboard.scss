@@ -44,16 +44,18 @@ input.radioBtn {
 //   }
 .leaderboardNotification {
   margin: 5px;
+  height: min-content;
 }
 .restartBlock {
   width: 200px;
   height: 100px;
-  margin-top: 10px;
-  text-align: center;
+  margin-top: 15px;
+  margin-left: 3px;
+  // text-align: center;
   // display: flex;
   // background-color: red;
   // justify-content: center;
-  align-self: center;
+  // align-self: center;
   a {
     background-color: colors.$layoutBgColor;
     color: colors.$linkColor;

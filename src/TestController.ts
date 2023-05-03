@@ -43,9 +43,3 @@ export function getResult(
   }
 }
 
-/*
-    no flags - match(regExp)
-    g - add ?.join("")
-    i - same
-
-    */

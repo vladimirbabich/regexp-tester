@@ -10,6 +10,7 @@ import React, {
 import { useAppSelector } from '../app/hooks';
 import './../App.scss';
 import './../styles/QuestionBlock.scss';
+
 enum Colors {
   RED = 'rgb(255,2,0)',
   BGRED = 'rgb(255,2,0, 0.05)',
@@ -18,27 +19,28 @@ enum Colors {
 }
 
 export default function QuestionBlock({ question, questionId }: any) {
+  // console.log(question);
   const askedQuestions = useAppSelector(
     (state) => state.testForm.askedQuestions
   );
   const textRef = useRef<HTMLTextAreaElement | null>(null);
-  // useEffect(() => {
-  //   console.log(textValue);
-  // }, [textValue]);
+
   useEffect(() => {
-    console.log(textRef.current);
+    // dont remember why this here
     if (textRef && textRef.current) {
       setTextAreaHeight(textRef.current);
     }
-  });
+  }, []);
 
   function setTextAreaHeight(textArea: HTMLTextAreaElement) {
-    console.log(typeof textArea);
+    // console.log(typeof textArea);
     textArea.style.lineHeight = '20px';
     textArea.style.height = '5px';
     textArea.style.height = textArea.scrollHeight + 5 + 'px';
   }
-  const [possiblePattern, possibleFlags] = question.possibleAnswer.split('/');
+  const [possiblePattern, possibleFlags] = question.possibleAnswer
+    ? question.possibleAnswer.split('/')
+    : [null, null];
 
   const [userPattern, userFlags] = question?.userAnswer?.split('/') || [
     null,
@@ -95,9 +97,16 @@ export default function QuestionBlock({ question, questionId }: any) {
         <div className="row">
           <div className="answerBlock">
             <span className="answerKey">
-              Possible answer: /
-              <span className="answerText">{possiblePattern}</span>/
-              <span className="answerText">{possibleFlags}</span>
+              Possible answer:{' '}
+              {possiblePattern ? (
+                <>
+                  {'/'}
+                  <span className="answerText">{possiblePattern}</span>/
+                  <span className="answerText">{possibleFlags}</span>
+                </>
+              ) : (
+                '???'
+              )}
             </span>
           </div>
         </div>

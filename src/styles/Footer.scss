@@ -1,7 +1,10 @@
 @use './../styles/colors';
-.footer {
+@use './../styles/sizes';
+
+div.footer {
+  padding: 3px 2px 3px 2px;
   background-color: colors.$layoutBgColor;
-  height: 71px;
+  height: 77px;
   // width: 900px;
   width: 100%;
   margin-top: 10px;
@@ -14,9 +17,24 @@
   bottom: 0;
   a.link {
     color: colors.$linkColor;
+    padding: 2px;
     text-decoration: none;
+    -webkit-text-decoration: none;
     &:hover {
       text-decoration: underline;
+      -webkit-text-decoration: underline;
     }
+  }
+}
+@media (max-width: sizes.$mobileMax) {
+  div.footer {
+    height: fit-content;
+  }
+  span.about {
+    text-align: center;
+  }
+  div.information {
+    text-align: center;
+    height: fit-content;
   }
 }

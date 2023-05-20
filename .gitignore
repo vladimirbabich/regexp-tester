@@ -9,6 +9,8 @@
 /coverage
 test.js
 
+# future stuff
+SignController.tsx
 # production
 /build
 

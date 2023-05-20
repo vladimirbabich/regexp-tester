@@ -1,4 +1,5 @@
 @use './../styles/colors';
+@use './../styles/sizes';
 
 .analyzer {
   width: 100%;
@@ -8,5 +9,16 @@
   .block {
     width: 100px;
     background-color: yellow;
+  }
+}
+
+@media (max-width: sizes.$mobileMax) {
+  .analyzer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    .block {
+    }
   }
 }

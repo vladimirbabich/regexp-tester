@@ -1,15 +1,15 @@
 @use './../styles/colors';
+@use './../styles/sizes';
 
-.signPage {
-  // background-color: red;
-}
 .signForm {
   width: 300px;
   font-size: 16px;
   display: flex;
   flex-direction: column;
-  // justify-content: center;
   margin: auto;
+  .formBtn {
+    margin-left: 0;
+  }
   label {
     margin-top: 3px;
     display: flex;
@@ -43,13 +43,23 @@
       color: colors.$layoutBgColor;
       font-size: 1em;
       text-decoration: underline;
+      -webkit-text-decoration: underline;
       &:hover {
         cursor: pointer;
         text-decoration: none;
+        -webkit-text-decoration: none;
       }
     }
   }
   .signBtn {
     background-color: red;
+  }
+}
+@media (max-width: sizes.$mobileMax) {
+  .signPage {
+    max-width: 100%;
+    .signForm {
+      max-width: 100%;
+    }
   }
 }

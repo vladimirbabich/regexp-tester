@@ -1,14 +1,17 @@
 import jwtDecode from 'jwt-decode';
+import { useAppSelector } from '../app/hooks';
+import { IDecodedUserToken } from '../models/objectModels';
 
 export function Stats() {
-  const storedUser = localStorage.getItem('userToken');
+  const userToken = useAppSelector((state) => state.global.userToken);
   let storedId = undefined;
-  if (storedUser) {
-    const decoded: any = jwtDecode(storedUser);
+  if (userToken) {
+    const decoded: IDecodedUserToken = jwtDecode(userToken);
     storedId = decoded.id;
   }
   const userId = storedId || localStorage.getItem('genUserId');
-  if (userId < 0)
+
+  if (!userId || userId < 0)
     return <div className="statsBlock">User with that ID does not exists</div>;
   return (
     <div className="statsBlock">

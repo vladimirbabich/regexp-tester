@@ -1,4 +1,6 @@
 @use './../styles/colors';
+@use './../styles/sizes';
+
 div.testInput {
   margin-top: 5px;
   width: 100%;
@@ -13,11 +15,10 @@ div.testInput {
     user-select: none;
     justify-content: center;
     align-items: center;
-    height: 38px; //34px;
+    height: 38px;
     top: 1px;
     border: none;
-    margin: 0;
-    margin-left: 122px;
+    margin-left: 3px;
     align-self: center;
     padding: 3px 10px 0 10px;
     background-color: colors.$mainBgColor;
@@ -26,6 +27,9 @@ div.testInput {
     // vertical-align: bottom;
     // vertical-align: top;
     // font-size: 20px;
+  }
+  div.inputBlock {
+    width: 100%;
   }
   input {
     width: 100%;
@@ -48,6 +52,18 @@ div.testInput {
     }
     &:disabled {
       background-color: colors.$mainBgColor;
+    }
+  }
+}
+
+@media (max-width: sizes.$mobileMax) {
+  input#regexpInput {
+    font-size: 0.8em;
+  }
+  div.testInput {
+    button.startPtrn {
+      margin: 0;
+      margin-left: 3px;
     }
   }
 }

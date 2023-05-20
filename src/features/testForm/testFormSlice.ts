@@ -1,5 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { IDropDownPickerList, IQuestion } from '../../Models';
+import {
+  AskedQuestion,
+  IDropDownPickerList,
+  IQuestion,
+} from '../../models/objectModels';
 type InitialState = {
   currentQuestion: IQuestion | null;
   flags: IDropDownPickerList[];
@@ -7,16 +11,6 @@ type InitialState = {
   isTestOver: boolean;
   askedQuestions: AskedQuestion[];
   activeMode: string;
-};
-type AskedQuestion = {
-  difficulty: number;
-  expectedResult: string;
-  functionName: string;
-  id: number;
-  possibleAnswer: string;
-  task: string;
-  text: string;
-  userAnswer?: string;
 };
 const initialState: InitialState = {
   currentQuestion: null,
@@ -36,11 +30,16 @@ const initialState: InitialState = {
       description: 'multiline',
       status: false,
     },
+    {
+      name: 's',
+      description: 'singleline',
+      status: false,
+    },
   ],
   selectedFunction: 'match',
   isTestOver: false,
   askedQuestions: [],
-  activeMode: 'min5',
+  activeMode: 'only-flags',
 };
 
 const testFormSlice = createSlice({
@@ -55,7 +54,7 @@ const testFormSlice = createSlice({
     },
     updateFlag: (state, action) => {
       state.flags = state.flags.map((el) => {
-        if (el.name == action.payload) return { ...el, status: !el.status };
+        if (el.name === action.payload) return { ...el, status: !el.status };
         return { ...el };
       });
     },

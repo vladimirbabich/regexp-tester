@@ -1,134 +1,97 @@
-import React, {
-  DetailedHTMLProps,
-  InputHTMLAttributes,
-  RefObject,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import { useAppDispatch, useAppSelector } from '../app/hooks';
+import React, { useRef, useState } from 'react';
+import { useAppDispatch } from '../app/hooks';
 import jwtDecode from 'jwt-decode';
 import { useRegUserMutation } from '../features/api/apiSlice';
 import './../App.scss';
 import './../styles/SignPage.scss';
 import SignNotification from './SignNotification';
-import { setUserSessionDelay } from '../features/global/globalSlice';
+import {
+  setUserSessionDelay,
+  setUserToken,
+} from '../features/global/globalSlice';
+import { ISign } from '../models/componentModels';
+import { IDecodedUserToken } from '../models/objectModels';
 
-export default function SignUp({ nickname, handleSwitchClick }: any) {
-  const nickRef = useRef<any>();
-  const passRef = useRef<any>();
-  const emailRef = useRef<any>();
-  const [isActiveSubmit, setIsActiveSubmit] = useState<boolean>(true);
-  const [regUser, response] = useRegUserMutation();
-  const notificationText = useAppSelector(
-    (state) => state.global.notificationText
-  );
+export default function SignUp({
+  handleChangeInput,
+  handleSwitchClick,
+}: ISign) {
+  const nickRef = useRef<HTMLInputElement>();
+  const passRef = useRef<HTMLInputElement>();
+  const emailRef = useRef<HTMLInputElement>();
+  const [isActiveSubmit, setIsActiveSubmit] = useState<boolean>(false);
+  const [regUser] = useRegUserMutation();
 
   const [nickErrorText, setNickErrorText] = useState<string>('');
   const [passErrorText, setPassErrorText] = useState<string>('');
 
   const dispatch = useAppDispatch();
-  const userSessionDelay = useAppSelector(
-    (state) => state.global.userSessionDelay
-  );
-
-  function handleChange({ target }: any) {
-    // console.log(target.value);
-    if (passRef.current.value) {
-      setIsActiveSubmit(true);
-    } else {
-      setIsActiveSubmit(false);
-    }
-    // console.log(nickRef.current?.value.length);
-  }
-  function checkAuth() {
-    console.log('start checkAuth');
-    const token = localStorage.getItem('userToken');
-    if (!token) {
-      console.log('Token was not found');
-      return;
-    }
-    const decodedUser: any = jwtDecode(token);
-    var delay = (decodedUser.exp - decodedUser.iat) * 1000;
-    if (delay < 1000) {
-      console.log('Session timed out');
-      return;
-    }
-    setTimeout(() => {
-      console.log('delay ends');
-      //     if(!token) return;
-      //     get delay
-      //     if(delay>1000)
-      checkAuth();
-    }, delay);
-  }
 
   function handleSubmitClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
 
+    const currentNick = nickRef?.current;
+    const currentPass = passRef?.current;
+    const currentEmail = emailRef?.current;
+    if (!currentNick || !currentPass || !currentEmail) {
+      return;
+    }
     //clear errors
-    nickRef.current.className = '';
-    passRef.current.className = '';
+    currentNick.className = '';
+    currentPass.className = '';
     setNickErrorText('');
     setPassErrorText('');
 
-    //check client errors
-    if (nickRef?.current.value.length < 1) {
-      nickRef.current.className = 'wrongInput';
-      setNickErrorText('Type your nickname');
-    }
-    if (nickRef?.current.value.length < 3) {
-      nickRef.current.className = 'wrongInput';
+    //check clientside errors
+    if (currentNick.value.length < 3) {
+      currentNick.className = 'wrongInput';
       setNickErrorText('Nickname should have atleast 3 symbols');
     }
-    if (passRef?.current.value < 6) {
-      passRef.current.className = 'wrongInput';
+    if (currentPass.value.length < 6) {
+      currentPass.className = 'wrongInput';
       setPassErrorText('Password should have atleast 6 symbols');
       return;
     }
-    if (nickRef?.current.value.length < 3 || passRef?.current.value < 1) {
+    if (currentNick.value.length < 3 || currentPass.value.length < 6) {
       return;
     }
 
     regUser({
-      nickname: nickRef?.current.value || nickname,
-      email: emailRef?.current.value || null,
-      pass: passRef?.current.value,
+      nickname: currentNick.value,
+      email: currentEmail.value || null,
+      pass: currentPass.value,
     })
       .then((response) => {
         if ('data' in response) {
           //check server errors
           if ('nickError' in response.data) {
-            nickRef.current.className = 'wrongInput';
+            currentNick.className = 'wrongInput';
             setNickErrorText(response.data.nickError);
           } else if ('passError' in response.data) {
-            passRef.current.className = 'wrongInput';
+            currentPass.className = 'wrongInput';
             setPassErrorText(response.data.passError);
           } else {
-            //reg is completed, login user
-            // console.log({
-            //   nickname: nickRef?.current.value || nickname,
-            //   email: emailRef?.current.value || null,
-            //   pass: passRef?.current.value,
-            // });
-            if (!response.data.token)
+            if (!response.data.token) {
               setNickErrorText('Problem with registration, try later please');
+              return;
+            }
 
-            const decodedUser: any = jwtDecode(response.data.token);
+            const decodedUser: IDecodedUserToken = jwtDecode(
+              response.data.token
+            );
             const delay = (decodedUser.exp - decodedUser.iat) * 1000;
-            if (delay < 2000) {
+            if (delay < 1000) {
               setNickErrorText('Session timed out, sign in instead');
               return;
             }
             dispatch(setUserSessionDelay(delay));
-            console.log(`delay: ${delay}`);
-            localStorage.setItem('userToken', response.data.token);
-            checkAuth();
+            console.log(`Sign up set: ${response.data.token}`);
+            dispatch(setUserToken(response.data.token));
           }
         }
         if ('error' in response) alert(response.error);
       })
-      .catch((reason: any) => console.log(reason));
+      .catch((reason: Error) => console.log(reason));
   }
 
   return (
@@ -137,7 +100,13 @@ export default function SignUp({ nickname, handleSwitchClick }: any) {
       <form className="signForm">
         <label className="important">
           <span className="field">Nickname</span>
-          <input type="text" ref={nickRef} onChange={handleChange} />
+          <input
+            type="text"
+            ref={nickRef as React.LegacyRef<HTMLInputElement>}
+            onChange={() => {
+              handleChangeInput(nickRef, passRef, setIsActiveSubmit);
+            }}
+          />
           {nickErrorText.length > 0 && (
             <SignNotification
               className="errorNotification"
@@ -146,31 +115,32 @@ export default function SignUp({ nickname, handleSwitchClick }: any) {
         </label>
         <label className="important">
           <span className="field">Password</span>
-          <input type="password" ref={passRef} onChange={handleChange} />
+          <input
+            type="password"
+            ref={passRef as React.LegacyRef<HTMLInputElement>}
+            onChange={() => {
+              handleChangeInput(nickRef, passRef, setIsActiveSubmit);
+            }}
+          />
           {passErrorText.length > 0 && (
             <SignNotification
               className="errorNotification"
               text={passErrorText}></SignNotification>
           )}
         </label>
-        <button
-          onClick={() => {
-            const delay = 5;
-            console.log(`delay: ${delay}`);
-            setTimeout(() => {
-              console.log(`time is out`);
-            }, delay);
-          }}></button>
         <label className="">
           <span>Email</span>
-          <input type="email" ref={emailRef} onChange={handleChange} />
+          <input
+            type="email"
+            ref={emailRef as React.LegacyRef<HTMLInputElement>}
+          />
         </label>
         <button
-          className={'formBtn ' + (isActiveSubmit ? ' disabled' : '')}
+          className="formBtn"
           style={{ marginTop: '9px' }}
           disabled={!isActiveSubmit}
           onClick={handleSubmitClick}>
-          Submit
+          Create an account
         </button>
         <div className="notification">
           Have an account?{' '}

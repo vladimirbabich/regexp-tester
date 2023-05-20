@@ -1,14 +1,5 @@
-import React, {
-  ChangeEvent,
-  DetailedHTMLProps,
-  FormEvent,
-  TextareaHTMLAttributes,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import { useAppSelector } from '../app/hooks';
-import './../App.scss';
+import React, { ChangeEvent, useEffect, useRef } from 'react';
+import { IQuestionBlock } from '../models/componentModels';
 import './../styles/QuestionBlock.scss';
 
 enum Colors {
@@ -18,15 +9,15 @@ enum Colors {
   BGGREEN = 'rgb(32,193,0,0.05)',
 }
 
-export default function QuestionBlock({ question, questionId }: any) {
-  // console.log(question);
-  const askedQuestions = useAppSelector(
-    (state) => state.testForm.askedQuestions
-  );
+export default function QuestionBlock({
+  question,
+  questionId,
+}: IQuestionBlock) {
   const textRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
-    // dont remember why this here
+    // this code used to restyle textarea after mount
+    //todo: refactor
     if (textRef && textRef.current) {
       setTextAreaHeight(textRef.current);
     }
@@ -66,7 +57,7 @@ export default function QuestionBlock({ question, questionId }: any) {
         }}>
         <div className="row">
           <div className="textBlock">
-            <span className="task">{question.task}</span>
+            <p className="task">{question.task}</p>
             <textarea
               className="text"
               // contentEditable={true}

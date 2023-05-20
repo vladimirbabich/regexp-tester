@@ -1,15 +1,14 @@
 @use './../styles/colors';
+@use './../styles/sizes';
 
 .leaderboard {
   width: 100%;
   display: flex;
   flex-direction: column;
 }
-
 .leaderboardContent {
   margin-top: 10px;
   display: flex;
-  //   justify-content: space-between;
   flex-direction: row;
 }
 .leaderboardSettings {
@@ -21,7 +20,6 @@
   }
 }
 .radioItem {
-  // border: 2px salmon dashed;
   user-select: none;
 }
 input.radioBtn {
@@ -29,19 +27,18 @@ input.radioBtn {
   appearance: none;
   &:hover ~ label {
     text-decoration: underline;
+    -webkit-text-decoration: underline;
     cursor: pointer;
   }
   &:checked ~ label {
     text-decoration: underline;
+    -webkit-text-decoration: underline;
     color: colors.$activeColor;
   }
   &:checked:hover ~ label {
     cursor: default;
   }
 }
-// .radio-custom:checked ~ label {
-//     color: blue;
-//   }
 .leaderboardNotification {
   margin: 5px;
   height: min-content;
@@ -51,16 +48,12 @@ input.radioBtn {
   height: 100px;
   margin-top: 15px;
   margin-left: 3px;
-  // text-align: center;
-  // display: flex;
-  // background-color: red;
-  // justify-content: center;
-  // align-self: center;
   a {
     background-color: colors.$layoutBgColor;
     color: colors.$linkColor;
     height: 25px;
     text-decoration: none;
+    -webkit-text-decoration: none;
     margin: 0 auto;
     // height: 20px;
     padding: 5px;
@@ -75,5 +68,25 @@ input.radioBtn {
     &:active {
       background-color: colors.$activeColor;
     }
+  }
+}
+
+@media (max-width: sizes.$mobileMax) {
+  .leaderboardContent {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+}
+@media (min-width: sizes.$tabletMin) and (max-width: sizes.$tabletMax) {
+  .leaderboardContent {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+}
+@media (min-width: sizes.$laptopMin) and (max-width: sizes.$appWidth) {
+  div.app {
+    width: 100%;
   }
 }

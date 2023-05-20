@@ -1,13 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './../App.scss';
 import './../styles/TestForm.scss';
 import Popup from './Popup';
-import { expectedResult, getResult } from '../TestController';
-import allQuestions from './../questions';
+import { getResult } from '../controllers/TestController';
 import Timer from './Timer';
 import TestInput from './TestInput';
-import { IDropDownPickerList, IQuestion, IResultMatch } from '../Models';
-import { defaultTimeAmount, getDiverseMatches, getFlagsString } from '../utils';
+import { IQuestion, IResultMatch } from '../models/objectModels';
+import { getFlagsString } from '../utils';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import {
   resetFlags,
@@ -18,21 +17,20 @@ import {
   setSelectedFunction,
 } from '../features/testForm/testFormSlice';
 import TestScore from './TestScore';
-import { setFlagsFromString } from 'v8';
 import {
   setDataOfTest,
   setNotificationText,
+  setUserToken,
 } from '../features/global/globalSlice';
-import {
-  useGetAllQuestionsForModeQuery,
-  useSendTestMutation,
-} from '../features/api/apiSlice';
-import { useLocation } from 'react-router-dom';
-import { LocalStorageController } from '../StorageController';
+import { useGetAllQuestionsForModeQuery } from '../features/api/apiSlice';
+import { LocalStorageController } from '../controllers/StorageController';
+import { ITestForm } from '../models/componentModels';
+import { metaTageController } from '../controllers/MetaTagsController';
 
 const SKIP_ANIMATION_TIME_AMOUNT = 25; //seconds
 
-export default function TestForm({ title, mode }: any) {
+export default function TestForm({ title, mode }: ITestForm) {
+  const dispatch = useAppDispatch();
   const {
     data: questionsDB,
     error: questionsDBError,
@@ -44,20 +42,15 @@ export default function TestForm({ title, mode }: any) {
   useEffect(() => {
     if (questionsDBError) {
       if ('token' in questionsDBError) {
-        localStorage.setItem(
-          'userToken',
-          (questionsDBError.token as any).toString()
+        console.log(
+          `TestForm questionsDBError set: ${questionsDBError.token as string}`
         );
+        dispatch(setUserToken(questionsDBError.token as string));
       }
       console.log(questionsDBError);
     }
-  }, [questionsDBError]);
+  }, [dispatch, questionsDBError]);
 
-  // useEffect(() => {
-  //   console.log('timeSpent: ' + timeSpent);
-  // }, [timeSpent]);
-
-  const dispatch = useAppDispatch();
   const flags = useAppSelector((state) => state.testForm.flags);
   const askedQuestions = useAppSelector(
     (state) => state.testForm.askedQuestions
@@ -90,22 +83,27 @@ export default function TestForm({ title, mode }: any) {
   const [skipAnimationDuration, setSkipAnimationDuration] = useState(0);
   const [isActiveSkipAnimation, setIsActiveSkipAnimation] = useState(false);
 
-  const storedUser = localStorage.getItem('userToken');
   const localStorageController = new LocalStorageController();
-  const userId = localStorageController.getUsersKey('id');
+
+  const isTestOver = useAppSelector((state) => state.testForm.isTestOver);
+  useEffect(() => {
+    metaTageController.setTitle(`Retester mode: ${mode}`);
+  }, []);
 
   function getDefaultTimeAmount(mode: string) {
-    return mode == 'all' ? 0 : mode == 'flags' ? 60 : 300;
+    return mode === 'all-questions' ? 0 : mode === 'only-flags' ? 60 : 300;
   }
 
   useEffect(() => {
     // console.log('questionsDB is loaded:');
     if (!questionsDB) return;
-    console.log(questionsDB);
-    if (questionsDB?.token)
-      localStorage.setItem('userToken', questionsDB.token);
+    // console.log(questionsDB);
+    if (questionsDB?.token) {
+      dispatch(setUserToken(questionsDB.token as string));
+      console.log(`TestForm questionsDB set: ${questionsDB.token || ''}`);
+    }
     setQuestions(questionsDB.questions);
-  }, [questionsDB]);
+  }, [dispatch, questionsDB]);
 
   useEffect(() => {
     let timeInterval: NodeJS.Timer;
@@ -120,11 +118,11 @@ export default function TestForm({ title, mode }: any) {
         clearInterval(timeInterval);
       };
     }
-  }, []);
+  }, [isActiveSkipAnimation]);
 
   useEffect(() => {
     // console.log(skipAnimationDuration);
-    if (skipAnimationDuration == SKIP_ANIMATION_TIME_AMOUNT) {
+    if (skipAnimationDuration === SKIP_ANIMATION_TIME_AMOUNT) {
       setIsActiveSkipAnimation(true);
     }
   }, [skipAnimationDuration]);
@@ -152,6 +150,9 @@ export default function TestForm({ title, mode }: any) {
       setTestStart(new Date().getTime() / 1000);
       console.log('timeSpent');
       console.log(timeSpent);
+
+      const userId = localStorageController.getUsersKey('id');
+      // alert(userId);
       const formdata = {
         testQuestions,
         timeSpent: Math.round(timeSpent).toString(), // ? how to get it in
@@ -166,8 +167,6 @@ export default function TestForm({ title, mode }: any) {
 
   function restartTest() {
     dispatch(setCurrentQuestion(null));
-    // prepareAndSendEndedTest();
-    // console.log(askedQuestions);
     if (questionsDB) {
       setQuestions([...questionsDB.questions]);
       // console.log('rand');
@@ -177,11 +176,10 @@ export default function TestForm({ title, mode }: any) {
       dispatch(setAskedQuestions([]));
     }
   }
-  const isTestOver = useAppSelector((state) => state.testForm.isTestOver);
   useEffect(() => {
     updateResults();
     // console.log(flags);
-  }, [flags, pattern, selectedFunction]);
+  }, [dispatch, flags, pattern, selectedFunction]);
 
   useEffect(() => {
     // console.log('qq');
@@ -190,7 +188,7 @@ export default function TestForm({ title, mode }: any) {
     if (questions && questions?.length > 0) {
       if (!currentQuestion) setRandomQuestion();
     }
-  }, [questions]);
+  }, [dispatch, questions]);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setPattern((prev) => {
@@ -236,7 +234,7 @@ export default function TestForm({ title, mode }: any) {
   function updateResults() {
     if (!isTimerActive) setIsTimerActive(true); //mb need to add "&&timeAmount>0"
     if (!currentQuestion) return;
-    if (pattern.length == 0) {
+    if (pattern.length === 0) {
       updateExpectedResult();
       if (userResult) setUserResult([]);
       return;
@@ -266,7 +264,7 @@ export default function TestForm({ title, mode }: any) {
       console.error('Error! expected result not found.');
       return;
     }
-  }, [userResult]);
+  }, [dispatch, userResult]);
 
   function setRandomQuestion() {
     // console.log('questions!');
@@ -290,7 +288,7 @@ export default function TestForm({ title, mode }: any) {
   }
   useEffect(() => {
     if (timeSpent > 0) prepareAndSendEndedTest(); // if test over - change dataOfTest in globalSlice and send it to the server
-  }, [timeSpent]);
+  }, [dispatch, timeSpent]);
   useEffect(() => {
     //resetTestForm
     if (isTestOver) {
@@ -302,26 +300,28 @@ export default function TestForm({ title, mode }: any) {
       setTestStart(new Date().getTime() / 1000);
     }
     // console.log('isTestOver: ' + isTestOver);
-  }, [isTestOver]);
+  }, [dispatch, isTestOver]);
 
   useEffect(() => {
-    dispatch(setActiveMode(mode));
-
+    metaTageController.setTitle(`Retester mode: ${mode}`);
     //restart test after mode change
-    restartTest();
+    setPattern('');
+
+    dispatch(setActiveMode(mode));
     setTimeSpent(0);
+    dispatch(resetFlags());
+    restartTest();
     setTestStart(new Date().getTime() / 1000);
     if (isTestOver) {
       console.log('isTestOver true');
       dispatch(setIsTestOver(false));
     }
     setIsTimerActive(true);
-    dispatch(resetFlags());
   }, [mode]);
 
   useEffect(() => {
     if (currentQuestion && currentQuestion.expectedResult) {
-      if (mode == 'flags') {
+      if (mode === 'only-flags') {
         setPattern(currentQuestion.expectedResult.split('/')[0]);
       } else setPattern('');
       setExpectedResult(
@@ -388,10 +388,18 @@ export default function TestForm({ title, mode }: any) {
   if (questionsDBError) {
     return <h1 className="h1Title">Connection problem! try later please</h1>;
   }
-
+  console.log(currentQuestion?.text);
+  const splitedTitle = title.split('\n');
   return (
     <>
-      <h1 className="h1Title">{title}</h1>
+      <h1 className="h1Title">
+        {splitedTitle.map((line) => (
+          <>
+            {line}
+            <br />
+          </>
+        ))}
+      </h1>
       <form className="testForm">
         {isTestOver && (
           <TestScore
@@ -406,13 +414,15 @@ export default function TestForm({ title, mode }: any) {
             setTimeAmount={setTimeAmount}
             isTimerActive={isTimerActive}
             setIsTimerActive={setIsTimerActive}
-            isCountDown={mode == 'all' ? false : true}></Timer>
-          <h2 className="task">
-            {/* {currentQuestion &&
-              currentQuestion.task.length > 0 &&
-              currentQuestion.task} */}
-          </h2>
-          <div>
+            isCountDown={mode === 'all-questions' ? false : true}></Timer>
+          {!(window.innerWidth < 670) && (
+            <p className="task">
+              {currentQuestion &&
+                currentQuestion.task.length > 0 &&
+                currentQuestion.task}
+            </p>
+          )}
+          <div className="infoBtns">
             <span className="questionsCount">
               <span
                 onMouseEnter={() => {
@@ -437,9 +447,10 @@ export default function TestForm({ title, mode }: any) {
               <span
                 style={{ display: 'inline-block' }}
                 onMouseEnter={() => {
+                  // console.log(questionsDB);
                   dispatch(
                     setNotificationText(
-                      `This test contains ${questionsDB?.length} questions`
+                      `This test contains ${questionsDB?.questions?.length} questions`
                     )
                   );
                 }}
@@ -467,14 +478,26 @@ export default function TestForm({ title, mode }: any) {
             </button>
           </div>
         </div>
+        {window.innerWidth < 670 && (
+          <p className="task">
+            {currentQuestion &&
+              currentQuestion.task.length > 0 &&
+              currentQuestion.task}
+          </p>
+        )}
         <TestInput
           value={pattern}
           handleChange={handleChange}
           mode={mode}></TestInput>
-        <textarea
-          className="textBlock"
-          disabled={true}
-          value={currentQuestion?.text || ''}></textarea>
+        <span className="textBlock" role="textbox">
+          {currentQuestion?.text ? (
+            currentQuestion?.text
+              .split('\n')
+              .map((el, index) => <span key={index}>{el}</span>)
+          ) : (
+            <span>Error</span>
+          )}
+        </span>
         <div className="results">
           <div className="resultBlock">
             <div className="resultLabel">Expected result</div>
@@ -497,7 +520,11 @@ export default function TestForm({ title, mode }: any) {
                         if (el.isUnique) dispatch(setNotificationText(''));
                       }}
                       className={classes}>
-                      {el.match}
+                      {el.match
+                        ? el.match
+                            .split('\n')
+                            .map((el, index) => <span key={index}>{el}</span>)
+                        : 'NOT FOUND'}
                     </span>
                   );
                 })}

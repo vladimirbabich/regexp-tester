@@ -1,7 +1,9 @@
 @use './../styles/colors';
+@use './../styles/sizes';
 
 select.functionsBlock {
   box-sizing: border-box;
+  background-color: colors.$mainBgColor;
   padding: 3px;
   height: 40px;
   cursor: pointer;
@@ -17,5 +19,12 @@ select.functionsBlock {
   &:disabled {
     color: black;
     opacity: 100%;
+  }
+}
+
+@media (max-width: sizes.$mobileMax) {
+  select.functionsBlock {
+    font-size: 0.8em; 
+    width: 54px;
   }
 }

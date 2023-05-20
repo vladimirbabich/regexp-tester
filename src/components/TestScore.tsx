@@ -1,32 +1,22 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import './../App.scss';
 import './../styles/TestScore.scss';
-import DropDownPicker from './DropDownPicker';
 import { Link } from 'react-router-dom';
-import { TestInputProps } from '../Models';
-import { getFlagsString } from '../utils';
-import { Select } from './Select';
-import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { useAppDispatch } from '../app/hooks';
 import { restartTest } from '../features/testForm/testFormSlice';
+import { ITestScore } from '../models/componentModels';
 
-export default function TestScore({ skippedAmount, solvedAmount }: any) {
-  const [solvedPercent, setSolvedPercent] = useState<number>(
-    parseInt(((solvedAmount / (solvedAmount + skippedAmount)) * 100).toFixed(0))
-  );
-  const [userName, setUserName] = useState('');
-  const defaultName = 'user';
+export default function TestScore({ skippedAmount, solvedAmount }: ITestScore) {
   const dispatch = useAppDispatch();
-  const isTestOver = useAppSelector((state) => state.testForm.isTestOver);
-  function handleStartTest(e: any) {
+  function handleStartTestClick(e: React.MouseEvent) {
     e.preventDefault();
     // console.log(isTestOver);
     dispatch(restartTest());
     return 1;
   }
-  function handleNickChange({ target }: React.ChangeEvent<HTMLInputElement>) {
-    setUserName(target.value);
-    // console.log(userName);
-  }
+  const solvedPercent = parseInt(
+    ((solvedAmount / (solvedAmount + skippedAmount)) * 100).toFixed(0)
+  );
   return (
     <div className="testScore">
       <span className="title">Test completed!</span>
@@ -48,21 +38,17 @@ export default function TestScore({ skippedAmount, solvedAmount }: any) {
         <Link to="/leaderboard" className="link">
           Leaderboard
         </Link>
-        <a className="link" onClick={handleStartTest}>
+        <span className="link" onClick={handleStartTestClick}>
           Start again
-        </a>
-        <Link to="/results" className="link">
+        </span>
+        <Link
+          to="/results"
+          className={
+            skippedAmount + solvedAmount === 0 ? 'link btnDisabled' : 'link'
+          }>
           Watch answers
         </Link>
       </div>
-      {/* <div className="saveNotification"> mb later will return it, for now dont wanna do this
-        <span>Saving result as: </span>
-        <input
-          className="nickChanger"
-          onChange={handleNickChange}
-          value={userName}
-          placeholder={genUserName || defaultName}></input>
-      </div> */}
     </div>
   );
 }

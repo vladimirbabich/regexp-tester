@@ -1,84 +1,94 @@
-import React, {
-  DetailedHTMLProps,
-  InputHTMLAttributes,
-  RefObject,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useRef, useState } from 'react';
 import { useAppDispatch } from '../app/hooks';
 import { useLoginUserMutation } from '../features/api/apiSlice';
-import { setNotificationText } from '../features/global/globalSlice';
+import { setUserToken } from '../features/global/globalSlice';
+import { ISign } from '../models/componentModels';
 import './../App.scss';
 import './../styles/SignPage.scss';
 import SignNotification from './SignNotification';
 
-export default function SignIn({ nickname, handleSwitchClick }: any) {
-  const nickEmailRef = useRef<any>();
-  const passRef = useRef<any>();
-  const [isActiveSubmit, setIsActiveSubmit] = useState<boolean>(true); //false);
+export default function SignIn({
+  handleChangeInput,
+  handleSwitchClick,
+}: ISign) {
+  const nickEmailRef = useRef<HTMLInputElement>();
+  const passRef = useRef<HTMLInputElement>();
+  const [isActiveSubmit, setIsActiveSubmit] = useState<boolean>(false);
 
-  const [loginUser, response] = useLoginUserMutation();
+  const [loginUser] = useLoginUserMutation();
 
   const [nickErrorText, setNickErrorText] = useState<string>('');
   const [passErrorText, setPassErrorText] = useState<string>('');
   const dispatch = useAppDispatch();
 
-  function handleChange({ target }: any) {
-    // console.log(target.value);
-    // if (nickEmailRef.current.value && passRef.current.value) {
-    //   setIsActiveSubmit(true);
-    // } else {
-    //   setIsActiveSubmit(false);
-    // }
-    // console.log(nickRef.current?.value.length);
-  }
-
   function handleSubmitClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
-
+    const currentNickEmail = nickEmailRef?.current;
+    const currentPass = passRef?.current;
+    if (!currentNickEmail || !currentPass) {
+      return;
+    }
     //clear errors
-    nickEmailRef.current.className = '';
-    passRef.current.className = '';
+    if (currentNickEmail) currentNickEmail.className = '';
+    if (currentPass) currentPass.className = '';
     setNickErrorText('');
     setPassErrorText('');
 
-    //check client errors
-    if (nickEmailRef?.current.value.length < 1) {
-      nickEmailRef.current.className = 'wrongInput';
-      setNickErrorText('Type your nickname of email');
+    //check clientside errors
+    if (currentNickEmail.value.length < 1) {
+      currentNickEmail.className = 'wrongInput';
+      setNickErrorText('Type your nickname or email');
     }
-    if (passRef?.current.value < 1) {
-      passRef.current.className = 'wrongInput';
+    if (currentPass.value.length < 1) {
+      currentPass.className = 'wrongInput';
       setPassErrorText('Type your password');
-      return;
     }
-    if (nickEmailRef?.current.value.length < 1 || passRef?.current.value < 1) {
+    if (currentNickEmail.value.length < 1 || currentPass.value.length < 1) {
+      //if one of them is empty - return instead of login request
       return;
     }
 
     loginUser({
-      nicknameOrEmail: nickEmailRef?.current.value,
-      pass: passRef?.current.value,
+      nicknameOrEmail: currentNickEmail.value,
+      pass: currentPass.value,
     })
       .then((response) => {
         if ('data' in response) {
           //check server errors
+          console.log('data');
           if ('nickError' in response.data) {
-            nickEmailRef.current.className = 'wrongInput';
+            console.log('ttt');
+            currentNickEmail.className = 'wrongInput';
             setNickErrorText(response.data.nickError);
           } else if ('passError' in response.data) {
-            passRef.current.className = 'wrongInput';
+            currentPass.className = 'wrongInput';
             setPassErrorText(response.data.passError);
           } else {
+            if (!response.data.token) {
+              setNickErrorText('Problem with registration, try later please');
+              return;
+            }
             console.log(response.data.token);
-            localStorage.setItem('userToken', response.data.token);
-            //todo: some redirect here
+            console.log(`Sign in set: ${response.data.token}`);
+            dispatch(setUserToken(response.data.token));
           }
         }
-        if ('error' in response) console.error(response.error);
+        if ('error' in response)
+          if ('data' in response.error) {
+            const data = response.error.data as {
+              nickError?: string;
+              passError?: string;
+            };
+            if ('nickError' in data && data.nickError) {
+              currentNickEmail.className = 'wrongInput';
+              setNickErrorText(data.nickError);
+            } else if ('passError' in data && data.passError) {
+              currentPass.className = 'wrongInput';
+              setPassErrorText(data.passError);
+            }
+          }
       })
-      .catch((reason: any) => console.log('reason'));
+      .catch((reason: Error) => console.log('reason'));
   }
   return (
     <div className="signPage">
@@ -86,7 +96,13 @@ export default function SignIn({ nickname, handleSwitchClick }: any) {
       <form className="signForm">
         <label>
           <span>Nickname or Email</span>
-          <input type="text" ref={nickEmailRef} onChange={handleChange} />
+          <input
+            type="text"
+            ref={nickEmailRef as React.LegacyRef<HTMLInputElement>}
+            onChange={() => {
+              handleChangeInput(nickEmailRef, passRef, setIsActiveSubmit);
+            }}
+          />
           {nickErrorText.length > 0 && (
             <SignNotification
               className="errorNotification"
@@ -95,7 +111,13 @@ export default function SignIn({ nickname, handleSwitchClick }: any) {
         </label>
         <label>
           <span>Password</span>
-          <input type="password" ref={passRef} onChange={handleChange} />
+          <input
+            type="password"
+            ref={passRef as React.LegacyRef<HTMLInputElement>}
+            onChange={() => {
+              handleChangeInput(nickEmailRef, passRef, setIsActiveSubmit);
+            }}
+          />
           {passErrorText.length > 0 && (
             <SignNotification
               className="errorNotification"
@@ -103,11 +125,11 @@ export default function SignIn({ nickname, handleSwitchClick }: any) {
           )}
         </label>
         <button
-          className={'formBtn ' + (isActiveSubmit ? ' disabled' : '')}
+          className="formBtn"
           style={{ marginTop: '9px' }}
           disabled={!isActiveSubmit}
           onClick={handleSubmitClick}>
-          Submit
+          Sign in
         </button>
         <div className="notification">
           Don`t have an account?{' '}

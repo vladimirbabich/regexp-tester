@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="200mm"
+   height="200mm"
+   viewBox="0 0 200 200"
+   version="1.1"
+   id="svg551"
+   inkscapeExport-filename="reLogo.svg"
+   inkscapeExport-xdpi="96"
+   inkscapeExport-ydpi="96"
+   xmlnsInkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlnsSodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlnsXlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlnsSvg="http://www.w3.org/2000/svg">
+  <sodipodiNamedview
+     id="namedview553"
+     pagecolor="#ffffff"
+     bordercolor="#111111"
+     borderopacity="1"
+     inkscapeShowpageshadow="0"
+     inkscapePageopacity="0"
+     inkscapePagecheckerboard="1"
+     inkscapeDeskcolor="#d1d1d1"
+     inkscapeDocument-units="mm"
+     showgrid="false"
+     showguides="true">
+    <sodipodiGuide
+       position="-16.322581,99.935483"
+       orientation="0,-1"
+       id="guide6585"
+       inkscapeLocked="false" />
+    <sodipodiGuide
+       position="-13.83871,50.258064"
+       orientation="0,-1"
+       id="guide6587"
+       inkscapeLocked="false" />
+    <sodipodiGuide
+       position="-13.129032,149.96774"
+       orientation="0,-1"
+       id="guide6589"
+       inkscapeLocked="false" />
+  </sodipodiNamedview>
+  <defs
+     id="defs548">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath3527">
+      <use
+         x="0"
+         y="0"
+         xlinkHref="#g3523"
+         id="use3529" />
+    </clipPath>
+  </defs>
+  <g
+     inkscapeLabel="Layer 1"
+     inkscapeGroupmode="layer"
+     id="layer1">
+    <g
+       id="g3525"
+       clip-path="url(#clipPath3527)"
+       transform="matrix(0.82894737,0,0,1,22,7.8064516)"
+       style="display:inline;fill:#d40000">
+      <g
+         inkscapeLabel="Clip"
+         id="g3523"
+         style="fill:#d40000">
+        <rect
+           style="fill:#d40000;fill-opacity:1;stroke-width:0.264583"
+           id="rect555"
+           width="242.70969"
+           height="219.99998"
+           x="-26.967741"
+           y="-7.4516129" />
+      </g>
+    </g>
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke-width:0.353792"
+       id="rect3585"
+       width="180"
+       height="180"
+       x="10"
+       y="10" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke-width:0.252678"
+       id="rect3639"
+       width="100"
+       height="244.12903"
+       x="50"
+       y="-14.903226" />
+    <text
+       xmlSpace="preserve"
+       style="font-size:110.69px;fill:#003c81;fill-opacity:1;stroke-width:0.576509"
+       x="22.307413"
+       y="140.67676"
+       id="text3697"><tspan
+         sodipodiRole="line"
+         id="tspan3695"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:110.69px;font-family:Arial;-inkscape-font-specification:Arial;fill:#003c81;fill-opacity:1;stroke-width:0.576509"
+         x="22.307413"
+         y="140.67676">RE</tspan></text>
+  </g>
+</svg>

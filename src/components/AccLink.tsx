@@ -3,14 +3,14 @@ import { NavLink } from 'react-router-dom';
 import jwtDecode from 'jwt-decode';
 
 import './../styles/Header.scss';
-import { setSelectedFunction } from '../features/testForm/testFormSlice';
-import { setNotificationText } from '../features/global/globalSlice';
+import { setUserToken } from '../features/global/globalSlice';
 import { useState } from 'react';
+import { IDecodedUserToken } from '../models/objectModels';
 
 export function AccLink() {
-  const storedUser = localStorage.getItem('userToken');
-  let decoded: any = undefined;
-  if (storedUser) decoded = jwtDecode(storedUser);
+  const userToken = useAppSelector((state) => state.global.userToken);
+  let decoded: IDecodedUserToken | undefined = undefined;
+  if (userToken) decoded = jwtDecode(userToken);
   const [isNavListOpen, setIsNavListOpen] = useState<boolean>(false);
   const username = decoded?.nickname || localStorage.getItem('genUserNickname');
   const dispatch = useAppDispatch();
@@ -33,6 +33,8 @@ export function AccLink() {
             <li
               onClick={() => {
                 localStorage.removeItem('userToken');
+                console.log(`AccLink click set empty`);
+                dispatch(setUserToken(''));
               }}>
               <NavLink to="/">Exit</NavLink>
             </li>

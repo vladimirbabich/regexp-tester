@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useAppDispatch } from '../app/hooks';
 import { setIsTestOver } from '../features/testForm/testFormSlice';
-import './../App.scss';
+import './../styles/Timer.scss';
 function getFormattedTime(timestamp: number) {
   if (timestamp < 0) timestamp = 0;
   const date = new Date(timestamp * 1000);
@@ -37,10 +37,7 @@ export default function Timer({
   setTimeAmount,
   isCountDown,
 }: TimerProps) {
-  //   const [timeAmount, setTimeAmount] = useState<number>(5); //300sec
-  const [startTime, setStartTime] = useState<number | undefined>(undefined);
   const dispatch = useAppDispatch();
-  //   let startTime: undefined | number = undefined;
   useEffect(() => {
     let timeInterval: NodeJS.Timer | undefined = undefined;
     if (!isTimerActive) {
@@ -52,14 +49,14 @@ export default function Timer({
       return;
     }
     timeInterval = setInterval(() => {
-      console.warn(1);
+      // console.warn(1);
       const timerTick = isCountDown ? -1 : 1;
       setTimeAmount((prev) => (prev += timerTick));
     }, 1000);
     return () => {
       clearInterval(timeInterval);
     };
-  }, [isTimerActive, isCountDown]);
+  }, [setTimeAmount, isTimerActive, isCountDown]);
 
   useEffect(() => {
     if (isCountDown && timeAmount < 1) {
@@ -70,11 +67,13 @@ export default function Timer({
 
   return (
     <div
+      className="timerBlock"
       onClick={(e) => {
         // console.log('ok');
         // if (timeAmount > 0) setIsTimerActive(!isTimerActive);
       }}>
-      Time{isCountDown && ' left'}: {getFormattedTime(timeAmount)}
+      <span>Time{isCountDown && ' left'}:</span>
+      <span>{getFormattedTime(timeAmount)}</span>
     </div>
   );
 }

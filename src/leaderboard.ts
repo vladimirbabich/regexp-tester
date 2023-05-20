@@ -1,4 +1,4 @@
-import { IRecordData, IRecordData2 } from './Models';
+import { IRecordData, IRecordData2 } from './models/objectModels';
 
 const testData: IRecordData = {
   min5: [

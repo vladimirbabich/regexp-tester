@@ -1,19 +1,20 @@
-import { MouseEvent, useEffect, useRef, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { useEffect, useRef } from 'react';
+import { useAppDispatch } from '../app/hooks';
 import { setNotificationText } from '../features/global/globalSlice';
-import { LocalStorageController } from '../StorageController';
+import { LocalStorageController } from '../controllers/StorageController';
 import './../styles/LeaderboardTable.scss';
-import Notification from './Notification';
+import { ILeaderboardTable } from '../models/componentModels';
+import { ITestResult } from '../models/objectModels';
 
-interface ILeaderboardTable {
-  data: Object;
-  setLimit: React.Dispatch<React.SetStateAction<number>>;
+if (navigator.userAgent.includes('Firefox')) {
+  require('./../styles/FirefoxSpecificLeaderboardTable.scss');
 }
+
 export default function LeaderboardTable({
   data,
   setLimit,
   dataOnServerCount,
-}: any) {
+}: ILeaderboardTable) {
   const USERNAME_MAX_LENGTH = 9;
   const columnNames = [
     '#',
@@ -27,18 +28,17 @@ export default function LeaderboardTable({
     'SD',
   ];
   const columnDescriptions = [
-    ,
-    ,
-    ,
-    ,
-    ,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
     'Number of answered questions',
     'Average difficulty of answered questions',
     'Number of skipped questions',
     'Average difficulty of skipped questions',
   ];
 
-  const subColumnNames = ['count', 'avg diff'];
   const localStorageController = new LocalStorageController();
   const userNickname = localStorageController.getUsersKey('nickname');
   const dispatch = useAppDispatch();
@@ -50,8 +50,8 @@ export default function LeaderboardTable({
     const todayMillis = Date.parse(new Date().toString());
     var diffMillis = Math.abs(dateMillis - todayMillis);
     var diffDays = Math.ceil(diffMillis / (1000 * 60 * 60 * 24));
-    // if (diffDays == 0) return 'today';
-    if (diffDays <= 2) return 'yesterday';
+    if (diffDays <= 1) return 'today';
+    if (diffDays <= 2) return 'yesteday';
     if (diffDays < 32) return `${diffDays} day's ago`;
     return `${Math.floor(diffDays / 31)} month's ago`;
   }
@@ -59,14 +59,15 @@ export default function LeaderboardTable({
   function getModifiedTimeSpent(str: string) {
     const time = new Date(parseInt(str) * 1000).toISOString().slice(11, 19);
     const [hours, minutes, seconds] = time.split(':');
-    if (hours != '00') return `${hours}:${minutes}:${seconds}`;
-    if (minutes != '00') return `${minutes}:${seconds}`;
+    if (hours !== '00') return `${hours}:${minutes}:${seconds}`;
+    if (minutes !== '00') return `${minutes}:${seconds}`;
     return `${
       seconds.startsWith('0') ? seconds.replace('0', '') : seconds
     } sec.`;
   }
 
   useEffect(() => {
+    const currentLastRowRef = lastRowRef.current;
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -86,13 +87,13 @@ export default function LeaderboardTable({
       }
     );
 
-    if (lastRowRef.current) {
-      observer.observe(lastRowRef.current);
+    if (currentLastRowRef) {
+      observer.observe(currentLastRowRef);
     }
 
     return () => {
-      if (lastRowRef.current) {
-        observer.unobserve(lastRowRef.current);
+      if (currentLastRowRef) {
+        observer.unobserve(currentLastRowRef);
       }
     };
   }, [lastRowRef, data]);
@@ -126,11 +127,11 @@ export default function LeaderboardTable({
             </tr>
           </thead>
           <tbody>
-            {data.map((record: any, index: number) => {
+            {data.map((record: ITestResult, index: number) => {
               return (
                 <tr
                   className={
-                    record.username == userNickname
+                    record.username === userNickname
                       ? 'layoutedTR recordOwner'
                       : 'layoutedTR'
                   }

@@ -3,7 +3,6 @@ import globalSlice from '../features/global/globalSlice';
 import testFormSlice from '../features/testForm/testFormSlice';
 import testInputSlice from '../features/testInput/testInputSlice';
 import { apiSlice } from '../features/api/apiSlice';
-import { setupListeners } from '@reduxjs/toolkit/query';
 const store = configureStore({
   reducer: {
     global: globalSlice,

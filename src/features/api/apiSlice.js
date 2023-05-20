@@ -1,11 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-// import type { Pokemon } from './types'
+const apiBaseUrl = 'http://192.168.0.11:7000/api/';
 
 // Define a service using a base URL and expected endpoints
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:7000/api/',
+    baseUrl: apiBaseUrl,
     prepareHeaders: (headers, { getState }) => {
       // Read the token from localStorage
       const token = localStorage.getItem('userToken');

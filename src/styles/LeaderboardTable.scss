@@ -1,4 +1,5 @@
 @use './../styles/colors';
+@use './../styles/sizes';
 
 table.leaderboardTable {
   // border: 2px solid black;
@@ -116,5 +117,44 @@ span.notificationTip {
 
   &::-webkit-scrollbar-track {
     background: colors.$mainBgColor;
+  }
+}
+
+@media (max-width: sizes.$mobileMax) {
+  #tableWrapper {
+    align-self: center;
+    position: relative;
+    overflow-x: auto;
+    overflow-y: auto;
+    width: fit-content;
+    max-width: 100%;
+  }
+  table.leaderboardTable {
+    box-sizing: content-box;
+    max-width: 100%;
+
+    th {
+      font-size: 0.8em;
+    }
+  }
+}
+@media (min-width: sizes.$tabletMin) and (max-width: sizes.$tabletMax) {
+  #tableWrapper {
+    align-self: center;
+    position: relative;
+    overflow-x: auto;
+    overflow-y: auto;
+    width: fit-content;
+    max-width: 100%;
+  }
+}
+@media (min-width: sizes.$laptopMin) and (max-width: sizes.$appWidth) {
+  #tableWrapper {
+    // align-self: center;
+    position: relative;
+    overflow-x: auto;
+    overflow-y: auto;
+    width: fit-content;
+    max-width: 100%;
   }
 }

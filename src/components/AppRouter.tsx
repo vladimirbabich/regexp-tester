@@ -18,8 +18,8 @@ export default function AppRouter() {
           {/* <TestForm mode="min5" title="min5" /> */}
           {/* Test your RegExp knowledge! */}
           {/* <TestForm mode="all" title="all" /> */}
-          <TestForm mode="flags" title="only flags" />
-          <Leaderboard title="Leaderboard" mode={activeMode}></Leaderboard>
+          <TestForm mode="flags" title="Only flags" />
+          <Leaderboard mode={activeMode}></Leaderboard>
         </>
       ),
     },
@@ -27,23 +27,49 @@ export default function AppRouter() {
 
   const testFormRoutes = [
     {
-      path: '/all',
-      key: '/all',
-      element: <TestForm mode="all" title="allQuestions" />,
+      path: '/all-questions',
+      key: '/all-questions',
+      element: (
+        <TestForm
+          mode="all-questions"
+          title={`Complete as many tasks as you can.\nWrite a regular expression to get the expected result.`}
+        />
+      ),
     },
-    { path: '/', key: '/', element: <TestForm mode="min5" title="min5" /> },
     {
-      path: '/flags',
-      key: '/flags',
-      element: <TestForm mode="flags" title="flags" />,
+      path: '/',
+      key: '/',
+      element: (
+        <TestForm
+          mode="minutes-5"
+          title={`Complete as many tasks as you can in five minutes.\nWrite a regular expression to get the expected result.`}
+        />
+      ),
     },
+    {
+      path: '/minutes-5',
+      key: '/minutes-5',
+      element: (
+        <TestForm
+          mode="minutes-5"
+          title={
+            'Complete as many tasks as you can in five minutes.\nWrite a regular expression to get the expected result.'
+          }
+        />
+      ),
+    },
+    // { - will add if create 30+ questions
+    //   path: '/only-flags',
+    //   key: '/only-flags',
+    //   element: <TestForm mode="only-flags" title="flags" />,
+    // },
   ];
 
   const routes = [
     {
       path: '/leaderboard',
       key: '/leaderboard',
-      element: <Leaderboard title="Leaderboard" mode={activeMode} />,
+      element: <Leaderboard mode={activeMode} />,
     },
     {
       path: '/results',

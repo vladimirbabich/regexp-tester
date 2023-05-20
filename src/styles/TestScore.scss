@@ -1,4 +1,5 @@
 @use './../styles/colors';
+@use './../styles/sizes';
 div.testScore {
   margin-top: 5px;
   background-color: rgba(255, 255, 255, 0.9);
@@ -32,15 +33,17 @@ div.testScore {
     flex-direction: row;
     justify-content: space-between;
     color: colors.$linkColor;
-    * {
+    a.link,
+    span.link {
       display: block;
       border: 1px colors.$layoutBgColor solid;
-      color: 1px colors.$layoutBgColor solid;
+      color: colors.$mainBgColor;
       background-color: colors.$layoutBgColor;
       font-size: 14px;
       text-align: center;
       padding: 5px;
       text-decoration: none;
+      -webkit-text-decoration: none;
       cursor: pointer;
       margin-left: 3px;
       border-radius: 5px;
@@ -51,6 +54,12 @@ div.testScore {
         color: colors.$layoutBgColor;
         background-color: colors.$mainBgColor;
       }
+    }
+    a.btnDisabled,
+    span.btnDisabled {
+      pointer-events: none;
+      background-color: rgba(72, 126, 243, 0.281);
+      cursor: default;
     }
     *:first-child {
       margin-left: 0px;
@@ -67,9 +76,22 @@ div.testScore {
       border: 1px solid colors.$layoutBgColor;
       margin-left: 3px;
       width: 100px;
-      // &:hover {
-      //   text-decoration: none;
-      // }
+    }
+  }
+}
+
+@media (max-width: sizes.$mobileMax) {
+  div.testScore {
+    max-width: 90%;
+    //
+    * {
+      font-size: 0.9rem;
+    }
+  }
+  div.rowHandlers {
+    a.link,
+    span.link {
+      font-size: 0.8rem;
     }
   }
 }

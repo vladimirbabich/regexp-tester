@@ -30,15 +30,7 @@ export interface IDropDownPickerList {
   description: string;
   status: boolean;
 }
-export type DropDownPickerFlagsPropsType = {
-  isMultiple: boolean;
-  children: string;
-};
-export type TestInputProps = {
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  value: string;
-  mode?: string;
-};
+
 export interface IQuestion {
   text: string;
   expectedResult: string;
@@ -107,3 +99,26 @@ export interface ITestData {
   skippedAmount: number;
   timeSpent?: number;
 }
+
+export interface IDecodedUserToken {
+  id: number;
+  nickname: string;
+  iat: number;
+  exp: number;
+}
+
+export type AskedQuestion = {
+  difficulty: number;
+  expectedResult: string;
+  functionName: string;
+  id: number;
+  possibleAnswer: string;
+  task: string;
+  text: string;
+  userAnswer?: string;
+};
+export type handleChangeInputParamsType = (
+  ref1: React.MutableRefObject<HTMLInputElement | undefined>,
+  ref2: React.MutableRefObject<HTMLInputElement | undefined>,
+  btnSetter: React.Dispatch<React.SetStateAction<boolean>>
+) => void;

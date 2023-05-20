@@ -1,15 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { DropDownPickerFlagsPropsType } from '../Models';
 import './../App.scss';
 import './../styles/DropDownPicker.scss';
-import store from '../app/store';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { updateFlag } from '../features/testForm/testFormSlice';
 import { getFlagsString } from '../utils';
+import { IDropDownPicker } from '../models/componentModels';
 export default function DropDownPicker({
   isMultiple,
   children,
-}: DropDownPickerFlagsPropsType) {
+}: IDropDownPicker) {
   const [isOpen, setIsOpen] = useState(false);
   const flags = useAppSelector((state) => state.testForm.flags);
   const isTestOver = useAppSelector((state) => state.testForm.isTestOver);
@@ -17,11 +16,12 @@ export default function DropDownPicker({
 
   if (isTestOver && isOpen) setIsOpen(false);
 
-  const handleClickOption = (
-    e: React.MouseEvent<HTMLOptionElement, MouseEvent>
-  ) => {
-    const optionValue: string = (e.target as HTMLInputElement).value;
-    dispatch(updateFlag(optionValue));
+  const handleClickLi = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+    const liValue = (e.target as HTMLLIElement).getAttribute('data-value');
+    console.log(e.target);
+    console.log(e.target as HTMLLIElement);
+    console.log(liValue);
+    dispatch(updateFlag(liValue));
   };
 
   const handleClickSelectActivator = (
@@ -31,15 +31,13 @@ export default function DropDownPicker({
     setIsOpen(!isOpen);
   };
 
-  const wrapperRef = useRef<any>(null);
+  const wrapperRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     //close flagsBlock if click outside of dropdownpicker
-    function handleClickOutside(event: any) {
-      // console.log(wrapperRef.current);
-      // console.log(event.target.className);
-      // console.log(event.target.className.indexOf('flagsHint') > -1);
+    function handleClickOutside(event: MouseEvent) {
       if (
         wrapperRef.current &&
+        event.target instanceof Node &&
         !wrapperRef.current.contains(event.target)
       ) {
         setIsOpen(false);
@@ -54,6 +52,12 @@ export default function DropDownPicker({
   useEffect(() => {
     // console.log(isOpen);
   }, [isOpen]);
+  // const options = [
+  //   { value: 'chocolate', label: 'Chocolate' },
+  //   { value: 'strawberry', label: 'Strawberry' },
+  //   { value: 'vanilla', label: 'Vanilla' },
+  // ];
+  // return <ReactSelect isMulti options={options} />;
 
   return (
     <div ref={wrapperRef}>
@@ -62,7 +66,12 @@ export default function DropDownPicker({
           className="flagsHint"
           onClick={() => setIsOpen(!isOpen)}
           style={{
-            display: getFlagsString(flags).length > 0 ? 'none' : 'block',
+            display:
+              window.innerWidth > 670
+                ? getFlagsString(flags).length > 0
+                  ? 'none'
+                  : 'block'
+                : 'none',
           }}>
           Select flags:
         </span>
@@ -80,20 +89,20 @@ export default function DropDownPicker({
         </button>
       </div>
       {isOpen && (
-        <select className="flagsBlock" id="flagsSelect" multiple={isMultiple}>
+        <ul className="flagsBlock" id="flagsSelect">
           {flags.map((el) => {
             return (
-              <option
-                value={el.name}
-                id="flagsOption"
+              <li
+                data-value={el.name}
+                className="flagsOption"
                 key={el.name}
-                onClick={(e) => handleClickOption(e)}>
+                onClick={(e) => handleClickLi(e)}>
                 {el.name} ({'description' in el && el.description})
                 {el.status && '\u2713'}
-              </option>
+              </li>
             );
           })}
-        </select>
+        </ul>
       )}
     </div>
   );

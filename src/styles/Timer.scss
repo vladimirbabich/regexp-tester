@@ -1,0 +1,12 @@
+@use './../styles/colors';
+@use './../styles/sizes';
+.timerBlock {
+  display: flex;
+  flex-direction: row;
+}
+
+@media (max-width: sizes.$mobileMax) {
+  .timerBlock {
+    // flex-direction: column;
+  }
+}

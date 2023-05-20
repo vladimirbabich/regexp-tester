@@ -1,44 +1,17 @@
-import { useEffect, useState } from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './../styles/Header.scss';
-import { AccLink } from './AccLink';
-import { SignLink } from './SignLink';
-
+import Navigation from './Navigation';
+import logo from './../static/reLogoHeader.svg';
 export default function Header() {
-  const [userToken, setUserToken] = useState<string | null>(
-    localStorage.getItem('userToken')
-  );
-  // console.log(userToken);
-  useEffect(() => {
-    const storedToken = localStorage.getItem('userToken');
-    if (userToken != storedToken) setUserToken(storedToken);
-  });
+  function handleLogoClick(e: React.MouseEvent) {
+    console.log(123);
+  }
   return (
     <header className="header">
-      <Link to="/" className="logo">
-        RegExp TESTER
+      <Link to="/" className="linkLogo">
+        <img src={logo} alt="REtester" onClick={handleLogoClick}></img>
       </Link>
-      <div className="navigation">
-        {/* <NavLink className="link testStuff" to="/test">
-          TEST!!!
-        </NavLink>
-        <NavLink className="link testStuff" to="/results">
-          results
-        </NavLink> */}
-        <NavLink className="link" to="/all">
-          All questions
-        </NavLink>
-        <NavLink className="link" to="/">
-          5 minutes test
-        </NavLink>
-        <NavLink className="link" to="/flags">
-          Flags test
-        </NavLink>
-        <NavLink className="link" to="/leaderboard">
-          Leaderboard
-        </NavLink>
-        {userToken ? <AccLink /> : <SignLink />}
-      </div>
+      <Navigation className="menuList" />
     </header>
   );
 }

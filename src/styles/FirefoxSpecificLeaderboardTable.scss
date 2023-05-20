@@ -1,0 +1,14 @@
+@use './../styles/colors';
+@use './../styles/sizes';
+
+table.leaderboardTable {
+  border-collapse: separate;
+  border-spacing: 0;
+  > thead tr.layoutedTR,
+  > tbody tr.layoutedTR {
+    border-bottom: 0;
+    th {
+      border-bottom: 1px solid black;
+    }
+  }
+}

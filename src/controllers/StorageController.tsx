@@ -1,5 +1,5 @@
 import jwtDecode from 'jwt-decode';
-import { IUserToken } from './Models';
+import { IUserToken } from '../models/objectModels';
 export class LocalStorageController {
   removeGenUser() {
     localStorage.removeItem('genUserId');
@@ -14,8 +14,13 @@ export class LocalStorageController {
       else return -1;
     }
     const camelCaseKey = key.charAt(0).toUpperCase() + key.slice(1);
+    // for (let el in localStorage) {
+    //   alert(el + ' ' + localStorage[el]);
+    // }
+
     const genUserKey = localStorage.getItem(`genUser${camelCaseKey}`);
-    if (genUserKey && genUserKey != '-1') return genUserKey;
-    return -1;
+    // alert(`genKey:${genUserKey}`);
+    if (genUserKey && genUserKey !== '-1') return genUserKey;
+    return -2;
   }
 }

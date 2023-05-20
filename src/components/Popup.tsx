@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
 import './../App.scss';
 import './../styles/Popup.scss';
+
 export default function Popup() {
   return (
     <div className="popup">
-    <span className="popupText">Great!</span>
+      <span className="popupText">Great!</span>
       <span className="star LT">★</span>
       <span className="star T">★</span>
       <span className="star RT">★</span>

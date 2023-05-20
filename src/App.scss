@@ -1,4 +1,4 @@
-// $linkColor: rgb(72, 126, 243);
+@use './styles/sizes';
 $hoverColor: #00d5cb;
 $hintColor: grey;
 $mainBgColor: rgb(255, 255, 255);
@@ -15,6 +15,7 @@ body {
   margin: 0;
   padding: 0;
   height: 100vh;
+  overflow-x: hidden;
   * {
     box-sizing: border-box;
   }
@@ -31,7 +32,7 @@ div.global {
   overflow: visible;
 }
 div.app {
-  width: 970px;
+  width: sizes.$appWidth;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -41,8 +42,6 @@ div.app {
   * {
     box-sizing: border-box;
     font-size: 18px;
-    // margin: 0;
-    // padding: 0;
   }
 }
 div.main {
@@ -68,9 +67,12 @@ div.content {
 }
 
 h1.h1Title {
+  width: 70%;
+  font-weight: 600;
+  margin: auto;
   text-align: center;
-  margin-top: 10;
-  margin-bottom: 0px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 button.formBtn {
   background-color: $layoutBgColor;
@@ -79,6 +81,7 @@ button.formBtn {
   border: 1px solid $layoutBgColor;
   border-radius: 4px;
   margin-top: 3px;
+  margin-left: 2px;
   &:hover {
     background-color: $linkColor;
     color: $layoutBgColor;
@@ -94,5 +97,21 @@ button.formBtn {
   &:disabled:hover {
     background-color: $disabledColor;
     color: $linkColor;
+  }
+}
+
+@media (max-width: sizes.$mobileMax) {
+  div.app {
+    width: 100%;
+  }
+}
+@media (min-width: sizes.$tabletMin) and (max-width: sizes.$tabletMax) {
+  div.app {
+    width: 100%;
+  }
+}
+@media (min-width: sizes.$laptopMin) and (max-width: sizes.$appWidth) {
+  div.app {
+    width: 100%;
   }
 }

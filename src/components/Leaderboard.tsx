@@ -77,10 +77,10 @@ export default function Leaderboard({
       id: 'minutes-5',
       label: '5 minutes',
     },
-    {
-      id: 'only-flags',
-      label: 'Only flags',
-    },
+    // {
+    //   id: 'only-flags',
+    //   label: 'Only flags',
+    // },
   ];
 
   return (

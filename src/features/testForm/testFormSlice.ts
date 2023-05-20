@@ -39,7 +39,7 @@ const initialState: InitialState = {
   selectedFunction: 'match',
   isTestOver: false,
   askedQuestions: [],
-  activeMode: 'only-flags',
+  activeMode: 'all-questions',
 };
 
 const testFormSlice = createSlice({

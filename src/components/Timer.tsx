@@ -72,7 +72,7 @@ export default function Timer({
         // console.log('ok');
         // if (timeAmount > 0) setIsTimerActive(!isTimerActive);
       }}>
-      <span>Time{isCountDown && ' left'}:</span>
+      <span>Time{isCountDown && ' left'}: </span>
       <span>{getFormattedTime(timeAmount)}</span>
     </div>
   );

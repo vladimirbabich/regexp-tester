@@ -71,6 +71,7 @@ export default function SignUp({
             currentPass.className = 'wrongInput';
             setPassErrorText(response.data.passError);
           } else {
+            console.log(response.data);
             if (!response.data.token) {
               setNickErrorText('Problem with registration, try later please');
               return;

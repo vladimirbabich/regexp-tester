@@ -14,7 +14,8 @@ import Notification from './components/Notification';
 import { setIsTestOver } from './features/testForm/testFormSlice';
 import AppRouter from './components/AppRouter';
 import checkAuthToken from './controllers/AuthorizationController';
-
+//test git
+//test git2
 function App() {
   //should be only if not
   const [generateUser] = apiSlice.endpoints.getUniqueNickname.useLazyQuery();

@@ -388,16 +388,15 @@ export default function TestForm({ title, mode }: ITestForm) {
   if (questionsDBError) {
     return <h1 className="h1Title">Connection problem! try later please</h1>;
   }
-  console.log(currentQuestion?.text);
   const splitedTitle = title.split('\n');
   return (
     <>
       <h1 className="h1Title">
-        {splitedTitle.map((line) => (
-          <>
+        {splitedTitle.map((line, id) => (
+          <span key={id}>
             {line}
             <br />
-          </>
+          </span>
         ))}
       </h1>
       <form className="testForm">

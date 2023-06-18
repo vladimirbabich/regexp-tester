@@ -1,15 +1,6 @@
 @use './styles/sizes';
-$hoverColor: #00d5cb;
-$hintColor: grey;
-$mainBgColor: rgb(255, 255, 255);
-$linkColor: rgb(255, 255, 255);
-$activeColor: rgb(2, 44, 136);
-$focusColor: rgb(197, 0, 33);
-$disabledColor: rgba(72, 126, 243, 0.281);
-$layoutBgColor: #003c81;
+@use './styles/colors';
 
-//layout
-$headerHeight: 57px;
 body {
   background-color: rgb(34, 34, 34);
   margin: 0;
@@ -53,7 +44,7 @@ div.main {
   padding: 0;
   min-height: 100vh;
   overflow: hidden;
-  background-color: $mainBgColor;
+  background-color: colors.$mainBgColor;
   //
 
   display: 'flex';
@@ -75,28 +66,28 @@ h1.h1Title {
   margin-bottom: 10px;
 }
 button.formBtn {
-  background-color: $layoutBgColor;
-  color: $linkColor;
+  background-color: colors.$layoutBgColor;
+  color: colors.$linkColor;
   padding: 5px;
-  border: 1px solid $layoutBgColor;
+  border: 1px solid colors.$layoutBgColor;
   border-radius: 4px;
   margin-top: 3px;
   margin-left: 2px;
   &:hover {
-    background-color: $linkColor;
-    color: $layoutBgColor;
+    background-color: colors.$linkColor;
+    color: colors.$layoutBgColor;
     cursor: pointer;
   }
   &:active {
-    background-color: $activeColor;
+    background-color: colors.$activeColor;
   }
   &:disabled {
-    background-color: $disabledColor;
+    background-color: colors.$disabledColor;
     cursor: default;
   }
   &:disabled:hover {
-    background-color: $disabledColor;
-    color: $linkColor;
+    background-color: colors.$disabledColor;
+    color: colors.$linkColor;
   }
 }
 

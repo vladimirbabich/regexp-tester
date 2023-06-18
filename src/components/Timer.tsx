@@ -9,17 +9,18 @@ function getFormattedTime(timestamp: number) {
   const hours = date.getHours() + offsetHours;
   const minutes = '0' + date.getMinutes();
   const seconds = '0' + date.getSeconds();
-
   if (hours === 0)
     return `${minutes.substring(
       minutes.length - 2,
       minutes.length
     )}:${seconds.substring(seconds.length - 2, seconds.length)}`;
-  else
+  else {
+    console.log('g2');
     return `${hours}:${minutes.substring(
       minutes.length - 2,
       minutes.length
     )}:${seconds.substring(seconds.length - 2, seconds.length)}`;
+  }
 }
 
 type TimerProps = {
@@ -69,11 +70,10 @@ export default function Timer({
     <div
       className="timerBlock"
       onClick={(e) => {
-        // console.log('ok');
         // if (timeAmount > 0) setIsTimerActive(!isTimerActive);
       }}>
-      <span>Time{isCountDown && ' left'}: </span>
-      <span>{getFormattedTime(timeAmount)}</span>
+      <span>Time{isCountDown && ' left'}:</span>
+      <span style={{ marginLeft: '2px' }}>{getFormattedTime(timeAmount)}</span>
     </div>
   );
 }

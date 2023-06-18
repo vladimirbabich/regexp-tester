@@ -1,3 +1,5 @@
+import { SerializedError } from '@reduxjs/toolkit';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 import { MutableRefObject } from 'react';
 
 export interface ITestResult {
@@ -11,6 +13,20 @@ export interface ITestResult {
   skpDiff: string;
   username: string;
   version: string;
+}
+export interface IQuizResult {
+  id: number;
+  timeSpent: string;
+  createdAt: string;
+  score: number;
+  quizId: number;
+  userId: number;
+  username: string;
+}
+export interface ILeaderboardColumnSetting {
+  name: string;
+  description: string | undefined;
+  attribute: string;
 }
 export interface IUserToken {
   id: number;
@@ -46,58 +62,11 @@ export interface IResultMatch {
   isUnique: boolean;
   isTest?: boolean;
 }
-export interface IRecordData {
-  // [key: string]: ITestData[];
-  all: IAllData[];
-  min5: IMin5Data[];
-  flags: INoflagsData[];
-}
 
-export interface IRecordData2 {
-  all: IAllData[];
-  min5: IMin5Data2[];
-  flags: INoflagsData[];
-}
-
-export interface IMin5Data {
-  id: number;
-  userName: string;
-  solvedAmount: number;
-  skippedAmount: number;
-}
-export interface IMin5Data2 {
-  id: number;
-  userName: string;
-  solvedAmount: number;
-  skippedAmount: number;
-  field1: number;
-  field2: number;
-  field3: number;
-  field4: number;
-  field5: number;
-  field6: number;
-}
-export interface IAllData {
-  id: number;
-  userName: string;
-  solvedAmount: number;
-  skippedAmount: number;
-  timeSpent: number;
-}
-export interface INoflagsData {
-  id: number;
-  userName: string;
-  solvedAmount: number;
-  skippedAmount: number;
-  timeSpent: number;
-}
-
-export interface ITestData {
-  id: number;
-  userName: string;
-  solvedAmount: number;
-  skippedAmount: number;
-  timeSpent?: number;
+export interface ILeaderboardFetchInfo {
+  activeMode: string;
+  error?: FetchBaseQueryError | SerializedError | undefined;
+  isDataLoading: boolean;
 }
 
 export interface IDecodedUserToken {
@@ -122,3 +91,31 @@ export type handleChangeInputParamsType = (
   ref2: React.MutableRefObject<HTMLInputElement | undefined>,
   btnSetter: React.Dispatch<React.SetStateAction<boolean>>
 ) => void;
+
+export type QuizQuestion = {
+  question: string;
+  options: string;
+  answers: string;
+  difficulty: number;
+  userAnswer?: Array<string>;
+};
+export type PreparedQuizQuestion = {
+  question: string;
+  allOptions: string[];
+  difficulty: number;
+  ansCount: number;
+};
+
+export enum Colors {
+  RED = 'rgb(255 164 163)',
+  BGRED = 'rgb(255 164 163 / 5%)',
+  GREEN = 'rgb(178 235 167)',
+  BGGREEN = 'rgb(178 235 167 / 5%)',
+  YELLOW = 'rgb(241 241 149)',
+  BGYELLOW = 'rgb(241 241 149 / 5%)',
+}
+
+export type QuizResultOption = {
+  option: string;
+  isSelected: boolean;
+};

@@ -1,12 +1,20 @@
 @use './../styles/colors';
 @use './../styles/sizes';
+.appOverlay {
+  background-color: rgba(0, 0, 0, 0.616);
+  z-index: 790;//big enough to hide all except header
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+}
 div.testScore {
-  margin-top: 5px;
   background-color: rgba(255, 255, 255, 0.9);
   width: 330px;
   transform: translate(-50%, -50%);
   left: 50%;
-  top: 25%;
+  top: 35%;
   position: absolute;
   border: 1px colors.$layoutBgColor solid;
   border-radius: 5px;
@@ -17,7 +25,6 @@ div.testScore {
   justify-content: space-between;
   span.title {
     display: flex;
-    margin-top: 5px;
     justify-content: center;
     align-items: center;
   }
@@ -28,7 +35,7 @@ div.testScore {
     justify-content: space-between;
   }
   div.rowHandlers {
-    margin-top: 3px;
+    margin-top: 9px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;

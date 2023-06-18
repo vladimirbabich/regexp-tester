@@ -8,6 +8,20 @@ div.questionBlock {
   margin-top: 20px;
   margin-right: 3px;
   flex-direction: row;
+  &:first-of-type {
+    margin-top: 10px;
+  }
+  .columns {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    .column {
+      display: flex;
+      flex-direction: column;
+      padding: 5px;
+      width: 50%;
+    }
+  }
   .row {
     display: flex;
     flex-direction: row;
@@ -22,59 +36,88 @@ div.questionBlock {
     border-bottom-left-radius: 3px;
     border-right: none;
   }
-  .questionCart {
+  .questionCard {
     width: 100%;
     border: 2px solid #b90404;
     border-radius: 5px;
+    flex-direction: column;
+    display: flex;
     border-top-left-radius: 0;
   }
+}
+p.task {
+  margin: 0;
+  text-align: left;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  // font-size: 0.9rem;
 }
 .textBlock {
   display: flex;
   width: 50%;
+  border: 3px solid red;
   flex-direction: column;
-  p.task {
-    margin: 0;
-    text-align: left;
-    font-size: 0.9rem;
-  }
-  textarea {
-    font-size: 20px;
-    margin-top: 7px;
-    resize: none;
-    padding: 3px 7px;
-    min-height: 10px;
-    overflow: hidden;
-    &:disabled {
-      border: 1px solid #222222;
-      background-color: colors.$mainBgColor;
-    }
+  & span {
+    word-wrap: break-word;
   }
 }
 .expectedBlock {
-  width: 50%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  span.value {
-    margin-left: 2px;
-    margin-top: 1px;
-    padding: 3px 7px;
-    background-color: colors.$mainBgColor;
-    border: 1px solid #222222;
+  span.key {
+    margin-top: 5px;
+    margin-bottom: 5px;
   }
-  span.value:first-child {
-    margin-left: 0;
+  .wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    flex-wrap: wrap;
+    margin-top: 3px;
+    padding: 0;
+    row-gap: 4px;
+    column-gap: 4px;
+    span.value {
+      padding: 3px 7px;
+      // height: 100%;
+      background-color: colors.$mainBgColor;
+      border: 1px solid colors.$layoutBgColor;
+      border-radius: 5px;
+      &:first-child {
+        margin-left: 0;
+      }
+    }
+    width: 98%;
   }
 }
 .answerBlock {
+  padding: 5px;
   .answerText {
     color: rgb(63, 0, 236);
   }
 }
 
 @media (max-width: sizes.$mobileMax) {
-  textarea {
-    background-color: red;
+  div.questionBlock {
+    .columns {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      .column {
+        width: 100%;
+      }
+    }
+  }
+
+  span.textBlock {
+    width: 90%;
+  }
+  .expectedBlock {
+    align-items: flex-start;
+    .wrapper {
+      justify-content: flex-start;
+    }
   }
 }

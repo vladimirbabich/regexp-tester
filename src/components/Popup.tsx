@@ -13,3 +13,4 @@ export default function Popup() {
     </div>
   );
 }
+//<span className="star shadow">★</span>

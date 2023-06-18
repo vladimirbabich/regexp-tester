@@ -9,6 +9,7 @@ div.testInput {
   justify-content: space-between;
   // align-items: center;
   button.startPtrn {
+    pointer-events: none;
     position: absolute;
     display: flex;
     color: colors.$layoutBgColor;
@@ -38,8 +39,6 @@ div.testInput {
     padding: 3px;
     padding-left: 30px;
     border-radius: 5px;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
     border: 1px solid colors.$layoutBgColor;
     &::placeholder {
       /* Chrome, Firefox, Opera, Safari 10.1+ */

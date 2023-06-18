@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAppSelector } from '../app/hooks';
-import { metaTageController } from '../controllers/MetaTagsController';
+import { metaTagsController } from '../controllers/MetaTagsController';
 import { handleChangeInputParamsType } from '../models/objectModels';
 import './../App.scss';
 import './../styles/SignPage.scss';
@@ -10,7 +10,7 @@ import SignUp from './SignUp';
 
 export default function SignPage() {
   useEffect(() => {
-    metaTageController.setTitle(`Sign page - Retester`);
+    metaTagsController.setTitle(`Sign page - Retester`);
   }, []);
 
   const [isSignUp, setIsSignUp] = useState(true);

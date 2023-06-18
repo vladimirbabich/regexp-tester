@@ -5,9 +5,10 @@ import Leaderboard from './Leaderboard';
 import SignPage from './SignPage';
 import { Stats } from './Stats';
 import TestForm from './TestForm';
+import QuizForm from './QuizForm';
 
 export default function AppRouter() {
-  const activeMode = useAppSelector((state) => state.testForm.activeMode);
+  const activeMode = useAppSelector((state) => state.global.activeMode);
 
   const privateRoutes = [
     {
@@ -26,6 +27,16 @@ export default function AppRouter() {
   ];
 
   const testFormRoutes = [
+    {
+      path: '/all-questions',
+      key: '/all-questions',
+      element: (
+        <TestForm
+          mode="all-questions"
+          title={`Complete as many tasks as you can.\nWrite a regular expression to get the expected result.`}
+        />
+      ),
+    },
     {
       path: '/all-questions',
       key: '/all-questions',
@@ -64,7 +75,13 @@ export default function AppRouter() {
     //   element: <TestForm mode="only-flags" title="flags" />,
     // },
   ];
-
+  const quizFormRoutes = [
+    {
+      path: '/quiz',
+      key: '/quiz',
+      element: <QuizForm mode={'quiz'}/>,
+    },
+  ];
   const routes = [
     {
       path: '/leaderboard',
@@ -102,6 +119,9 @@ export default function AppRouter() {
         <Route path={el.path} key={el.key} element={el.element}></Route>
       ))}
       {testFormRoutes.map((el) => (
+        <Route path={el.path} key={el.key} element={el.element}></Route>
+      ))}
+      {quizFormRoutes.map((el) => (
         <Route path={el.path} key={el.key} element={el.element}></Route>
       ))}
     </Routes>

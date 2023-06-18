@@ -1,0 +1,64 @@
+@use './../styles/colors';
+@use './../styles/sizes';
+
+.quizForm {
+  width: 75%;
+  display: flex;
+  align-self: center;
+  margin: auto;
+  margin-top: 3px;
+  border: 1px colors.$layoutBgColor solid;
+  border-radius: 5px;
+  padding: 10px;
+  flex-direction: column;
+  align-items: center;
+  .quizFormHeader {
+    width: 100%;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    .questionStatus {
+      display: flex;
+      flex-direction: row;
+    }
+  }
+  .quizFormBody {
+    width: 100%;
+    .question {
+      margin: 0;
+      margin-bottom: 10px;
+      user-select: none;
+      // width: 100px;
+      // background-color: yellow;
+    }
+    .quizBtn {
+      margin: auto;
+      width: 33%;
+    }
+  }
+}
+.options {
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  .option {
+    position: relative;
+    width: fit-content;
+    &:hover {
+      cursor: pointer;
+    }
+    input {
+      cursor: pointer;
+    }
+  }
+  margin: 3px;
+  user-select: none;
+  margin-left: 0;
+}
+
+@media (max-width: sizes.$mobileMax) {
+  .quizForm {
+    width: 99%;
+  }
+}

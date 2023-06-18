@@ -6,9 +6,12 @@ import './../styles/Header.scss';
 import { setUserToken } from '../features/global/globalSlice';
 import { useState } from 'react';
 import { IDecodedUserToken } from '../models/objectModels';
+import { LocalStorageController } from '../controllers/StorageController';
 
+const localStorageController = new LocalStorageController();
 export function AccLink() {
-  const userToken = useAppSelector((state) => state.global.userToken);
+  const userToken = localStorage.getItem('userToken');
+
   let decoded: IDecodedUserToken | undefined = undefined;
   if (userToken) decoded = jwtDecode(userToken);
   const [isNavListOpen, setIsNavListOpen] = useState<boolean>(false);

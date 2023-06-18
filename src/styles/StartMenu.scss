@@ -1,0 +1,44 @@
+@use './../styles/colors';
+@use './../styles/sizes';
+
+.appOverlay {
+  background-color: rgba(0, 0, 0, 0.616);
+  z-index: 790; //big enough to hide all except header
+  width: 100%;
+  position: absolute;
+  top: 0;
+  height: 100%;
+}
+.startMenu {
+  width: 500px;
+  background-color: rgba(255, 255, 255, 0.9);
+  transform: translate(-50%, -50%);
+  left: 50%;
+  top: 25%;
+  position: absolute;
+  margin: 0 auto;
+  border: 1px colors.$layoutBgColor solid;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  p {
+    margin: 8px;
+    text-align: center;
+  }
+  button.startBtn {
+    margin-bottom: 8px;
+    margin-top: 8px;
+  }
+}
+
+@media (max-width: sizes.$mobileMax) {
+  .startMenu {
+    width: 95%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+}

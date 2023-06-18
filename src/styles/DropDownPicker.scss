@@ -79,6 +79,8 @@ ul.flagsBlock {
 
 @media (max-width: sizes.$mobileMax) {
   span.flagsHint {
-    display: none;
+    // display: none;
+    // top: 33px;
+    font-size: 0.7em;
   }
 }

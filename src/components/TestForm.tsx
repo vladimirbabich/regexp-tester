@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './../App.scss';
 import './../styles/TestForm.scss';
 import Popup from './Popup';
@@ -10,7 +10,6 @@ import { getFlagsString } from '../utils';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import {
   resetFlags,
-  setActiveMode,
   setAskedQuestions,
   setCurrentQuestion,
   setIsTestOver,
@@ -18,6 +17,7 @@ import {
 } from '../features/testForm/testFormSlice';
 import TestScore from './TestScore';
 import {
+  setActiveMode,
   setDataOfTest,
   setNotificationText,
   setUserToken,
@@ -25,7 +25,9 @@ import {
 import { useGetAllQuestionsForModeQuery } from '../features/api/apiSlice';
 import { LocalStorageController } from '../controllers/StorageController';
 import { ITestForm } from '../models/componentModels';
-import { metaTageController } from '../controllers/MetaTagsController';
+import { metaTagsController } from '../controllers/MetaTagsController';
+import { restartTestSlice } from '../features/testForm/testFormSlice';
+import StartMenu from './StartMenu';
 
 const SKIP_ANIMATION_TIME_AMOUNT = 25; //seconds
 
@@ -87,8 +89,10 @@ export default function TestForm({ title, mode }: ITestForm) {
 
   const isTestOver = useAppSelector((state) => state.testForm.isTestOver);
   useEffect(() => {
-    metaTageController.setTitle(`Retester mode: ${mode}`);
+    metaTagsController.setTitle(`Retester mode: ${mode}`);
   }, []);
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   function getDefaultTimeAmount(mode: string) {
     return mode === 'all-questions' ? 0 : mode === 'only-flags' ? 60 : 300;
@@ -131,6 +135,11 @@ export default function TestForm({ title, mode }: ITestForm) {
   //   console.log('testStart:' + testStart.toString());
   // }, [testStart]);
 
+  function handleStartBtnClick() {
+    setIsTimerActive(true);
+    if (inputRef?.current) inputRef.current.focus();
+  }
+
   function prepareAndSendEndedTest() {
     if (!isTestOver) {
       dispatch(setIsTestOver(true));
@@ -155,9 +164,8 @@ export default function TestForm({ title, mode }: ITestForm) {
       // alert(userId);
       const formdata = {
         testQuestions,
-        timeSpent: Math.round(timeSpent).toString(), // ? how to get it in
-        //App.tsx to update global.dataOfTest and send on the server
-        modeName: mode, //?
+        timeSpent: timeSpent.toFixed(8),
+        modeName: mode,
         userId: typeof userId == 'number' ? userId : parseInt(userId),
       };
       console.log(formdata);
@@ -178,7 +186,6 @@ export default function TestForm({ title, mode }: ITestForm) {
   }
   useEffect(() => {
     updateResults();
-    // console.log(flags);
   }, [dispatch, flags, pattern, selectedFunction]);
 
   useEffect(() => {
@@ -232,18 +239,23 @@ export default function TestForm({ title, mode }: ITestForm) {
   }
 
   function updateResults() {
-    if (!isTimerActive) setIsTimerActive(true); //mb need to add "&&timeAmount>0"
+    // if (!isTimerActive) setIsTimerActive(true); //mb need to add "&&timeAmount>0"
     if (!currentQuestion) return;
     if (pattern.length === 0) {
       updateExpectedResult();
       if (userResult) setUserResult([]);
       return;
     }
+    const flagsString = getFlagsString(flags);
+    let cleanPattern = '';
+    let patternFlags = '';
+    if (pattern.includes('/'))
+      [cleanPattern, patternFlags] = pattern.split('/');
     const match: string | undefined = getResult(
       currentQuestion.text,
-      pattern,
       selectedFunction,
-      getFlagsString(flags)
+      cleanPattern || pattern,
+      patternFlags || flagsString
     );
     if (match) {
       updateUserResult(match);
@@ -267,8 +279,6 @@ export default function TestForm({ title, mode }: ITestForm) {
   }, [dispatch, userResult]);
 
   function setRandomQuestion() {
-    // console.log('questions!');
-    // console.log(questions);
     if (!questions) return;
 
     const randomIndex = Math.round(Math.random() * (questions.length - 1));
@@ -299,11 +309,11 @@ export default function TestForm({ title, mode }: ITestForm) {
       restartTest();
       setTestStart(new Date().getTime() / 1000);
     }
-    // console.log('isTestOver: ' + isTestOver);
   }, [dispatch, isTestOver]);
 
   useEffect(() => {
-    metaTageController.setTitle(`Retester mode: ${mode}`);
+    metaTagsController.setTitle(`Retester mode: ${mode}`);
+    setIsTimerActive(false);
     //restart test after mode change
     setPattern('');
 
@@ -313,10 +323,8 @@ export default function TestForm({ title, mode }: ITestForm) {
     restartTest();
     setTestStart(new Date().getTime() / 1000);
     if (isTestOver) {
-      console.log('isTestOver true');
       dispatch(setIsTestOver(false));
     }
-    setIsTimerActive(true);
   }, [mode]);
 
   useEffect(() => {
@@ -345,7 +353,6 @@ export default function TestForm({ title, mode }: ITestForm) {
       setSkipAnimationDuration(0);
       setIsActiveSkipAnimation(false);
       const timeout = setTimeout(() => {
-        // console.log("time");
         setIsRightAnswer(false);
       }, 1000);
       setRandomQuestion();
@@ -364,7 +371,7 @@ export default function TestForm({ title, mode }: ITestForm) {
     dispatch(setIsTestOver(true));
 
     dispatch(setCurrentQuestion(null));
-    dispatch(setAskedQuestions([...askedQuestions, { ...currentQuestion }]));
+    dispatch(setAskedQuestions([...askedQuestions]));
     setSkipAnimationDuration(0);
     setIsActiveSkipAnimation(false);
   }
@@ -382,184 +389,198 @@ export default function TestForm({ title, mode }: ITestForm) {
   const skippedQuestionsAmount = askedQuestions.filter((el) => {
     return 'userAnswer' in el ? 0 : 1;
   }).length;
+
   if (questionsDBIsLoading) {
     return <h1 className="h1Title">Loading...</h1>;
   }
   if (questionsDBError) {
     return <h1 className="h1Title">Connection problem! try later please</h1>;
   }
-  const splitedTitle = title.split('\n');
+
+  function handleRestartClick(e: React.MouseEvent) {
+    e.preventDefault();
+    dispatch(restartTestSlice());
+    setIsTimerActive(true);
+  }
+
   return (
-    <>
-      <h1 className="h1Title">
-        {splitedTitle.map((line, id) => (
-          <span key={id}>
-            {line}
-            <br />
-          </span>
-        ))}
-      </h1>
-      <form className="testForm">
-        {isTestOver && (
-          <TestScore
-            skippedAmount={skippedQuestionsAmount}
-            solvedAmount={
-              askedQuestions.length - skippedQuestionsAmount
-            }></TestScore>
-        )}
-        <div className="testInfo">
-          <Timer
-            timeAmount={timeAmount}
-            setTimeAmount={setTimeAmount}
-            isTimerActive={isTimerActive}
-            setIsTimerActive={setIsTimerActive}
-            isCountDown={mode === 'all-questions' ? false : true}></Timer>
-          {!(window.innerWidth < 670) && (
-            <p className="task">
-              {currentQuestion &&
-                currentQuestion.task.length > 0 &&
-                currentQuestion.task}
-            </p>
-          )}
-          <div className="infoBtns">
-            <span className="questionsCount">
-              <span
-                onMouseEnter={() => {
-                  dispatch(setNotificationText('Number of answered questions'));
-                }}
-                onMouseLeave={() => {
-                  dispatch(setNotificationText(''));
-                }}>
-                {askedQuestions.length - skippedQuestionsAmount}
-              </span>
-              (
-              <span
-                onMouseEnter={() => {
-                  dispatch(setNotificationText('Number of skipped questions'));
-                }}
-                onMouseLeave={() => {
-                  dispatch(setNotificationText(''));
-                }}>
-                {skippedQuestionsAmount}
-              </span>
-              )/
-              <span
-                style={{ display: 'inline-block' }}
-                onMouseEnter={() => {
-                  // console.log(questionsDB);
-                  dispatch(
-                    setNotificationText(
-                      `This test contains ${questionsDB?.questions?.length} questions`
-                    )
-                  );
-                }}
-                onMouseLeave={() => {
-                  dispatch(setNotificationText(''));
-                }}>
-                {questionsDB.questions?.length}
-              </span>
-            </span>
-            <button
-              onClick={handleClickSkip}
-              disabled={isTestOver}
-              className={
-                isActiveSkipAnimation && isTimerActive
-                  ? 'formBtn animated'
-                  : 'formBtn'
-              }>
-              Skip
-            </button>
-            <button
-              onClick={handleClickGiveUp}
-              disabled={isTestOver}
-              className="formBtn">
-              Give Up
-            </button>
-          </div>
-        </div>
-        {window.innerWidth < 670 && (
-          <p className="task">
+    <form className="testForm">
+      <div className="testInfo">
+        <Timer
+          timeAmount={timeAmount}
+          setTimeAmount={setTimeAmount}
+          isTimerActive={isTimerActive}
+          setIsTimerActive={setIsTimerActive}
+          isCountDown={mode === 'all-questions' ? false : true}></Timer>
+        {!(window.innerWidth < 880) && (
+          <h1 className="formTitle">
             {currentQuestion &&
               currentQuestion.task.length > 0 &&
               currentQuestion.task}
-          </p>
+          </h1>
         )}
-        <TestInput
-          value={pattern}
-          handleChange={handleChange}
-          mode={mode}></TestInput>
-        <span className="textBlock" role="textbox">
-          {currentQuestion?.text ? (
-            currentQuestion?.text
-              .split('\n')
-              .map((el, index) => <span key={index}>{el}</span>)
-          ) : (
-            <span>Error</span>
-          )}
-        </span>
-        <div className="results">
-          <div className="resultBlock">
-            <div className="resultLabel">Expected result</div>
-            <div className="wrapper">
-              {currentQuestion &&
-                expectedResult.map((el, i) => {
-                  let classes = 'matchElement';
-                  if (el.isUnique) classes += ' wrong';
+        <div className="infoBtns">
+          <span className="questionsCount">
+            <span
+              onMouseEnter={() => {
+                dispatch(setNotificationText('Number of answered questions'));
+              }}
+              onMouseLeave={() => {
+                dispatch(setNotificationText(''));
+              }}>
+              {askedQuestions.length - skippedQuestionsAmount}
+            </span>
+            (
+            <span
+              onMouseEnter={() => {
+                dispatch(setNotificationText('Number of skipped questions'));
+              }}
+              onMouseLeave={() => {
+                dispatch(setNotificationText(''));
+              }}>
+              {skippedQuestionsAmount}
+            </span>
+            )/
+            <span
+              style={{ display: 'inline-block' }}
+              onMouseEnter={() => {
+                dispatch(
+                  setNotificationText(
+                    `This test contains ${questionsDB?.questions?.length} questions`
+                  )
+                );
+              }}
+              onMouseLeave={() => {
+                dispatch(setNotificationText(''));
+              }}>
+              {questionsDB.questions?.length}
+            </span>
+          </span>
+          <button
+            onClick={handleClickSkip}
+            disabled={isTestOver}
+            className={
+              isActiveSkipAnimation && isTimerActive
+                ? 'formBtn animated'
+                : 'formBtn'
+            }>
+            Skip
+          </button>
+          <button
+            onClick={handleClickGiveUp}
+            disabled={isTestOver}
+            className="formBtn">
+            Give Up
+          </button>
+        </div>
+      </div>
+      {window.innerWidth < 880 && (
+        <h1 className="formTitle">
+          {currentQuestion &&
+            currentQuestion.task.length > 0 &&
+            currentQuestion.task}
+        </h1>
+      )}
+      <TestInput
+        value={pattern}
+        handleChange={handleChange}
+        inputRef={inputRef}
+        mode={mode}></TestInput>
+      <span className="textBlock" role="textbox">
+        {currentQuestion?.text ? (
+          currentQuestion?.text
+            .split('\n')
+            .map((el, index) => <span key={index}>{el}</span>)
+        ) : (
+          <span>...</span>
+        )}
+      </span>
+      <div className="results">
+        <div className="resultBlock">
+          <div className="resultLabel">Expected result</div>
+          <div className="wrapper">
+            {currentQuestion &&
+              expectedResult.map((el, i) => {
+                let classes = 'matchElement';
+                if (el.isUnique) classes += ' wrong';
 
-                  return (
-                    <span
-                      key={i}
-                      onMouseEnter={() => {
-                        if (el.isUnique)
-                          dispatch(
-                            setNotificationText(`Not found in your result`)
-                          );
-                      }}
-                      onMouseLeave={() => {
-                        if (el.isUnique) dispatch(setNotificationText(''));
-                      }}
-                      className={classes}>
-                      {el.match
-                        ? el.match
-                            .split('\n')
-                            .map((el, index) => <span key={index}>{el}</span>)
-                        : 'NOT FOUND'}
-                    </span>
-                  );
-                })}
-            </div>
-          </div>
-          <div className="resultBlock">
-            <div className="resultLabel">Your result</div>
-            {userResult.length < 1 ? (
-              <span>No matches</span>
-            ) : (
-              <div className="wrapper">
-                {userResult.map((el, i) => {
-                  let classes = 'matchElement';
-                  if (el.isUnique) classes += ' wrong';
-                  return (
-                    <span
-                      className={classes}
-                      key={i}
-                      onMouseEnter={() => {
-                        if (el.isUnique)
-                          dispatch(setNotificationText(`Not expected match`));
-                      }}
-                      onMouseLeave={() => {
-                        if (el.isUnique) dispatch(setNotificationText(''));
-                      }}>
-                      {el.match}
-                    </span>
-                  );
-                })}
-              </div>
-            )}
+                return (
+                  <span
+                    key={i}
+                    onMouseEnter={() => {
+                      if (el.isUnique)
+                        dispatch(
+                          setNotificationText(`Not found in your result`)
+                        );
+                    }}
+                    onMouseLeave={() => {
+                      if (el.isUnique) dispatch(setNotificationText(''));
+                    }}
+                    className={classes}>
+                    {el.match
+                      ? el.match
+                          .split('\n')
+                          .map((el, index) => <span key={index}>{el}</span>)
+                      : 'NOT FOUND'}
+                  </span>
+                );
+              })}
           </div>
         </div>
-        {/* {true && <Popup></Popup>} */}
-        {isRightAnswer && <Popup></Popup>}
-      </form>
-    </>
+        <div className="resultBlock">
+          <div className="resultLabel">Your result</div>
+          {userResult.length < 1 ? (
+            <span>No matches</span>
+          ) : (
+            <div className="wrapper">
+              {userResult.map((el, i) => {
+                let classes = 'matchElement';
+                if (el.isUnique) classes += ' wrong';
+                return (
+                  <span
+                    className={classes}
+                    key={i}
+                    onMouseEnter={() => {
+                      if (el.isUnique)
+                        dispatch(setNotificationText(`Not expected match`));
+                    }}
+                    onMouseLeave={() => {
+                      if (el.isUnique) dispatch(setNotificationText(''));
+                    }}>
+                    {el.match}
+                  </span>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+      {!isTestOver &&
+        !isTimerActive &&
+        timeAmount === getDefaultTimeAmount(mode) && (
+          <StartMenu
+            title="Regular expression open-ended test"
+            text={[
+              `Write a regular expression to get the expected result from the given text.`,
+              mode === 'all-questions'
+                ? 'The test is not time-limited.'
+                : 'Test duration: 5 minutes.',
+            ]}
+            btnText="Start test"
+            handleClick={handleStartBtnClick}></StartMenu>
+        )}
+      {isRightAnswer && <Popup></Popup>}
+      {isTestOver && (
+        <TestScore
+          askedQuestions={askedQuestions}
+          timeSpent={
+            getDefaultTimeAmount(mode) === 0
+              ? timeAmount
+              : getDefaultTimeAmount(mode) - timeAmount
+          }
+          handleRestartClick={handleRestartClick}
+        />
+      )}
+    </form>
   );
 }

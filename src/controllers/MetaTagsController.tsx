@@ -4,5 +4,5 @@ export class MetaTagsController {
   }
   //later can add setMeta etc.
 }
-const metaTageController = new MetaTagsController();
-export { metaTageController };
+const metaTagsController = new MetaTagsController();
+export { metaTagsController };

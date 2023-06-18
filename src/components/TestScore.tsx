@@ -1,53 +1,152 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './../App.scss';
 import './../styles/TestScore.scss';
 import { Link } from 'react-router-dom';
 import { useAppDispatch } from '../app/hooks';
-import { restartTest } from '../features/testForm/testFormSlice';
 import { ITestScore } from '../models/componentModels';
+import { timeFormatController } from '../controllers/TimeFormatController';
+import TestScoreController from '../controllers/TestScoreController';
+import QuizScoreController from '../controllers/QuizScoreController';
+import { LocalStorageController } from '../controllers/StorageController';
+import { useSendUserQuizMutation } from '../features/api/apiSlice';
 
-export default function TestScore({ skippedAmount, solvedAmount }: ITestScore) {
-  const dispatch = useAppDispatch();
-  function handleStartTestClick(e: React.MouseEvent) {
-    e.preventDefault();
-    // console.log(isTestOver);
-    dispatch(restartTest());
-    return 1;
-  }
-  const solvedPercent = parseInt(
-    ((solvedAmount / (solvedAmount + skippedAmount)) * 100).toFixed(0)
+const localStorageController = new LocalStorageController();
+export default function TestScore({
+  askedQuestions,
+  timeSpent,
+  quizQuestions,
+  handleRestartClick,
+}: ITestScore) {
+  const [sendUserQuiz] = useSendUserQuizMutation();
+
+  const [quizScoreValues] = useState<QuizScoreController | undefined>(
+    quizQuestions
+      ? new QuizScoreController(quizQuestions, parseFloat(timeSpent.toFixed(8)))
+      : undefined
   );
-  return (
-    <div className="testScore">
-      <span className="title">Test completed!</span>
-      <div className="row">
-        <span className="resultKey">solved questions:</span>
-        <span className="resultValue">{solvedAmount}</span>
-      </div>
-      {!isNaN(solvedPercent) ? (
-        <div className="row">
-          <span className="resultKey">solved questions percent</span>
-          <span className="resultValue">{solvedPercent}%</span>
+  useEffect(() => {
+    if (quizScoreValues) {
+      const formData = {
+        userId: localStorageController.getUsersKey('id'),
+        quizId: 1,
+        timeSpent: timeSpent,
+        score: quizScoreValues.score,
+      };
+      console.log(formData);
+      sendUserQuiz(formData);
+    }
+  }, [quizScoreValues]);
+
+  if (quizScoreValues) {
+    return (
+      <div className="appOverlay">
+        <div className="testScore">
+          <span className="title">Test "Regexp quiz" completed!</span>
+          <div className="row">
+            <span className="resultKey">Score:</span>
+            <span className="resultValue">
+              {Number.isNaN(quizScoreValues.score) ? 0 : quizScoreValues.score}
+            </span>
+          </div>
+          <div className="row">
+            <span className="resultKey">Time spent:</span>
+            <span className="resultValue">
+              {timeFormatController.getModifiedTimeSpent(timeSpent)}
+            </span>
+          </div>
+          <div className="row">
+            <span className="resultKey">Correct answers:</span>
+            <span className="resultValue">{quizScoreValues.rightAmount}</span>
+          </div>
+          <div className="row">
+            <span className="resultKey">Partially correct answers:</span>
+            <span className="resultValue">
+              {quizScoreValues.partiallyAmount}
+            </span>
+          </div>
+
+          <div className="rowHandlers">
+            <Link to="/leaderboard" className="link">
+              Leaderboard
+            </Link>
+            <span className="link" onClick={handleRestartClick}>
+              Start again
+            </span>
+            <Link to="/results" className="link">
+              Watch answers
+            </Link>
+          </div>
         </div>
-      ) : null}
-      <div className="row">
-        <span className="resultKey">skipped questions:</span>
-        <span className="resultValue">{skippedAmount}</span>
       </div>
-      <div className="rowHandlers">
-        <Link to="/leaderboard" className="link">
-          Leaderboard
-        </Link>
-        <span className="link" onClick={handleStartTestClick}>
-          Start again
-        </span>
-        <Link
-          to="/results"
-          className={
-            skippedAmount + solvedAmount === 0 ? 'link btnDisabled' : 'link'
-          }>
-          Watch answers
-        </Link>
+    );
+  }
+
+  if (askedQuestions) {
+    const testScoreValues = new TestScoreController(
+      askedQuestions,
+      parseFloat(timeSpent.toFixed(8))
+    );
+
+    return (
+      <div className="appOverlay">
+        <div className="testScore">
+          <span className="title">
+            Test {testScoreValues.ansCount > 0 ? 'completed' : 'over'}!
+          </span>
+          <div className="row">
+            <span className="resultKey">Score:</span>
+            <span className="resultValue">
+              {Math.round(
+                Number.isNaN(testScoreValues.score) ? 0 : testScoreValues.score
+              )}
+            </span>
+          </div>
+          <div className="row">
+            <span className="resultKey">Time spent:</span>
+            <span className="resultValue">
+              {timeFormatController.getModifiedTimeSpent(timeSpent)}
+            </span>
+          </div>
+          <div className="row">
+            <span className="resultKey">Answered questions:</span>
+            <span className="resultValue">{testScoreValues.ansCount}</span>
+          </div>
+          <div className="row">
+            <span className="resultKey">Average difficulty:</span>
+            <span className="resultValue">{testScoreValues.ansDiff}</span>
+          </div>
+          <div className="row">
+            <span className="resultKey">Skipped questions:</span>
+            <span className="resultValue">{testScoreValues.skpCount}</span>
+          </div>
+          <div className="row">
+            <span className="resultKey subKey">Average difficulty:</span>
+            <span className="resultValue">{testScoreValues.skpDiff}</span>
+          </div>
+          <div className="rowHandlers">
+            <Link to="/leaderboard" className="link">
+              Leaderboard
+            </Link>
+            <span className="link" onClick={handleRestartClick}>
+              Start again
+            </span>
+            <Link
+              to="/results"
+              className={
+                testScoreValues.ansCount > 0 ? 'link' : 'link btnDisabled'
+              }>
+              Watch answers
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  console.log(askedQuestions);
+  return (
+    <div className="appOverlay">
+      <div className="testScore">
+        <div>Questions not found!</div>
       </div>
     </div>
   );

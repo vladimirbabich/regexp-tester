@@ -2,7 +2,11 @@ import { MutableRefObject } from 'react';
 import {
   AskedQuestion,
   handleChangeInputParamsType,
+  ILeaderboardColumnSetting,
+  ILeaderboardFetchInfo,
+  IQuizResult,
   ITestResult,
+  QuizQuestion,
 } from './objectModels';
 
 export interface IDropDownPicker {
@@ -17,14 +21,17 @@ export type DocumentEventType<T extends Document> = Event & {
   target: T;
 };
 export interface ILeaderboardTable {
-  data: ITestResult[];
+  data: ITestResult[] | IQuizResult[] | undefined;
+  columns: ILeaderboardColumnSetting[];
   setLimit: React.Dispatch<React.SetStateAction<number>>;
   dataOnServerCount: number;
+  isDataLoading: boolean;
 }
 export type ITestInput = {
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   value: string;
   mode?: string;
+  inputRef: React.RefObject<HTMLInputElement>;
 };
 export interface INavigation {
   className: string;
@@ -54,6 +61,22 @@ export interface ITestForm {
   mode: string;
 }
 export interface ITestScore {
-  skippedAmount: number;
-  solvedAmount: number;
+  askedQuestions?: AskedQuestion[];
+  quizQuestions?: QuizQuestion[];
+  timeSpent: number;
+  handleRestartClick: (e: React.MouseEvent) => void;
+}
+
+export interface IQuizFormBody {
+  question: QuizQuestion;
+}
+export interface IQuizBlock {
+  question: QuizQuestion;
+  questionId: number;
+}
+export interface IStartMenu {
+  title: string;
+  text: string | string[];
+  btnText: string;
+  handleClick: () => void;
 }

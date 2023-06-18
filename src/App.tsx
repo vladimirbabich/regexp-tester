@@ -69,15 +69,11 @@ function App() {
   const dataOfTest = useAppSelector((state) => state.global.dataOfTest);
 
   useEffect(() => {
-    // console.log('POST API CALL useEffect');
     if (dataOfTest != null) {
-      // alert('POST API CALL');
-      console.log(dataOfTest);
       sendTest(dataOfTest).then((res) => {
         console.log(res);
         if ('data' in res) {
           if (res.data?.token) {
-            // console.log(res.data.token);
             console.log(`App dataOfTest set: ${res.data.token}`);
             dispatch(setUserToken(res.data.token));
           }
@@ -138,7 +134,6 @@ function App() {
       dispatch(setIsTestOver(false));
       console.log('paths.includes:');
       console.log(paths.includes(location.pathname));
-      // dispatch(setDataOfTest())
     }
   }, [location.pathname]);
 

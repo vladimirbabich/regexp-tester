@@ -7,25 +7,21 @@ import menuIcon from './../static/menu.svg';
 import { INavigation } from '../models/componentModels';
 import { useAppSelector } from '../app/hooks';
 
+const SIZE_TABLET_MIN = 670;
 export default function Navigation({ className }: INavigation) {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const navigationRef = useRef<HTMLImageElement>(null);
   function handleMenuIconClick(e: React.MouseEvent) {
-    console.log('click');
     setIsMenuOpen((prev) => !prev);
   }
   const navLinks: { path: string; title: string }[] = [
-    { path: '/all-questions', title: 'All questions' },
-    { path: '/minutes-5', title: '5 minutes' },
+    { path: '/quiz', title: 'Quiz' },
+    { path: '/all-questions', title: 'Open-ended: All' },
+    { path: '/minutes-5', title: 'Open-ended: 5min' },
     // { path: '/only-flags', title: 'Only flags' },
     { path: '/leaderboard', title: 'Leaderboard' },
   ];
-  const [innerToken, setInnerToken] = useState<any>('');
-  const userToken = useAppSelector((state) => state.global.userToken);
-  useEffect(() => {
-    console.log('userToken was changed: ' + userToken);
-    setInnerToken(userToken);
-  }, [userToken]);
+  const userToken = localStorage.getItem('userToken');
   // console.log(innerToken);
   useEffect(() => {
     //close menu if click outside of menuIcon
@@ -43,7 +39,10 @@ export default function Navigation({ className }: INavigation) {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [navigationRef]);
-
+  function handleMenuItemClick() {
+    setIsMenuOpen(false);
+    console.log('test');
+  }
   return (
     <div
       className="navigation"
@@ -54,24 +53,28 @@ export default function Navigation({ className }: INavigation) {
         src={menuIcon}
         alt="regex menu"
       />
-      {window.innerWidth < 670 && isMenuOpen && (
+      {window.innerWidth < SIZE_TABLET_MIN && isMenuOpen && (
         <div className={className}>
           {navLinks.map((el, index) => (
-            <NavLink className="link" key={index} to={el.path}>
+            <NavLink
+              className="link"
+              key={index}
+              to={el.path}
+              onClick={handleMenuItemClick}>
               {el.title}
             </NavLink>
           ))}
-          {innerToken ? <AccLink /> : <SignLink />}
+          {userToken ? <AccLink /> : <SignLink />}
         </div>
       )}
-      {window.innerWidth >= 670 && (
+      {window.innerWidth >= SIZE_TABLET_MIN && (
         <div className={className}>
           {navLinks.map((el, index) => (
             <NavLink className="link" key={index} to={el.path}>
               {el.title}
             </NavLink>
           ))}
-          {innerToken ? <AccLink /> : <SignLink />}
+          {userToken ? <AccLink /> : <SignLink />}
         </div>
       )}
     </div>

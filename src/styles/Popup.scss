@@ -1,15 +1,19 @@
+@use './../styles/sizes';
+@use './../styles/colors';
+
 $slideTime: 1s;
 $animIteration: infinite;
 $horEnd: 35px;
 $vertEnd: 35px;
 
 div.popup {
+  scale: 2.2;
   color: white;
   position: absolute;
   left: 50%;
   top: 30%;
   z-index: 990;
-  transform: translate(-50%, -50%);
+  // transform: translate(-50%, -50%);
   span.popupText {
     position: absolute;
     z-index: 999;
@@ -19,18 +23,14 @@ div.popup {
     animation-name: scaleText;
     animation-iteration-count: $animIteration;
     transform: translate(-50%, -50%);
-    // transform-origin: center;
-    // top:25px;
-  }
-  & span {
-    // border: 3px solid black;
-    text-shadow: 2px 0 #ff6315, -2px 0 #ff6315, 0 2px #ff6315, 0 -2px #ff6315,
-      1px 1px #582700, -1px -1px #582700, 1px -1px #582700, -1px 1px #582700;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
   }
   .star {
     position: absolute;
+    display: block;
+    font-size: 24px;
     transform: translate(-50%, -50%);
-    // top:50px;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
   }
   .LT {
     left: -5px;
@@ -72,7 +72,7 @@ div.popup {
   to {
     top: -1 * $vertEnd + 10;
     left: -1 * $horEnd + 5;
-    color: #ffff79;
+    color: colors.$popupFin;
   }
 }
 @keyframes slideT {
@@ -82,7 +82,7 @@ div.popup {
 
   to {
     top: $vertEnd * -1;
-    color: #ffff79;
+    color: colors.$popupFin;
   }
 }
 @keyframes slideRT {
@@ -94,7 +94,7 @@ div.popup {
   to {
     top: $vertEnd * -1 +10;
     left: $horEnd - 5;
-    color: #ffff79;
+    color: colors.$popupFin;
   }
 }
 
@@ -106,8 +106,8 @@ div.popup {
 
   to {
     top: -5px;
-    left: $horEnd;
-    color: #ffff79;
+    left: $horEnd + 5;
+    color: colors.$popupFin;
   }
 }
 @keyframes slideL {
@@ -118,20 +118,16 @@ div.popup {
 
   to {
     top: -5px;
-    left: $horEnd * -1;
-    color: #ffff79;
+    left: ($horEnd + 5) * -1;
+    color: colors.$popupFin;
   }
 }
 @keyframes scaleText {
   from {
-    // transform: translate(-50%,-35%);
     scale: 0.5;
   }
   to {
-    // transform: translate(-50%,-35%);
     scale: 1.2;
-    // text-shadow: 2px 0 white, -2px 0 white, 0 2px white, 0 -2px white,
-    //   1px 1px white, -1px -1px white, 1px -1px white, -1px 1px white;
-    color: yellow;
+    color: colors.$popupFin;
   }
 }

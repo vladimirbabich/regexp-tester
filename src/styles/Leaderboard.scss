@@ -44,10 +44,11 @@ input.radioBtn {
   height: min-content;
 }
 .restartBlock {
-  width: 200px;
-  height: 100px;
+  width: fit-content;
+  // height: 100px;
   margin-top: 15px;
   margin-left: 3px;
+  margin-bottom: 10px;
   a {
     background-color: colors.$layoutBgColor;
     color: colors.$linkColor;

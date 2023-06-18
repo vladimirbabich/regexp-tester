@@ -1,0 +1,86 @@
+@use './../styles/colors';
+@use './../styles/sizes';
+
+div.quizBlock {
+  display: flex;
+  padding: 3px;
+  position: relative;
+  width: 95%;
+  margin-top: 20px;
+  margin-right: 3px;
+  flex-direction: row;
+  &:first-of-type {
+    margin-top: 10px;
+  }
+  .questionId {
+    // width: fit-content;
+    border: 2px blue solid;
+    height: fit-content;
+    padding: 4px;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-right: none;
+  }
+  .questionCard {
+    width: 100%;
+    border: 2px solid #b90404;
+    border-radius: 5px;
+    flex-direction: column;
+    display: flex;
+    border-top-left-radius: 0;
+  }
+}
+p.question {
+  margin: 0;
+  padding: 5px;
+  padding-bottom: 0px;
+  text-align: left;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  // font-size: 0.9rem;
+}
+.options {
+  padding: 0 3px;
+  margin-bottom: 5px;
+  .option {
+    &:hover {
+      cursor: default;
+    }
+    & input {
+      cursor: default; /* change cursor to indicate disabled state */
+    }
+  }
+}
+.rightAnswer {
+  font-weight: bolder;
+}
+.selectedWrong {
+  // font-weight: bolder;
+  color: rgba(216, 0, 0);
+}
+.selectedRight {
+  color: rgba(0, 194, 0);
+}
+
+@media (max-width: sizes.$mobileMax) {
+  div.questionBlock {
+    .columns {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      .column {
+        width: 100%;
+      }
+    }
+  }
+
+  span.textBlock {
+    width: 90%;
+  }
+  .expectedBlock {
+    align-items: flex-start;
+    .wrapper {
+      justify-content: flex-start;
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-const apiBaseUrl = 'https://regexp-tester-server.vercel.app/api/';
+// const apiBaseUrl = 'https://regexp-tester-server.vercel.app/api/';
+const apiBaseUrl = 'http://localhost:7000/api/';
 
 // Define a service using a base URL and expected endpoints
 export const apiSlice = createApi({
@@ -18,7 +19,7 @@ export const apiSlice = createApi({
       return headers;
     },
   }),
-  tagTypes: ['Test'],
+  tagTypes: ['Test', 'Quiz'],
   endpoints: (builder) => ({
     //test
     sendTest: builder.mutation({
@@ -30,7 +31,7 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['Test'],
     }),
-    getAllTestsForMode: builder.query({
+    getTestsForMode: builder.query({
       query: ({ modeName, limit }) =>
         `test/getallformode?modeName=${modeName}&limit=${limit}`,
       providesTags: (result) => ['Test'],
@@ -73,17 +74,39 @@ export const apiSlice = createApi({
     getAllQuestionsForMode: builder.query({
       query: (modeName) => `question/getallformode?modeName=${modeName}`,
     }),
+    //quiz
+    getQuestionsOfQuiz: builder.query({
+      query: (id) => `quiz/get-questions/${id}`,
+    }),
+    getQuiz: builder.query({
+      query: (id) => (id ? `quiz/get/${id}` : `quiz/get/`),
+    }),
+    //user-quiz
+    getUserQuizzesForMode: builder.query({
+      query: ({ id, limit }) => `user-quiz/all/${id}?limit=${limit}`,
+      providesTags: (result) => ['Quiz'],
+    }),
+    sendUserQuiz: builder.mutation({
+      query: (payload) => ({
+        url: 'user-quiz/create',
+        method: 'POST',
+        body: payload,
+      }),
+      invalidatesTags: ['Quiz'],
+    }),
   }),
 });
 
-// Export hooks for usage in functional components, which are
-// auto-generated based on the defined endpoints
 export const {
   useSendTestMutation,
-  useGetAllTestsForModeQuery,
+  useLazyGetTestsForModeQuery,
   useRegUserMutation,
   useLoginUserMutation,
   useGetUniqueNicknameQuery,
   useLazyCheckAuthQuery,
   useGetAllQuestionsForModeQuery,
+  useSendUserQuizMutation,
+  useGetQuestionsOfQuizQuery,
+  useGetQuizQuery,
+  useLazyGetUserQuizzesForModeQuery,
 } = apiSlice;

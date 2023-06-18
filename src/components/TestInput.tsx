@@ -4,18 +4,34 @@ import './../styles/TestInput.scss';
 import DropDownPicker from './DropDownPicker';
 import { ITestInput } from '../models/componentModels';
 import { getFlagsString } from '../utils';
-import { Select } from './Select';
 import { useAppSelector } from '../app/hooks';
 
-export default function TestInput({ handleChange, value, mode }: ITestInput) {
+export default function TestInput({
+  handleChange,
+  value,
+  mode,
+  inputRef,
+}: ITestInput) {
   const flags = useAppSelector((state) => state.testForm.flags);
   const isTestOver = useAppSelector((state) => state.testForm.isTestOver);
 
-  const inputRef = useRef<HTMLInputElement>(null);
-
   useEffect(() => {
-    if (inputRef?.current) inputRef.current.focus();
-  }, [mode]);
+    console.log('123');
+    if (inputRef && inputRef.current) {
+      const handleEnterKeyDown = (event: KeyboardEvent) => {
+        console.log('event');
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          inputRef.current?.blur();
+        }
+      };
+
+      inputRef.current.addEventListener('keydown', handleEnterKeyDown);
+      return () => {
+        inputRef.current?.removeEventListener('keydown', handleEnterKeyDown);
+      };
+    }
+  }, [inputRef?.current?.value]);
 
   return (
     <div
@@ -23,8 +39,6 @@ export default function TestInput({ handleChange, value, mode }: ITestInput) {
       style={{
         marginTop: '5px',
       }}>
-      {mode !== 'flags' && <Select isMultiple={false}></Select>}
-
       <DropDownPicker isMultiple={true}>{getFlagsString(flags)}</DropDownPicker>
       <div className="inputBlock">
         <button className="startPtrn" disabled>

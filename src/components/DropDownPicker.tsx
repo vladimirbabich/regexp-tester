@@ -3,7 +3,6 @@ import './../App.scss';
 import './../styles/DropDownPicker.scss';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { updateFlag } from '../features/testForm/testFormSlice';
-import { getFlagsString } from '../utils';
 import { IDropDownPicker } from '../models/componentModels';
 export default function DropDownPicker({
   isMultiple,
@@ -62,17 +61,7 @@ export default function DropDownPicker({
   return (
     <div ref={wrapperRef}>
       <div className="selectFlagsInput">
-        <span
-          className="flagsHint"
-          onClick={() => setIsOpen(!isOpen)}
-          style={{
-            display:
-              window.innerWidth > 670
-                ? getFlagsString(flags).length > 0
-                  ? 'none'
-                  : 'block'
-                : 'none',
-          }}>
+        <span className="flagsHint" onClick={() => setIsOpen(!isOpen)}>
           Select flags:
         </span>
         <button

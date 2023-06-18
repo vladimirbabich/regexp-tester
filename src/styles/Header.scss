@@ -78,6 +78,7 @@
           list-style: none;
           a {
             width: 100%;
+            display: inline-block;
             color: colors.$mainBgColor;
             text-decoration: none;
             -webkit-text-decoration: none;

@@ -10,7 +10,6 @@ type InitialState = {
   selectedFunction: string;
   isTestOver: boolean;
   askedQuestions: AskedQuestion[];
-  activeMode: string;
 };
 const initialState: InitialState = {
   currentQuestion: null,
@@ -39,16 +38,12 @@ const initialState: InitialState = {
   selectedFunction: 'match',
   isTestOver: false,
   askedQuestions: [],
-  activeMode: 'all-questions',
 };
 
 const testFormSlice = createSlice({
   name: 'testForm',
   initialState,
   reducers: {
-    setActiveMode: (state, action) => {
-      state.activeMode = action.payload;
-    },
     setCurrentQuestion: (state, action) => {
       state.currentQuestion = action.payload;
     },
@@ -70,20 +65,19 @@ const testFormSlice = createSlice({
     setAskedQuestions: (state, action) => {
       state.askedQuestions = action.payload;
     },
-    restartTest: (state) => {
+    restartTestSlice: (state) => {
       state.isTestOver = false;
       state.flags = [...initialState.flags];
     },
   },
 });
 export const {
-  setActiveMode,
   setCurrentQuestion,
   updateFlag,
   resetFlags,
   setSelectedFunction,
   setIsTestOver,
-  restartTest,
+  restartTestSlice,
   setAskedQuestions,
 } = testFormSlice.actions;
 export default testFormSlice.reducer;

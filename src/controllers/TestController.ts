@@ -4,8 +4,8 @@ consectetur adipiscing elit. Mauris eget nisi nec metus dignissim ultrices et a 
 
 export function getResult(
   text: string,
-  pattern: string,
   functionName: string,
+  pattern: string,
   flags?: string
 ) {
   try {

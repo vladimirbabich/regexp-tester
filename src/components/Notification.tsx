@@ -40,14 +40,11 @@ export default function Notification({ position }: INotification) {
       ref={notificationRef}
       style={{
         ...(isEnoughSpaceHor
-          ? styles.horizontal(position.x)
-          : styles.horizontal(
-              position.x,
-              elementWidth > 0 ? elementWidth : 90 + 40
-            )),
+          ? styles.horizontalLeft(position.x)
+          : styles.horizontalRight(window.innerWidth - position.x)),
         ...(isEnoughSpaceVer
-          ? styles.vertical(position.y)
-          : styles.vertical(position.y, elementHeight)),
+          ? styles.verticalTop(position.y)
+          : styles.verticalBottom(window.innerHeight - position.y)),
       }}>
       <span>{text}</span>
     </div>
@@ -55,10 +52,16 @@ export default function Notification({ position }: INotification) {
 }
 
 const styles = {
-  horizontal: (x: number, elementWidth: number = 0) => ({
-    left: x + horOffset - elementWidth,
+  horizontalLeft: (x: number) => ({
+    left: x + horOffset,
   }),
-  vertical: (y: number, elementHeight: number = 0) => ({
-    top: y - elementHeight,
+  horizontalRight: (rightOffset: number) => ({
+    right: rightOffset + horOffset / 2,
+  }),
+  verticalTop: (y: number) => ({
+    top: y + vertOffset,
+  }),
+  verticalBottom: (bottomOffset: number) => ({
+    bottom: bottomOffset,
   }),
 };

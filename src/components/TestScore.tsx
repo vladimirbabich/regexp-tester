@@ -7,10 +7,10 @@ import { ITestScore } from '../models/componentModels';
 import { timeFormatController } from '../controllers/TimeFormatController';
 import TestScoreController from '../controllers/TestScoreController';
 import QuizScoreController from '../controllers/QuizScoreController';
-import { LocalStorageController } from '../controllers/StorageController';
+import { localStorageController } from '../controllers/StorageController';
 import { useSendUserQuizMutation } from '../features/api/apiSlice';
+import { setUserToken } from '../features/global/globalSlice';
 
-const localStorageController = new LocalStorageController();
 export default function TestScore({
   askedQuestions,
   timeSpent,
@@ -19,21 +19,38 @@ export default function TestScore({
 }: ITestScore) {
   const [sendUserQuiz] = useSendUserQuizMutation();
 
-  const [quizScoreValues] = useState<QuizScoreController | undefined>(
+  const [quizScoreValues, setQuizScoreValues] = useState<
+    QuizScoreController | undefined
+  >(
     quizQuestions
       ? new QuizScoreController(quizQuestions, parseFloat(timeSpent.toFixed(8)))
       : undefined
   );
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
     if (quizScoreValues) {
       const formData = {
-        userId: localStorageController.getUsersKey('id'),
         quizId: 1,
         timeSpent: timeSpent,
         score: quizScoreValues.score,
       };
-      console.log(formData);
-      sendUserQuiz(formData);
+      // console.log(formData);
+
+      const request = sendUserQuiz(formData);
+      request.then((res) => {
+        if ('data' in res) {
+          if (res.data.userId)
+            localStorageController.updateGenUserId(res.data.userId);
+          if (res.data?.token) {
+            console.log(`App dataOfTest set: ${res.data.token}`);
+            dispatch(setUserToken(res.data.token));
+          }
+        }
+      });
+      return () => {
+        request.abort();
+      };
     }
   }, [quizScoreValues]);
 
@@ -80,7 +97,8 @@ export default function TestScore({
       </div>
     );
   }
-
+  console.log(timeSpent);
+  console.log(parseFloat(timeSpent.toFixed(8)));
   if (askedQuestions) {
     const testScoreValues = new TestScoreController(
       askedQuestions,

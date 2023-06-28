@@ -29,10 +29,9 @@ export default function LeaderboardTable({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          console.log(123123);
           setLimit((prev: number) => {
             if (prev >= dataOnServerCount) return prev;
-            return prev + 2;
+            return prev + 5;
           });
         }
       },

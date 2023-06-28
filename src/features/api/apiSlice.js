@@ -10,12 +10,16 @@ export const apiSlice = createApi({
     prepareHeaders: (headers, { getState }) => {
       // Read the token from localStorage
       const token = localStorage.getItem('userToken');
+      const genUserId = localStorage.getItem('genUserId');
 
       if (token) {
         // Add the token to the Authorization header
         headers.set('Authorization', `Bearer ${token}`);
       }
-
+      if (genUserId) {
+        //add genUserId to give server info, so server will not create new user
+        headers.set('gen-user', genUserId);
+      }
       return headers;
     },
   }),
@@ -50,9 +54,6 @@ export const apiSlice = createApi({
         method: 'POST',
         body: payload,
       }),
-    }),
-    getUniqueNickname: builder.query({
-      query: () => `user/getuniquenickname`,
     }),
     checkAuth: builder.query({
       query: (token) => ({
@@ -102,7 +103,6 @@ export const {
   useLazyGetTestsForModeQuery,
   useRegUserMutation,
   useLoginUserMutation,
-  useGetUniqueNicknameQuery,
   useLazyCheckAuthQuery,
   useGetAllQuestionsForModeQuery,
   useSendUserQuizMutation,

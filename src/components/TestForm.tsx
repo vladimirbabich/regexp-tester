@@ -164,7 +164,10 @@ export default function TestForm({ title, mode }: ITestForm) {
       // alert(userId);
       const formdata = {
         testQuestions,
-        timeSpent: timeSpent.toFixed(8),
+        timeSpent:
+          getDefaultTimeAmount(mode) === 0
+            ? timeAmount
+            : getDefaultTimeAmount(mode) - timeAmount,
         modeName: mode,
         userId: typeof userId == 'number' ? userId : parseInt(userId),
       };
@@ -247,16 +250,14 @@ export default function TestForm({ title, mode }: ITestForm) {
       return;
     }
     const flagsString = getFlagsString(flags);
-    let cleanPattern = '';
-    let patternFlags = '';
-    if (pattern.includes('/'))
-      [cleanPattern, patternFlags] = pattern.split('/');
     const match: string | undefined = getResult(
       currentQuestion.text,
       selectedFunction,
-      cleanPattern || pattern,
-      patternFlags || flagsString
+      pattern,
+      flagsString
     );
+    console.log(match);
+
     if (match) {
       updateUserResult(match);
       return;

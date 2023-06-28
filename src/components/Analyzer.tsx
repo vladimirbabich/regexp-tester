@@ -30,16 +30,16 @@ export default function Analyzer({ title }: IAnalyzer) {
 
       {quizQuestions.length > 0 &&
         quizQuestions.map((question, i) => {
+          const prepQuestion = {
+            ...question,
+            userAnswer: question.userAnswer
+              ?.map((str) => str.replaceAll('*b', '\\'))
+              .map((str) => str.replaceAll('*p', '|'))
+              .map((str) => str.replaceAll('*s', '/')),
+          };
           console.log(i);
           return (
-            <QuizBlock
-              question={{
-                ...question,
-                userAnswer: question.userAnswer?.map((str) =>
-                  str.replaceAll('*b', '\\')
-                ),
-              }}
-              questionId={i + 1}></QuizBlock>
+            <QuizBlock question={prepQuestion} questionId={i + 1}></QuizBlock>
           );
         })}
       {!(quizQuestions.length > 0) && !(askedQuestions.length > 0) && (

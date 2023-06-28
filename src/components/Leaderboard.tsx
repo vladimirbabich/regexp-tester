@@ -19,7 +19,7 @@ import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
 import { SerializedError } from '@reduxjs/toolkit';
 import { callApi, callbacks } from '../controllers/LeaderboardUpdateController';
 
-const defaultLimit = 3;
+const defaultLimit = 5;
 export default function Leaderboard({
   mode = 'all-questions',
 }: {
@@ -30,23 +30,28 @@ export default function Leaderboard({
   const [activeMode, setActiveMode] = useState<string>(mode);
   const [isDataLoading, setIsDataLoading] = useState<boolean>(false);
   useEffect(() => {
-    console.log('limit: ' + limit);
+    // console.log('limit: ' + limit);
+    if (limit <= defaultLimit) return;
+
     if (activeMode === 'quiz') {
-      callApi(
+      const request = callApi(
         getUserQuizzes,
         { id: 1, limit },
         callbacks.responseUserQuizzes(setResults, setRecordsAmount),
         callbacks.errorUserQuizzes(setResults)
       );
+      //return request!
     } else {
-      callApi(
+      const abortCallback = callApi(
         getTests,
         { modeName: activeMode, limit },
         callbacks.responseTests(setResults, setRecordsAmount),
         callbacks.errorTests(setResults)
       );
+      return abortCallback;
     }
   }, [limit]);
+
   const [
     getTests,
     {
@@ -67,31 +72,31 @@ export default function Leaderboard({
   const [results, setResults] = useState<ITestResult[] | IQuizResult[]>();
   const [recordsAmount, setRecordsAmount] = useState<number>(0);
 
-  useEffect(() => {
-    console.log('results');
-    console.log(results);
-  }, [results]);
+  // useEffect(() => {
+  //   console.log('results');
+  //   console.log(results);
+  // }, [results]);
 
   useEffect(() => {
     if (fetchedQuizIsLoading || fetchedTestIsLoading) {
       setIsDataLoading(true);
-      console.log('true');
     } else setIsDataLoading(false);
   }, [fetchedQuizIsLoading, fetchedTestIsLoading]);
 
   useEffect(() => {
+    // console.log(`defaultLimit: ${defaultLimit}`);
     setLimit(defaultLimit);
     if (activeMode === 'quiz') {
       callApi(
         getUserQuizzes,
-        { id: 1, defaultLimit },
+        { id: 1, limit },
         callbacks.responseUserQuizzes(setResults, setRecordsAmount),
         callbacks.errorUserQuizzes(setResults)
       );
     } else {
       callApi(
         getTests,
-        { modeName: activeMode, defaultLimit },
+        { modeName: activeMode, limit },
         callbacks.responseTests(setResults, setRecordsAmount),
         callbacks.errorTests(setResults)
       );
@@ -167,14 +172,23 @@ export default function Leaderboard({
       attribute: 'timeSpent',
     },
   ];
+  const [modeInfo, setModeInfo] = useState<{ name: string; label: string }>({
+    name:
+      testModes.map((el) => el.id).indexOf(activeMode) > -1
+        ? 'Test'
+        : quizModes.map((el) => el.id).indexOf(activeMode) > -1
+        ? 'Quiz'
+        : '???',
+
+    label:
+      testModes[testModes.map((el) => el.id).indexOf(activeMode)]?.label ||
+      quizModes[quizModes.map((el) => el.id).indexOf(activeMode)]?.label ||
+      'Incorrect mode, try reload!',
+  });
 
   return (
     <div className="leaderboard">
-      <h1 className="h1Title">{`Leaderboard: ${
-        testModes[testModes.map((el) => el.id).indexOf(activeMode)]?.label ||
-        quizModes[quizModes.map((el) => el.id).indexOf(activeMode)]?.label ||
-        'Incorrect mode, try reload!'
-      }`}</h1>
+      <h1 className="h1Title">{`Leaderboard of ${modeInfo.name}: ${modeInfo.label}`}</h1>
       <div className="leaderboardContent">
         <div
           className="leaderboardSettings"
@@ -183,6 +197,19 @@ export default function Leaderboard({
             setResults(undefined);
             setIsDataLoading(true);
             setActiveMode(mode);
+            setModeInfo({
+              name:
+                testModes.map((el) => el.id).indexOf(mode) > -1
+                  ? 'Test'
+                  : quizModes.map((el) => el.id).indexOf(mode) > -1
+                  ? 'Quiz'
+                  : '???',
+
+              label:
+                testModes[testModes.map((el) => el.id).indexOf(mode)]?.label ||
+                quizModes[quizModes.map((el) => el.id).indexOf(mode)]?.label ||
+                'Incorrect mode, try reload!',
+            });
           }}>
           <span className="settingsTitle">Test modes:</span>
           {testModes.map((mode) => (
@@ -214,7 +241,7 @@ export default function Leaderboard({
           ))}
 
           <div className="restartBlock">
-            <Link to={restartRoute}>Restart test</Link>
+            <Link to={restartRoute}>Start {modeInfo.name}</Link>
           </div>
         </div>
         <LeaderboardTable

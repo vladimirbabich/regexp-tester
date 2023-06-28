@@ -7,6 +7,9 @@ export default class TestScoreController {
   public skpCount: number;
   public skpDiff: number | string;
   constructor(questions: AskedQuestion[], timeSpent: number = 1) {
+    console.log('timeSpent');
+    console.log(typeof timeSpent);
+    console.log(timeSpent);
     const SKIP_PENALTY_DIVIDER = 4;
     const BASE_NO_SKIP_BONUS = -10;
 
@@ -29,10 +32,10 @@ export default class TestScoreController {
     this.skpDiff =
       skpScore.avgDiff === 0 ? '-' : Number(skpScore.avgDiff.toFixed(2));
 
-    // console.log('ansScore:');
-    // console.log(ansScore);
-    // console.log('skpScore:');
-    // console.log(skpScore);
+    console.log('ansScore:');
+    console.log(ansScore);
+    console.log('skpScore:');
+    console.log(skpScore);
 
     if (skpScore.count === 0) {
       skpScore.score = BASE_NO_SKIP_BONUS * ansScore.multiplier;
@@ -41,14 +44,14 @@ export default class TestScoreController {
       skpScore.count === 0
         ? (ansScore.score - skpScore.score) * 100
         : (ansScore.score - skpScore.score / SKIP_PENALTY_DIVIDER) * 100;
-    // console.log('score:');
-    // console.log(questionScore, timeSpent);
-    // console.log(questionScore / timeSpent);
-    // console.log(questionScore / timeSpent);
-    // console.log((questionScore / timeSpent) * ansScore.avgDiff);
-    // console.log(
-    //   (questionScore / timeSpent) * ansScore.avgDiff * ansScore.avgDiff
-    // );
+    console.log('score:');
+    console.log(questionScore, timeSpent);
+    console.log(questionScore / timeSpent);
+    console.log(questionScore / timeSpent);
+    console.log((questionScore / timeSpent) * ansScore.avgDiff);
+    console.log(
+      (questionScore / timeSpent) * ansScore.avgDiff * ansScore.avgDiff
+    );
 
     this.score =
       (questionScore / timeSpent) * ansScore.avgDiff * ansScore.avgDiff;

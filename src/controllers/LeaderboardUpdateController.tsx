@@ -1,18 +1,23 @@
 import { IQuizResult, ITestResult } from '../models/objectModels';
+import { localStorageController } from './StorageController';
 
 function callApi(
-  apiFunction: (apiArgs: any, preferCacheValue?: boolean) => Promise<any>,
+  apiFunction: (apiArgs: any, preferCacheValue?: boolean) => any,
   apiArgs: Object,
   responseCallback: (res: any) => void,
   errorCallback: (e: any) => void
 ) {
-  apiFunction(apiArgs)
-    .then((res) => {
+  const request = apiFunction(apiArgs);
+  request
+    .then((res: any) => {
       responseCallback(res);
     })
-    .catch((e) => {
+    .catch((e: any) => {
       errorCallback(e);
     });
+  return () => {
+    request.abort();
+  };
 }
 
 const callbacks = {
@@ -23,6 +28,7 @@ const callbacks = {
     setRecordsAmount: React.Dispatch<React.SetStateAction<number>>
   ) => {
     return (res: any) => {
+      localStorageController.updateGenUserId(res.data.userId);
       if (res.data.quizzes) {
         setResults(res.data.quizzes);
         setRecordsAmount(res.data.count);
@@ -30,6 +36,7 @@ const callbacks = {
       }
     };
   },
+
   errorUserQuizzes: (
     setResults: React.Dispatch<
       React.SetStateAction<ITestResult[] | IQuizResult[] | undefined>
@@ -40,6 +47,7 @@ const callbacks = {
       setResults([]);
     };
   },
+
   responseTests: (
     setResults: React.Dispatch<
       React.SetStateAction<ITestResult[] | IQuizResult[] | undefined>
@@ -48,8 +56,9 @@ const callbacks = {
   ) => {
     return (res: any) => {
       if (res.data.tests) {
+        localStorageController.updateGenUserId(res.data.userId);
+        
         const tableData: ITestResult[] = [...res.data.tests];
-        console.log(tableData);
         setRecordsAmount(res.data.count);
         setResults([
           ...tableData.map((el) => {
@@ -78,6 +87,7 @@ const callbacks = {
       }
     };
   },
+
   errorTests: (
     setResults: React.Dispatch<
       React.SetStateAction<ITestResult[] | IQuizResult[] | undefined>

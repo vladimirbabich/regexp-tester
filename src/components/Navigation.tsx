@@ -15,7 +15,7 @@ export default function Navigation({ className }: INavigation) {
     setIsMenuOpen((prev) => !prev);
   }
   const navLinks: { path: string; title: string }[] = [
-    { path: '/quiz', title: 'Quiz' },
+    // { path: '/quiz', title: 'Quiz' },
     { path: '/all-questions', title: 'Open-ended: All' },
     { path: '/minutes-5', title: 'Open-ended: 5min' },
     // { path: '/only-flags', title: 'Only flags' },

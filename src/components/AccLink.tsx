@@ -15,7 +15,7 @@ export function AccLink() {
   let decoded: IDecodedUserToken | undefined = undefined;
   if (userToken) decoded = jwtDecode(userToken);
   const [isNavListOpen, setIsNavListOpen] = useState<boolean>(false);
-  const username = decoded?.nickname || localStorage.getItem('genUserNickname');
+  const username = decoded?.nickname || 'My account';
   const dispatch = useAppDispatch();
   return (
     <>

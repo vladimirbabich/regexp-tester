@@ -11,6 +11,8 @@ export default function QuizBlock({ question, questionId }: IQuizBlock) {
     question.options
       .split('||')
       .map((str) => str.replaceAll('*b', '\\'))
+      .map((str) => str.replaceAll('*p', '|'))
+      .map((str) => str.replaceAll('*s', '/'))
       .map((str) => {
         if (userAnswer && userAnswer.includes(str))
           return { option: str, isSelected: true };
@@ -21,8 +23,10 @@ export default function QuizBlock({ question, questionId }: IQuizBlock) {
     question.answers
       .split('||')
       .map((str) => str.replaceAll('*b', '\\'))
+      .map((str) => str.replaceAll('*p', '|'))
+      .map((str) => str.replaceAll('*s', '/'))
       .map((str) => {
-        console.log('userAnswer');
+        console.log('userAnswer2222');
         console.log(userAnswer);
         console.log(str);
         console.log(userAnswer.includes(str));

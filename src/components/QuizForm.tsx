@@ -13,8 +13,18 @@ import StartMenu from './StartMenu';
 import Timer from './Timer';
 import { setActiveMode, setUserToken } from '../features/global/globalSlice';
 import { useGetQuestionsOfQuizQuery } from '../features/api/apiSlice';
+import { metaTagsController } from '../controllers/MetaTagsController';
+import { useNavigate } from 'react-router-dom';
 
 export default function QuizForm({ mode, id = 1 }: any) {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate('/');
+    return;
+    metaTagsController.setTitle(`Regular expression Quiz - Retester`);
+  }, []);
+
   const {
     data: questionsDB,
     error: questionsDBError,
@@ -68,7 +78,10 @@ export default function QuizForm({ mode, id = 1 }: any) {
     e.preventDefault();
     dispatch(
       updateCurrentQuestionAnswer(
-        currentUserAnswer.map((str) => str.replaceAll('\\', '*b'))
+        currentUserAnswer
+          .map((str) => str.replaceAll('\\', '*b'))
+          .map((str) => str.replaceAll('*p', '|'))
+          .map((str) => str.replaceAll('*s', '/'))
       )
     );
     formRef.current?.reset();

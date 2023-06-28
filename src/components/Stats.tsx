@@ -2,7 +2,7 @@ import jwtDecode from 'jwt-decode';
 import { useAppSelector } from '../app/hooks';
 import { IDecodedUserToken } from '../models/objectModels';
 
-export function Stats() {
+export function Stats() {//future update(maybe)
   const userToken = useAppSelector((state) => state.global.userToken);
   let storedId = undefined;
   if (userToken) {

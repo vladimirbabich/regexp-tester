@@ -14,13 +14,22 @@ export class LocalStorageController {
       else return -1;
     }
     const camelCaseKey = key.charAt(0).toUpperCase() + key.slice(1);
-    // for (let el in localStorage) {
-    //   alert(el + ' ' + localStorage[el]);
-    // }
 
     const genUserKey = localStorage.getItem(`genUser${camelCaseKey}`);
-    // alert(`genKey:${genUserKey}`);
     if (genUserKey && genUserKey !== '-1') return genUserKey;
     return -2;
   }
+
+  updateGenUserId(userId: string) {
+    const localGenUserId = localStorage.getItem('genUserId');
+    console.log(localGenUserId);
+    console.log(userId);
+    if (!localGenUserId && userId) {
+      localStorage.setItem('genUserId', userId);
+      return;
+    }
+  }
 }
+
+const localStorageController = new LocalStorageController();
+export { localStorageController };

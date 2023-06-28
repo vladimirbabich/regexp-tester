@@ -14,11 +14,11 @@ import Notification from './components/Notification';
 import { setIsTestOver } from './features/testForm/testFormSlice';
 import AppRouter from './components/AppRouter';
 import checkAuthToken from './controllers/AuthorizationController';
+import { localStorageController } from './controllers/StorageController';
 //test git
 //test git2
 function App() {
   //should be only if not
-  const [generateUser] = apiSlice.endpoints.getUniqueNickname.useLazyQuery();
   const [sendTest] = useSendTestMutation();
   const [
     checkAuth,
@@ -27,30 +27,13 @@ function App() {
   const userToken = useAppSelector((state) => state.global.userToken);
 
   useEffect(() => {
-    // this code here to generate User data if not authorized and not found genUserId
-    const genId = localStorage.getItem('genUserId');
-    if (!userToken && (!genId || genId == '-1')) {
-      generateUser('test').then((res) => {
-        console.log('generateUser response');
-        // alert(`res.data: ${res.data.id} ${res.data.nickname}`);
-
-        if (res?.data) {
-          localStorage.setItem('genUserId', res.data.id);
-          localStorage.setItem('genUserNickname', res.data.nickname);
-        } else {
-          localStorage.setItem('genUserId', '-1');
-          localStorage.setItem('genUserNickname', 'You');
-        }
-      });
-    }
-
     if (userToken) {
       //checkAuth each 23 hours just because some users can get on site and do nothing for 24h,
       //then they will send test or new question, but it will not be added to their ID,
       //because token would be expired
       const authInterval = setInterval(() => {
         // console.log('ckechAuth');
-        checkAuth('123S').then((res) => {
+        checkAuth('check').then((res) => {
           if ('data' in res)
             if (res.data?.token) {
               console.log(`App delay set: ${res.data.token}`);
@@ -70,8 +53,12 @@ function App() {
 
   useEffect(() => {
     if (dataOfTest != null) {
-      sendTest(dataOfTest).then((res) => {
-        console.log(res);
+      const request = sendTest(dataOfTest);
+      request.then((res) => {
+        if ('data' in res) {
+          localStorageController.updateGenUserId(res.data.userId);
+        }
+
         if ('data' in res) {
           if (res.data?.token) {
             console.log(`App dataOfTest set: ${res.data.token}`);
@@ -81,6 +68,10 @@ function App() {
         // if(res?.data?.token)
       });
       dispatch(setDataOfTest(null));
+
+      // return () => {
+      //   request.abort();
+      // };
     }
   }, [dataOfTest]);
 
@@ -132,8 +123,6 @@ function App() {
     if (!paths.includes(location.pathname)) {
       //one of testForm are open
       dispatch(setIsTestOver(false));
-      console.log('paths.includes:');
-      console.log(paths.includes(location.pathname));
     }
   }, [location.pathname]);
 

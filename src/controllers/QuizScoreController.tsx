@@ -25,12 +25,9 @@ export default class QuizScoreController {
       const allOptionsAmount = prepAnswers.length + prepOptions.length; //3
 
       const rightAnswersPicked = prepAnswers.reduce((count, answer) => {
-        //0
-        // console.log(question.userAnswer?.includes(answer));
         return question.userAnswer?.includes(answer) ? count + 1 : count;
       }, 0);
       const wrongOptionsPicked = prepOptions.reduce(
-        //0
         (count, answer) =>
           question.userAnswer?.includes(answer) ? count + 1 : count,
         0
@@ -66,9 +63,10 @@ export default class QuizScoreController {
       questions
         .map((question) => question.difficulty)
         .reduce((sum, diff) => (sum += diff), 0) / questions.length;
-    this.score =
+    this.score = Math.floor(
       100 *
-      this.avgDifficulty *
-      pointsOfQuestions.reduce((sum, points) => (sum += points), 0);
+        this.avgDifficulty *
+        pointsOfQuestions.reduce((sum, points) => (sum += points), 0)
+    );
   }
 }

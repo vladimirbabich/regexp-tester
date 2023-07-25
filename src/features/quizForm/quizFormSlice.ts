@@ -22,29 +22,22 @@ const quizFormSlice = createSlice({
     updateCurrentUserAnswer: (state, action) => {
       if (!action.payload) {
         state.currentUserAnswer = [];
-        console.log(123);
         return;
       }
       const { answerId, type } = action.payload;
-      console.log(answerId, type);
 
       if (type === 'radio') {
         state.currentUserAnswer = [answerId];
-        console.log('radio if');
         return;
       }
       if (type === 'checkbox') {
-        console.log('check if');
         const index = state.currentUserAnswer.indexOf(answerId);
-        console.log('index:' + index);
         if (index != -1) {
-          console.log('index != -1');
           state.currentUserAnswer = state.currentUserAnswer.filter(
             (a) => a !== answerId
           );
         } else {
           state.currentUserAnswer.push(answerId);
-          console.log('index == -1');
         }
       }
     },
@@ -53,12 +46,11 @@ const quizFormSlice = createSlice({
       action: { payload: QuizQuestion[]; type: string }
     ) => {
       try {
-        if (action.payload instanceof Array<QuizQuestion>) {
+        if (action.payload) {
           if (action.payload.length < 1) return;
           let sortedQuestions = [...action.payload].sort(() =>
             Math.random() > 0.5 ? 1 : -1
           );
-          console.log('render');
           //set whole array
           state.questions = sortedQuestions;
           state.currentQuestionIndex = 0;
@@ -68,10 +60,20 @@ const quizFormSlice = createSlice({
             allOptions: [
               ...sortedQuestions[0].answers
                 .split('||')
-                .map((str) => str.replace('*b', '\\')),
+                .map((str) =>
+                  str
+                    .replaceAll('*b', '\\')
+                    .replaceAll('*s', '/')
+                    .replaceAll('*p', '|')
+                ),
               ...sortedQuestions[0].options
                 .split('||')
-                .map((str) => str.replace('*b', '\\')),
+                .map((str) =>
+                  str
+                    .replaceAll('*b', '\\')
+                    .replaceAll('*s', '/')
+                    .replaceAll('*p', '|')
+                ),
             ].sort(() => (Math.random() > 0.5 ? 1 : -1)),
             ansCount: sortedQuestions[0].answers.split('||').length,
           };
@@ -90,7 +92,6 @@ const quizFormSlice = createSlice({
           state.currentQuestionIndex++;
           if (state.currentQuestionIndex === state.questions.length) {
             state.isTestOver = true;
-            console.log(current(state.questions));
             return;
           }
           state.currentQuestion = {
@@ -98,10 +99,20 @@ const quizFormSlice = createSlice({
             allOptions: [
               ...state.questions[state.currentQuestionIndex].answers
                 .split('||')
-                .map((str) => str.replace('*b', '\\')),
+                .map((str) =>
+                  str
+                    .replaceAll('*b', '\\')
+                    .replaceAll('*s', '/')
+                    .replaceAll('*p', '|')
+                ),
               ...state.questions[state.currentQuestionIndex].options
                 .split('||')
-                .map((str) => str.replace('*b', '\\')),
+                .map((str) =>
+                  str
+                    .replaceAll('*b', '\\')
+                    .replaceAll('*s', '/')
+                    .replaceAll('*p', '|')
+                ),
             ].sort(() => (Math.random() > 0.5 ? 1 : -1)),
             ansCount:
               state.questions[state.currentQuestionIndex].answers.split('||')

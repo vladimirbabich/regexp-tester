@@ -10,11 +10,8 @@ export default function QuizFormBody({ isDataLoading }: any) {
   const dispatch = useAppDispatch();
 
   function handleInputClick(e: MouseEvent) {
-    console.log('yes');
     const { id: answerId } = e.target as HTMLElement;
     const type = (e.target as HTMLElement)['type' as keyof HTMLElement];
-    console.log(`answerId: ${answerId}`);
-    console.log(type);
     dispatch(updateCurrentUserAnswer({ answerId, type }));
   }
 
@@ -31,7 +28,7 @@ export default function QuizFormBody({ isDataLoading }: any) {
 
   return (
     <div className="quizFormBody">
-      <p className="question">{question.question}</p>
+      <p className="question">{question.question}?</p>
       <QuizOptions handleInputClick={handleInputClick} />
     </div>
   );

@@ -10,11 +10,17 @@ export default function StartMenu({
   return (
     <div className="appOverlay">
       <div className="startMenu">
-        <p>{title}</p>
+        <h1 className="title" style={{ fontWeight: '600' }}>
+          {title}
+        </h1>
         {typeof text === 'string' ? (
-          <p>{text}</p>
+          <p className="rows">{text}</p>
         ) : (
-          text.map((row, i) => <p key={i}>{row}</p>)
+          text.map((row, i) => (
+            <p className="rows" key={i}>
+              {row}
+            </p>
+          ))
         )}
         <button className="formBtn startBtn" onClick={handleClick}>
           {btnText}

@@ -15,9 +15,9 @@ export default function QuizOptions({ handleInputClick }: any) {
 
   return (
     <div className="options">
-      {allOptions.map((option) => {
+      {allOptions.map((option, index) => {
         return (
-          <label className="option" key={option}>
+          <label className="option" key={index}>
             <input
               type={ansCount > 1 ? 'checkbox' : 'radio'}
               id={option}
@@ -25,7 +25,7 @@ export default function QuizOptions({ handleInputClick }: any) {
               name="quizOption"
               value={option}
             />
-            {option}.
+            {option}
           </label>
         );
       })}

@@ -15,14 +15,13 @@ export default function Navigation({ className }: INavigation) {
     setIsMenuOpen((prev) => !prev);
   }
   const navLinks: { path: string; title: string }[] = [
-    // { path: '/quiz', title: 'Quiz' },
+    { path: '/quiz', title: 'Quiz' },
     { path: '/all-questions', title: 'Open-ended: All' },
     { path: '/minutes-5', title: 'Open-ended: 5min' },
     // { path: '/only-flags', title: 'Only flags' },
     { path: '/leaderboard', title: 'Leaderboard' },
   ];
   const userToken = localStorage.getItem('userToken');
-  // console.log(innerToken);
   useEffect(() => {
     //close menu if click outside of menuIcon
     function handleClickOutside(event: MouseEvent) {
@@ -41,7 +40,6 @@ export default function Navigation({ className }: INavigation) {
   }, [navigationRef]);
   function handleMenuItemClick() {
     setIsMenuOpen(false);
-    console.log('test');
   }
   return (
     <div

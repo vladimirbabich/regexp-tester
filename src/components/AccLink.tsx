@@ -36,7 +36,6 @@ export function AccLink() {
             <li
               onClick={() => {
                 localStorage.removeItem('userToken');
-                console.log(`AccLink click set empty`);
                 dispatch(setUserToken(''));
               }}>
               <NavLink to="/">Exit</NavLink>

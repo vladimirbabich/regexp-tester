@@ -37,7 +37,6 @@ export default function Analyzer({ title }: IAnalyzer) {
               .map((str) => str.replaceAll('*p', '|'))
               .map((str) => str.replaceAll('*s', '/')),
           };
-          console.log(i);
           return (
             <QuizBlock question={prepQuestion} questionId={i + 1}></QuizBlock>
           );
@@ -48,14 +47,6 @@ export default function Analyzer({ title }: IAnalyzer) {
       <div className="restartBlock">
         <Link to={restartRoute}>Restart test</Link>
       </div>
-      {/* {askedQuestions.length > 0 &&
-        askedQuestions.map((question, i) => (
-          <QuestionBlock question={question} questionId={i + 1}></QuestionBlock>
-        ))}
-      {askedQuestions.length > 0 &&
-        askedQuestions.map((question, i) => (
-          <QuestionBlock question={question} questionId={i + 1}></QuestionBlock>
-        ))} */}
     </div>
   );
 }

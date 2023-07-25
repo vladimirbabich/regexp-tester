@@ -17,9 +17,6 @@ export default function DropDownPicker({
 
   const handleClickLi = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     const liValue = (e.target as HTMLLIElement).getAttribute('data-value');
-    console.log(e.target);
-    console.log(e.target as HTMLLIElement);
-    console.log(liValue);
     dispatch(updateFlag(liValue));
   };
 
@@ -47,16 +44,6 @@ export default function DropDownPicker({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [wrapperRef]);
-
-  useEffect(() => {
-    // console.log(isOpen);
-  }, [isOpen]);
-  // const options = [
-  //   { value: 'chocolate', label: 'Chocolate' },
-  //   { value: 'strawberry', label: 'Strawberry' },
-  //   { value: 'vanilla', label: 'Vanilla' },
-  // ];
-  // return <ReactSelect isMulti options={options} />;
 
   return (
     <div ref={wrapperRef}>

@@ -15,21 +15,38 @@ import { setActiveMode, setUserToken } from '../features/global/globalSlice';
 import { useGetQuestionsOfQuizQuery } from '../features/api/apiSlice';
 import { metaTagsController } from '../controllers/MetaTagsController';
 import { useNavigate } from 'react-router-dom';
+import {
+  FetchedQuizQuestion,
+  FetchedQuizType,
+  PreparedQuizQuestion,
+} from '../models/objectModels';
 
 export default function QuizForm({ mode, id = 1 }: any) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    navigate('/');
-    return;
+    // navigate('/');
+    // return;
     metaTagsController.setTitle(`Regular expression Quiz - Retester`);
+    metaTagsController.setMeta(
+      'description',
+      `Test your knowledge of regular expressions. Choose right answer for each question of the quiz!`
+    );
+    metaTagsController.setMeta(
+      'keywords',
+      'quiz, simple test, regex test, test regex, Regular expressions, regexp, Regex, Pattern matching, String manipulation, Text processing, Search algorithms, Parsing, Syntax, Testing.'
+    );
+    return () => {
+      console.log(123);
+      metaTagsController.setDefault()
+    };
   }, []);
 
   const {
     data: questionsDB,
     error: questionsDBError,
     isLoading: questionsDBIsLoading,
-  } = useGetQuestionsOfQuizQuery(id);
+  } = useGetQuestionsOfQuizQuery<FetchedQuizType>(id);
 
   const [isTimerActive, setIsTimerActive] = useState<boolean>(false);
   const isTestOver = useAppSelector((state) => state.quizForm.isTestOver);
@@ -56,6 +73,8 @@ export default function QuizForm({ mode, id = 1 }: any) {
   }, [mode]);
 
   useEffect(() => {
+    if (!questionsDB) return;
+
     if (isTestOver === false) {
       dispatch(setQuestions(questionsDB));
       setTimeAmount(0);
@@ -88,8 +107,6 @@ export default function QuizForm({ mode, id = 1 }: any) {
   }
   function handleRestartClick(e: React.MouseEvent) {
     e.preventDefault();
-    console.error(123);
-    console.log(isTimerActive, isTestOver, timeAmount);
     dispatch(setIsTestOver(false));
     setIsTimerActive(true);
   }
@@ -122,7 +139,10 @@ export default function QuizForm({ mode, id = 1 }: any) {
       {!isTimerActive && timeAmount === 0 && (
         <StartMenu
           title="Regular expression quiz"
-          text="Choose one or more options for every question."
+          text={[
+            'Choose one or more options for every question.',
+            'The quiz is not time-limited.',
+          ]}
           btnText="Start quiz"
           handleClick={handleStartBtnClick}></StartMenu>
       )}

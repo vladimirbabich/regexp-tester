@@ -22,9 +22,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  p {
+  h1.title {
     margin: 8px;
     text-align: center;
+  }
+  p.rows {
+    align-self: flex-start;
+    margin: 8px;
   }
   button.startBtn {
     margin-bottom: 8px;

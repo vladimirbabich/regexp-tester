@@ -15,7 +15,6 @@ function getFormattedTime(timestamp: number) {
       minutes.length
     )}:${seconds.substring(seconds.length - 2, seconds.length)}`;
   else {
-    console.log('g2');
     return `${hours}:${minutes.substring(
       minutes.length - 2,
       minutes.length

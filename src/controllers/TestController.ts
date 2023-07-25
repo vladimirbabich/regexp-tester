@@ -32,8 +32,6 @@ export function getResult(
     }
   } catch (e) {
     if (typeof e === 'string') {
-      console.log(typeof e); // works, `e` narrowed to string
-      console.log(e); // works, `e` narrowed to string
       // return e;
     } else if (e instanceof Error) {
       console.error(e.message); // works, `e` narrowed to Error

@@ -32,14 +32,11 @@ function App() {
       //then they will send test or new question, but it will not be added to their ID,
       //because token would be expired
       const authInterval = setInterval(() => {
-        // console.log('ckechAuth');
         checkAuth('check').then((res) => {
           if ('data' in res)
             if (res.data?.token) {
-              console.log(`App delay set: ${res.data.token}`);
               dispatch(setUserToken(res.data.token));
             }
-          // console.log(res);
         });
       }, 82800000);
 
@@ -47,7 +44,7 @@ function App() {
         clearInterval(authInterval);
       };
     }
-  }, []); //idk why it was without dependency array, should work like that
+  }, []);
 
   const dataOfTest = useAppSelector((state) => state.global.dataOfTest);
 
@@ -61,7 +58,6 @@ function App() {
 
         if ('data' in res) {
           if (res.data?.token) {
-            console.log(`App dataOfTest set: ${res.data.token}`);
             dispatch(setUserToken(res.data.token));
           }
         }

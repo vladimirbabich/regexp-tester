@@ -16,10 +16,8 @@ export default function TestInput({
   const isTestOver = useAppSelector((state) => state.testForm.isTestOver);
 
   useEffect(() => {
-    console.log('123');
     if (inputRef && inputRef.current) {
       const handleEnterKeyDown = (event: KeyboardEvent) => {
-        console.log('event');
         if (event.key === 'Enter') {
           event.preventDefault();
           inputRef.current?.blur();

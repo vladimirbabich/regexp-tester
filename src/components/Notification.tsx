@@ -14,8 +14,6 @@ export default function Notification({ position }: INotification) {
 
   const [isEnoughSpaceHor, setIsEnoughSpaceHor] = useState<boolean>(false);
   const [isEnoughSpaceVer, setIsEnoughSpaceVer] = useState<boolean>(false);
-  // console.log('position:');
-  // console.log(position);
   const notificationRef = useRef(null);
 
   useEffect(() => {

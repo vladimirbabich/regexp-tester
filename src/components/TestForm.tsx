@@ -44,9 +44,6 @@ export default function TestForm({ title, mode }: ITestForm) {
   useEffect(() => {
     if (questionsDBError) {
       if ('token' in questionsDBError) {
-        console.log(
-          `TestForm questionsDBError set: ${questionsDBError.token as string}`
-        );
         dispatch(setUserToken(questionsDBError.token as string));
       }
       console.log(questionsDBError);
@@ -99,12 +96,9 @@ export default function TestForm({ title, mode }: ITestForm) {
   }
 
   useEffect(() => {
-    // console.log('questionsDB is loaded:');
     if (!questionsDB) return;
-    // console.log(questionsDB);
     if (questionsDB?.token) {
       dispatch(setUserToken(questionsDB.token as string));
-      console.log(`TestForm questionsDB set: ${questionsDB.token || ''}`);
     }
     setQuestions(questionsDB.questions);
   }, [dispatch, questionsDB]);
@@ -125,15 +119,10 @@ export default function TestForm({ title, mode }: ITestForm) {
   }, [isActiveSkipAnimation]);
 
   useEffect(() => {
-    // console.log(skipAnimationDuration);
     if (skipAnimationDuration === SKIP_ANIMATION_TIME_AMOUNT) {
       setIsActiveSkipAnimation(true);
     }
   }, [skipAnimationDuration]);
-
-  // useEffect(() => {
-  //   console.log('testStart:' + testStart.toString());
-  // }, [testStart]);
 
   function handleStartBtnClick() {
     setIsTimerActive(true);
@@ -148,7 +137,6 @@ export default function TestForm({ title, mode }: ITestForm) {
       askedQuestions.length > 0 &&
       askedQuestions.filter((el) => (el?.userAnswer ? 1 : 0)).length > 0
     ) {
-      console.log('prepareAndSendEndedTest');
       const testQuestions = askedQuestions.map((el) => ({
         questionId: el.id,
         difficulty: el.difficulty,
@@ -157,8 +145,6 @@ export default function TestForm({ title, mode }: ITestForm) {
       // if i will decide that default timeAmount is better in time modes - chalge timeSpent into finalTimeSpent
       // const finalTimeSpent = getDefaultTimeAmount(mode) || timeSpent;
       setTestStart(new Date().getTime() / 1000);
-      console.log('timeSpent');
-      console.log(timeSpent);
 
       const userId = localStorageController.getUsersKey('id');
       // alert(userId);
@@ -171,7 +157,6 @@ export default function TestForm({ title, mode }: ITestForm) {
         modeName: mode,
         userId: typeof userId == 'number' ? userId : parseInt(userId),
       };
-      console.log(formdata);
       dispatch(setDataOfTest(formdata));
     }
   }
@@ -180,7 +165,6 @@ export default function TestForm({ title, mode }: ITestForm) {
     dispatch(setCurrentQuestion(null));
     if (questionsDB) {
       setQuestions([...questionsDB.questions]);
-      // console.log('rand');
       setTimeAmount(getDefaultTimeAmount(mode));
       setSkipAnimationDuration(0);
       setIsActiveSkipAnimation(false);
@@ -192,9 +176,6 @@ export default function TestForm({ title, mode }: ITestForm) {
   }, [dispatch, flags, pattern, selectedFunction]);
 
   useEffect(() => {
-    // console.log('qq');
-    // console.log(questions);
-    // console.log(currentQuestion);
     if (questions && questions?.length > 0) {
       if (!currentQuestion) setRandomQuestion();
     }
@@ -256,7 +237,6 @@ export default function TestForm({ title, mode }: ITestForm) {
       pattern,
       flagsString
     );
-    console.log(match);
 
     if (match) {
       updateUserResult(match);

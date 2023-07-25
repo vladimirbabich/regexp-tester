@@ -9,7 +9,6 @@ export class LocalStorageController {
     const userToken = localStorage.getItem('userToken');
     if (userToken) {
       const decoded: IUserToken = jwtDecode(userToken);
-      //   console.log(decoded);
       if (key in decoded) return decoded[key as keyof IUserToken];
       else return -1;
     }
@@ -22,8 +21,6 @@ export class LocalStorageController {
 
   updateGenUserId(userId: string) {
     const localGenUserId = localStorage.getItem('genUserId');
-    console.log(localGenUserId);
-    console.log(userId);
     if (!localGenUserId && userId) {
       localStorage.setItem('genUserId', userId);
       return;

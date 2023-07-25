@@ -92,6 +92,20 @@ export type handleChangeInputParamsType = (
   btnSetter: React.Dispatch<React.SetStateAction<boolean>>
 ) => void;
 
+export type FetchedQuizType = {
+  data: FetchedQuizQuestion[];
+  error: FetchBaseQueryError | SerializedError | undefined;
+  isLoading: boolean;
+};
+
+export type FetchedQuizQuestion = {
+  question: string;
+  options: string;
+  answers: string;
+  difficulty: number;
+  id: number;
+  quizId: number;
+};
 export type QuizQuestion = {
   question: string;
   options: string;

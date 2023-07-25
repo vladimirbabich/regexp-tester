@@ -30,7 +30,6 @@ export default function Leaderboard({
   const [activeMode, setActiveMode] = useState<string>(mode);
   const [isDataLoading, setIsDataLoading] = useState<boolean>(false);
   useEffect(() => {
-    // console.log('limit: ' + limit);
     if (limit <= defaultLimit) return;
 
     if (activeMode === 'quiz') {
@@ -72,11 +71,6 @@ export default function Leaderboard({
   const [results, setResults] = useState<ITestResult[] | IQuizResult[]>();
   const [recordsAmount, setRecordsAmount] = useState<number>(0);
 
-  // useEffect(() => {
-  //   console.log('results');
-  //   console.log(results);
-  // }, [results]);
-
   useEffect(() => {
     if (fetchedQuizIsLoading || fetchedTestIsLoading) {
       setIsDataLoading(true);
@@ -84,7 +78,6 @@ export default function Leaderboard({
   }, [fetchedQuizIsLoading, fetchedTestIsLoading]);
 
   useEffect(() => {
-    // console.log(`defaultLimit: ${defaultLimit}`);
     setLimit(defaultLimit);
     if (activeMode === 'quiz') {
       callApi(
@@ -108,11 +101,11 @@ export default function Leaderboard({
   const testModes = [
     {
       id: 'all-questions',
-      label: 'All questions',
+      label: 'OE: All questions',
     },
     {
       id: 'minutes-5',
-      label: '5 minutes',
+      label: 'OE: 5 minutes',
     },
     // {
     //   id: 'only-flags',
@@ -168,7 +161,7 @@ export default function Leaderboard({
   const additionalQuizColumns: ILeaderboardColumnSetting[] = [
     {
       name: 'Time spent',
-      description: 'Does not affect score',
+      description: 'Does not affect the score',
       attribute: 'timeSpent',
     },
   ];

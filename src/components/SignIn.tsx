@@ -55,9 +55,7 @@ export default function SignIn({
       .then((response) => {
         if ('data' in response) {
           //check server errors
-          console.log('data');
           if ('nickError' in response.data) {
-            console.log('ttt');
             currentNickEmail.className = 'wrongInput';
             setNickErrorText(response.data.nickError);
           } else if ('passError' in response.data) {
@@ -68,8 +66,6 @@ export default function SignIn({
               setNickErrorText('Problem with registration, try later please');
               return;
             }
-            console.log(response.data.token);
-            console.log(`Sign in set: ${response.data.token}`);
             dispatch(setUserToken(response.data.token));
           }
         }

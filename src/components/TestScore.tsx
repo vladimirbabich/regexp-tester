@@ -35,7 +35,6 @@ export default function TestScore({
         timeSpent: timeSpent,
         score: quizScoreValues.score,
       };
-      // console.log(formData);
 
       const request = sendUserQuiz(formData);
       request.then((res) => {
@@ -43,7 +42,6 @@ export default function TestScore({
           if (res.data.userId)
             localStorageController.updateGenUserId(res.data.userId);
           if (res.data?.token) {
-            console.log(`App dataOfTest set: ${res.data.token}`);
             dispatch(setUserToken(res.data.token));
           }
         }
@@ -97,8 +95,6 @@ export default function TestScore({
       </div>
     );
   }
-  console.log(timeSpent);
-  console.log(parseFloat(timeSpent.toFixed(8)));
   if (askedQuestions) {
     const testScoreValues = new TestScoreController(
       askedQuestions,
@@ -160,7 +156,6 @@ export default function TestScore({
       </div>
     );
   }
-  console.log(askedQuestions);
   return (
     <div className="appOverlay">
       <div className="testScore">

@@ -26,10 +26,6 @@ export default function QuizBlock({ question, questionId }: IQuizBlock) {
       .map((str) => str.replaceAll('*p', '|'))
       .map((str) => str.replaceAll('*s', '/'))
       .map((str) => {
-        console.log('userAnswer2222');
-        console.log(userAnswer);
-        console.log(str);
-        console.log(userAnswer.includes(str));
         if (userAnswer && userAnswer.includes(str))
           return { option: str, isSelected: true };
         return { option: str, isSelected: false };
@@ -54,7 +50,6 @@ export default function QuizBlock({ question, questionId }: IQuizBlock) {
 
     return 'right';
   }
-  console.log(questionId);
   return (
     <div className="quizBlock" key={questionId}>
       <div

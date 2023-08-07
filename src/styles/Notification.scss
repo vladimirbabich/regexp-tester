@@ -1,7 +1,7 @@
 @use './../styles/colors';
 
 .notificationBlock {
-  // display: none;
+  box-shadow: 7px 7px 12px 1px black;
   position: absolute;
   z-index: 900;
   border: 1px;
@@ -12,15 +12,12 @@
   border-width: 1px;
   border-color: colors.$layoutBgColor;
   padding: 4px;
-  // width: max-content;
   max-width: 300px;
   white-space: normal;
   font-weight: 400;
   justify-content: center;
   align-items: center;
-  // color: red;
   * {
-    // color: red;
     text-align: center;
   }
 }

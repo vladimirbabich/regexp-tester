@@ -1,71 +1,45 @@
-import React, { useEffect, useState, useRef } from 'react';
-import './../App.scss';
-import './../styles/TestForm.scss';
-import Popup from './Popup';
-import { getResult } from '../controllers/TestController';
-import Timer from './Timer';
-import TestInput from './TestInput';
-import { IQuestion, IResultMatch } from '../models/objectModels';
-import { getFlagsString } from '../utils';
-import { useAppDispatch, useAppSelector } from '../app/hooks';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
+// import './../../App.scss';
+import './../../styles/TestForm.scss';
+import Popup from '../Popup';
+import { getResult } from '../../controllers/TestController';
+import Timer from '../Timer';
+import TestInput from '../TestInput';
+import { IQuestion, IResultMatch } from '../../models/objectModels';
+import { getFlagsString } from '../../utils';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
   resetFlags,
   setAskedQuestions,
   setCurrentQuestion,
   setIsTestOver,
   setSelectedFunction,
-} from '../features/testForm/testFormSlice';
-import TestScore from './TestScore';
+} from '../../features/testForm/testFormSlice';
+import TestScore from '../TestScore';
 import {
   setActiveMode,
   setDataOfTest,
   setNotificationText,
   setUserToken,
-} from '../features/global/globalSlice';
-import { useGetAllQuestionsForModeQuery } from '../features/api/apiSlice';
-import { LocalStorageController } from '../controllers/StorageController';
-import { ITestForm } from '../models/componentModels';
-import { metaTagsController } from '../controllers/MetaTagsController';
-import { restartTestSlice } from '../features/testForm/testFormSlice';
-import StartMenu from './StartMenu';
+} from '../../features/global/globalSlice';
+import { useGetAllQuestionsForModeQuery } from '../../features/services/apiSlice';
+import { LocalStorageController } from '../../controllers/StorageController';
+import { ITestForm } from '../../models/componentModels';
+import { metaTagsController } from '../../controllers/MetaTagsController';
+import { restartTestSlice } from '../../features/testForm/testFormSlice';
+import StartMenu from '../StartMenu';
+import { useGetSkippedQuestionAmount } from './hooks';
+import QuestionsCounter from './QuestionsCounter';
 
 const SKIP_ANIMATION_TIME_AMOUNT = 25; //seconds
 
 export default function TestForm({ title, mode }: ITestForm) {
-  const dispatch = useAppDispatch();
-  const {
-    data: questionsDB,
-    error: questionsDBError,
-    isLoading: questionsDBIsLoading,
-  } = useGetAllQuestionsForModeQuery(mode);
-
   const [timeSpent, setTimeSpent] = useState<number>(0);
-
-  useEffect(() => {
-    if (questionsDBError) {
-      if ('token' in questionsDBError) {
-        dispatch(setUserToken(questionsDBError.token as string));
-      }
-      console.log(questionsDBError);
-    }
-  }, [dispatch, questionsDBError]);
-
-  const flags = useAppSelector((state) => state.testForm.flags);
-  const askedQuestions = useAppSelector(
-    (state) => state.testForm.askedQuestions
-  );
-
   const [questions, setQuestions] = useState<IQuestion[] | null>([]);
-  const currentQuestion = useAppSelector(
-    (state) => state.testForm.currentQuestion
-  );
 
   const [expectedResult, setExpectedResult] = useState<IResultMatch[]>([]);
   const [userResult, setUserResult] = useState<IResultMatch[]>([]);
 
-  const selectedFunction = useAppSelector(
-    (state) => state.testForm.selectedFunction
-  );
   // const user
   const [pattern, setPattern] = useState<string>('');
   const [isRightAnswer, setIsRightAnswer] = useState<boolean>(false);
@@ -82,14 +56,45 @@ export default function TestForm({ title, mode }: ITestForm) {
   const [skipAnimationDuration, setSkipAnimationDuration] = useState(0);
   const [isActiveSkipAnimation, setIsActiveSkipAnimation] = useState(false);
 
-  const localStorageController = new LocalStorageController();
+  const {
+    data: questionsDB,
+    error: questionsDBError,
+    isLoading: questionsDBIsLoading,
+  } = useGetAllQuestionsForModeQuery(mode);
 
-  const isTestOver = useAppSelector((state) => state.testForm.isTestOver);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const dispatch = useAppDispatch();
+
+  //selector
+  const {
+    isTestOver,
+    flags,
+    currentQuestion,
+    selectedFunction,
+    askedQuestions,
+  } = useAppSelector(({ testForm }) => ({
+    isTestOver: testForm.isTestOver,
+    flags: testForm.flags,
+    askedQuestions: testForm.askedQuestions,
+    currentQuestion: testForm.currentQuestion,
+    selectedFunction: testForm.selectedFunction,
+  }));
+
+  const skippedQuestionsAmount = useGetSkippedQuestionAmount(askedQuestions);
+
+  useEffect(() => {
+    if (questionsDBError) {
+      if ('token' in questionsDBError) {
+        dispatch(setUserToken(questionsDBError.token as string));
+      }
+      console.log(questionsDBError);
+    }
+  }, [dispatch, questionsDBError]);
+
   useEffect(() => {
     metaTagsController.setTitle(`Retester mode: ${mode}`);
   }, []);
-
-  const inputRef = useRef<HTMLInputElement>(null);
 
   function getDefaultTimeAmount(mode: string) {
     return mode === 'all-questions' ? 0 : mode === 'only-flags' ? 60 : 300;
@@ -146,6 +151,7 @@ export default function TestForm({ title, mode }: ITestForm) {
       // const finalTimeSpent = getDefaultTimeAmount(mode) || timeSpent;
       setTestStart(new Date().getTime() / 1000);
 
+      const localStorageController = new LocalStorageController();
       const userId = localStorageController.getUsersKey('id');
       // alert(userId);
       const formdata = {
@@ -172,10 +178,12 @@ export default function TestForm({ title, mode }: ITestForm) {
     }
   }
   useEffect(() => {
+    console.log('useEffect: flags, pattern, selectedFunction');
     updateResults();
   }, [dispatch, flags, pattern, selectedFunction]);
 
   useEffect(() => {
+    console.log('useEffect: questions');
     if (questions && questions?.length > 0) {
       if (!currentQuestion) setRandomQuestion();
     }
@@ -253,10 +261,6 @@ export default function TestForm({ title, mode }: ITestForm) {
     if (userResultStr === currentQuestion.expectedResult) {
       setIsRightAnswer(true);
     }
-    if (expectedResult.length < 1) {
-      console.error('Error! expected result not found.');
-      return;
-    }
   }, [dispatch, userResult]);
 
   function setRandomQuestion() {
@@ -277,6 +281,7 @@ export default function TestForm({ title, mode }: ITestForm) {
     dispatch(setCurrentQuestion(chosenQuestion));
     dispatch(resetFlags());
   }
+
   useEffect(() => {
     if (timeSpent > 0) prepareAndSendEndedTest(); // if test over - change dataOfTest in globalSlice and send it to the server
   }, [dispatch, timeSpent]);
@@ -320,10 +325,6 @@ export default function TestForm({ title, mode }: ITestForm) {
       );
     }
   }, [currentQuestion]);
-  /**
-   * ! Does not abort current timeout
-   * TODO fix return
-   */
   useEffect(() => {
     if (isRightAnswer) {
       let completedQuestion = {
@@ -367,21 +368,17 @@ export default function TestForm({ title, mode }: ITestForm) {
     setIsActiveSkipAnimation(false);
   }
 
-  const skippedQuestionsAmount = askedQuestions.filter((el) => {
-    return 'userAnswer' in el ? 0 : 1;
-  }).length;
+  function handleRestartClick(e: React.MouseEvent) {
+    e.preventDefault();
+    dispatch(restartTestSlice());
+    setIsTimerActive(true);
+  }
 
   if (questionsDBIsLoading) {
     return <h1 className="h1Title">Loading...</h1>;
   }
   if (questionsDBError) {
     return <h1 className="h1Title">Connection problem! try later please</h1>;
-  }
-
-  function handleRestartClick(e: React.MouseEvent) {
-    e.preventDefault();
-    dispatch(restartTestSlice());
-    setIsTimerActive(true);
   }
 
   return (
@@ -401,42 +398,22 @@ export default function TestForm({ title, mode }: ITestForm) {
           </h1>
         )}
         <div className="infoBtns">
-          <span className="questionsCount">
-            <span
-              onMouseEnter={() => {
-                dispatch(setNotificationText('Number of answered questions'));
-              }}
-              onMouseLeave={() => {
-                dispatch(setNotificationText(''));
-              }}>
-              {askedQuestions.length - skippedQuestionsAmount}
-            </span>
-            (
-            <span
-              onMouseEnter={() => {
-                dispatch(setNotificationText('Number of skipped questions'));
-              }}
-              onMouseLeave={() => {
-                dispatch(setNotificationText(''));
-              }}>
-              {skippedQuestionsAmount}
-            </span>
-            )/
-            <span
-              style={{ display: 'inline-block' }}
-              onMouseEnter={() => {
-                dispatch(
-                  setNotificationText(
-                    `This test contains ${questionsDB?.questions?.length} questions`
-                  )
-                );
-              }}
-              onMouseLeave={() => {
-                dispatch(setNotificationText(''));
-              }}>
-              {questionsDB.questions?.length}
-            </span>
-          </span>
+          <QuestionsCounter
+            questionAmounts={[
+              {
+                text: 'Number of answered questions',
+                amount: askedQuestions.length - skippedQuestionsAmount,
+              },
+              {
+                text: 'Number of skipped questions',
+                amount: skippedQuestionsAmount,
+              },
+              {
+                text: `This test contains ${questionsDB?.questions?.length} questions`,
+                amount: questionsDB.questions?.length,
+              },
+            ]}
+          />
           <button
             onClick={handleClickSkip}
             disabled={isTestOver}

@@ -7,7 +7,7 @@ import {
   useSendTestMutation,
   apiSlice,
   useLazyCheckAuthQuery,
-} from './features/api/apiSlice';
+} from './features/services/apiSlice';
 import { useAppDispatch, useAppSelector } from './app/hooks';
 import { setDataOfTest, setUserToken } from './features/global/globalSlice';
 import Notification from './components/Notification';

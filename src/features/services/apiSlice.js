@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-// const apiBaseUrl = 'https://regexp-tester-server.vercel.app/api/';
-const apiBaseUrl = 'http://localhost:7000/api/';
+const apiBaseUrl = 'https://regexp-tester-server.vercel.app/api/';
+// const apiBaseUrl = 'http://localhost:7000/api/';
 
 // Define a service using a base URL and expected endpoints
 export const apiSlice = createApi({

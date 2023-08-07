@@ -4,7 +4,7 @@ import Analyzer from './Analyzer';
 import Leaderboard from './Leaderboard';
 import SignPage from './SignPage';
 import { Stats } from './Stats';
-import TestForm from './TestForm';
+import TestForm from './TestForm/TestForm';
 import QuizForm from './QuizForm';
 
 export default function AppRouter() {

@@ -8,7 +8,7 @@ import { timeFormatController } from '../controllers/TimeFormatController';
 import TestScoreController from '../controllers/TestScoreController';
 import QuizScoreController from '../controllers/QuizScoreController';
 import { localStorageController } from '../controllers/StorageController';
-import { useSendUserQuizMutation } from '../features/api/apiSlice';
+import { useSendUserQuizMutation } from '../features/services/apiSlice';
 import { setUserToken } from '../features/global/globalSlice';
 
 export default function TestScore({

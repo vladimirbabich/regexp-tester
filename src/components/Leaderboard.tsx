@@ -5,7 +5,7 @@ import { FormEvent, useEffect, useState } from 'react';
 import {
   useLazyGetTestsForModeQuery,
   useLazyGetUserQuizzesForModeQuery,
-} from '../features/api/apiSlice';
+} from '../features/services/apiSlice';
 import {
   ILeaderboardColumnSetting,
   ILeaderboardFetchInfo,

@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { useAppDispatch } from '../app/hooks';
 import jwtDecode from 'jwt-decode';
-import { useRegUserMutation } from '../features/api/apiSlice';
+import { useRegUserMutation } from '../features/services/apiSlice';
 import './../App.scss';
 import './../styles/SignPage.scss';
 import SignNotification from './SignNotification';

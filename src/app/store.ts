@@ -3,7 +3,7 @@ import globalSlice from '../features/global/globalSlice';
 import testFormSlice from '../features/testForm/testFormSlice';
 import quizFormSlice from '../features/quizForm/quizFormSlice';
 import testInputSlice from '../features/testInput/testInputSlice';
-import { apiSlice } from '../features/api/apiSlice';
+import { apiSlice } from '../features/services/apiSlice';
 const store = configureStore({
   reducer: {
     global: globalSlice,

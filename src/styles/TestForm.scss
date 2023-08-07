@@ -81,6 +81,11 @@ span.textBlock {
 .questionsCount {
   user-select: none;
   margin-right: 6px;
+  span {
+    vertical-align: middle;
+    padding: 1px;
+    display: 'block';
+  }
 }
 .labels {
   width: 100%;

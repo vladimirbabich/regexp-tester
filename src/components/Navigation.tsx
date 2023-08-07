@@ -23,6 +23,7 @@ export default function Navigation({ className }: INavigation) {
   ];
   const userToken = localStorage.getItem('userToken');
   useEffect(() => {
+    console.log('useEffect: Navigation');
     //close menu if click outside of menuIcon
     function handleClickOutside(event: MouseEvent) {
       if (

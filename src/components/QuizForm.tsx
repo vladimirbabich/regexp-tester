@@ -12,7 +12,7 @@ import TestScore from './TestScore';
 import StartMenu from './StartMenu';
 import Timer from './Timer';
 import { setActiveMode, setUserToken } from '../features/global/globalSlice';
-import { useGetQuestionsOfQuizQuery } from '../features/api/apiSlice';
+import { useGetQuestionsOfQuizQuery } from '../features/services/apiSlice';
 import { metaTagsController } from '../controllers/MetaTagsController';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -22,11 +22,7 @@ import {
 } from '../models/objectModels';
 
 export default function QuizForm({ mode, id = 1 }: any) {
-  const navigate = useNavigate();
-
   useEffect(() => {
-    // navigate('/');
-    // return;
     metaTagsController.setTitle(`Regular expression Quiz - Retester`);
     metaTagsController.setMeta(
       'description',
@@ -37,8 +33,7 @@ export default function QuizForm({ mode, id = 1 }: any) {
       'quiz, simple test, regex test, test regex, Regular expressions, regexp, Regex, Pattern matching, String manipulation, Text processing, Search algorithms, Parsing, Syntax, Testing.'
     );
     return () => {
-      console.log(123);
-      metaTagsController.setDefault()
+      metaTagsController.setDefault();
     };
   }, []);
 

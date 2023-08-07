@@ -80,3 +80,11 @@ export interface IStartMenu {
   btnText: string;
   handleClick: () => void;
 }
+export interface IQuestionAmount {
+  text: string;
+  amount: number;
+  isLastEl?: boolean;
+}
+export interface IQuestionsCounter {
+  questionAmounts: IQuestionAmount[];
+}

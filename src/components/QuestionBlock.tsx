@@ -7,8 +7,6 @@ export default function QuestionBlock({
   question,
   questionId,
 }: IQuestionBlock) {
-  const textRef = useRef<HTMLTextAreaElement | null>(null);
-
   const [possiblePattern, possibleFlags] = question.possibleAnswer
     ? question.possibleAnswer.split('/')
     : [null, null];
@@ -25,7 +23,6 @@ export default function QuestionBlock({
         style={{
           borderColor: question.userAnswer ? Colors.GREEN : Colors.RED,
           backgroundColor: question.userAnswer ? Colors.BGGREEN : Colors.BGRED,
-          //   bakc
         }}>
         #{questionId}
       </div>

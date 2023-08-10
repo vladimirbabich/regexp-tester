@@ -1,7 +1,7 @@
 @use './../styles/colors';
 
 .notificationBlock {
-  box-shadow: 7px 7px 12px 1px black;
+  box-shadow: 7px 7px 12px 1px #001835;
   position: absolute;
   z-index: 900;
   border: 1px;
@@ -13,11 +13,12 @@
   border-color: colors.$layoutBgColor;
   padding: 4px;
   max-width: 300px;
+  min-width: 50px;
   white-space: normal;
   font-weight: 400;
   justify-content: center;
   align-items: center;
-  * {
+  span {
     text-align: center;
   }
 }

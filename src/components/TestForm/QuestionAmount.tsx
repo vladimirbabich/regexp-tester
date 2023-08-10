@@ -9,7 +9,6 @@ export default function QuestionAmount({
 }: IQuestionAmount) {
   const dispatch = useAppDispatch();
   const handleMouseEvent = (e: React.MouseEvent) => {
-    console.log(text);
     e.type === 'mouseenter'
       ? dispatch(setNotificationText(text))
       : dispatch(setNotificationText(''));

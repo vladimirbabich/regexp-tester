@@ -5,18 +5,12 @@ import { FormEvent, useEffect, useState } from 'react';
 import {
   useLazyGetTestsForModeQuery,
   useLazyGetUserQuizzesForModeQuery,
-} from '../features/services/apiSlice';
+} from '../features/services/apiService';
 import {
   ILeaderboardColumnSetting,
-  ILeaderboardFetchInfo,
   IQuizResult,
   ITestResult,
 } from '../models/objectModels';
-import { setUserToken } from '../features/global/globalSlice';
-import { useAppDispatch } from '../app/hooks';
-import { metaTagsController } from '../controllers/MetaTagsController';
-import { FetchBaseQueryError } from '@reduxjs/toolkit/dist/query';
-import { SerializedError } from '@reduxjs/toolkit';
 import { callApi, callbacks } from '../controllers/LeaderboardUpdateController';
 
 const defaultLimit = 5;
@@ -26,47 +20,34 @@ export default function Leaderboard({
   mode: string;
 }) {
   const [limit, setLimit] = useState<number>(defaultLimit);
-  const dispatch = useAppDispatch();
   const [activeMode, setActiveMode] = useState<string>(mode);
   const [isDataLoading, setIsDataLoading] = useState<boolean>(false);
   useEffect(() => {
     if (limit <= defaultLimit) return;
 
     if (activeMode === 'quiz') {
-      const request = callApi(
+      const abortionCallback = callApi(
         getUserQuizzes,
         { id: 1, limit },
         callbacks.responseUserQuizzes(setResults, setRecordsAmount),
         callbacks.errorUserQuizzes(setResults)
       );
-      //return request!
+      return abortionCallback;
     } else {
-      const abortCallback = callApi(
+      const abortionCallback = callApi(
         getTests,
         { modeName: activeMode, limit },
         callbacks.responseTests(setResults, setRecordsAmount),
         callbacks.errorTests(setResults)
       );
-      return abortCallback;
+      return abortionCallback;
     }
   }, [limit]);
 
-  const [
-    getTests,
-    {
-      data: fetchedTestData,
-      error: fetchedTestError,
-      isLoading: fetchedTestIsLoading,
-    },
-  ] = useLazyGetTestsForModeQuery();
-  const [
-    getUserQuizzes,
-    {
-      data: fetchedQuizData,
-      error: fetchedQuizError,
-      isLoading: fetchedQuizIsLoading,
-    },
-  ] = useLazyGetUserQuizzesForModeQuery();
+  const [getTests, { isLoading: fetchedTestIsLoading }] =
+    useLazyGetTestsForModeQuery();
+  const [getUserQuizzes, { isLoading: fetchedQuizIsLoading }] =
+    useLazyGetUserQuizzesForModeQuery();
 
   const [results, setResults] = useState<ITestResult[] | IQuizResult[]>();
   const [recordsAmount, setRecordsAmount] = useState<number>(0);

@@ -21,9 +21,8 @@ export default function Navigation({ className }: INavigation) {
     // { path: '/only-flags', title: 'Only flags' },
     { path: '/leaderboard', title: 'Leaderboard' },
   ];
-  const userToken = localStorage.getItem('userToken');
+  const userToken = useAppSelector((state) => state.global.userToken);
   useEffect(() => {
-    console.log('useEffect: Navigation');
     //close menu if click outside of menuIcon
     function handleClickOutside(event: MouseEvent) {
       if (

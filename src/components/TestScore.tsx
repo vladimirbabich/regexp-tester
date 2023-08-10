@@ -8,7 +8,7 @@ import { timeFormatController } from '../controllers/TimeFormatController';
 import TestScoreController from '../controllers/TestScoreController';
 import QuizScoreController from '../controllers/QuizScoreController';
 import { localStorageController } from '../controllers/StorageController';
-import { useSendUserQuizMutation } from '../features/services/apiSlice';
+import { useSendUserQuizMutation } from '../features/services/apiService';
 import { setUserToken } from '../features/global/globalSlice';
 
 export default function TestScore({
@@ -19,9 +19,7 @@ export default function TestScore({
 }: ITestScore) {
   const [sendUserQuiz] = useSendUserQuizMutation();
 
-  const [quizScoreValues, setQuizScoreValues] = useState<
-    QuizScoreController | undefined
-  >(
+  const [quizScoreValues] = useState<QuizScoreController | undefined>(
     quizQuestions
       ? new QuizScoreController(quizQuestions, parseFloat(timeSpent.toFixed(8)))
       : undefined
@@ -35,9 +33,8 @@ export default function TestScore({
         timeSpent: timeSpent,
         score: quizScoreValues.score,
       };
-
       const request = sendUserQuiz(formData);
-      request.then((res) => {
+      request.then((res: any) => {
         if ('data' in res) {
           if (res.data.userId)
             localStorageController.updateGenUserId(res.data.userId);

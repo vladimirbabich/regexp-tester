@@ -3,11 +3,11 @@ const apiBaseUrl = 'https://regexp-tester-server.vercel.app/api/';
 // const apiBaseUrl = 'http://localhost:7000/api/';
 
 // Define a service using a base URL and expected endpoints
-export const apiSlice = createApi({
+export const apiService = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
     baseUrl: apiBaseUrl,
-    prepareHeaders: (headers, { getState }) => {
+    prepareHeaders: (headers) => {
       // Read the token from localStorage
       const token = localStorage.getItem('userToken');
       const genUserId = localStorage.getItem('genUserId');
@@ -30,7 +30,6 @@ export const apiSlice = createApi({
       query: (payload) => ({
         url: 'test/create',
         method: 'POST',
-        // headers:{}
         body: payload,
       }),
       invalidatesTags: ['Test'],
@@ -40,7 +39,6 @@ export const apiSlice = createApi({
         `test/getallformode?modeName=${modeName}&limit=${limit}`,
       providesTags: (result) => ['Test'],
     }),
-    //user
     regUser: builder.mutation({
       query: (payload) => ({
         url: 'user/',
@@ -63,26 +61,15 @@ export const apiSlice = createApi({
         },
       }),
     }),
-    //question
-    createQuestion: builder.mutation({
-      //later
-      query: (payload) => ({
-        url: 'question/create',
-        method: 'POST',
-        body: payload,
-      }),
-    }),
     getAllQuestionsForMode: builder.query({
       query: (modeName) => `question/getallformode?modeName=${modeName}`,
     }),
-    //quiz
     getQuestionsOfQuiz: builder.query({
       query: (id) => `quiz/get-questions/${id}`,
     }),
     getQuiz: builder.query({
       query: (id) => (id ? `quiz/get/${id}` : `quiz/get/`),
     }),
-    //user-quiz
     getUserQuizzesForMode: builder.query({
       query: ({ id, limit }) => `user-quiz/all/${id}?limit=${limit}`,
       providesTags: (result) => ['Quiz'],
@@ -109,4 +96,4 @@ export const {
   useGetQuestionsOfQuizQuery,
   useGetQuizQuery,
   useLazyGetUserQuizzesForModeQuery,
-} = apiSlice;
+} = apiService;

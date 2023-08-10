@@ -3,7 +3,6 @@ import { useAppSelector } from '../app/hooks';
 import Analyzer from './Analyzer';
 import Leaderboard from './Leaderboard';
 import SignPage from './SignPage';
-import { Stats } from './Stats';
 import TestForm from './TestForm/TestForm';
 import QuizForm from './QuizForm';
 
@@ -87,27 +86,24 @@ export default function AppRouter() {
       path: '*',
       element: <Navigate to="/" replace={true} />,
     },
-
-    // {
-    //   path: '/stats',
-    //   element: <Stats />,
-    // },
   ];
   return (
-    <Routes>
-      {routes.map((el) => (
-        <Route path={el.path} key={el.path} element={el.element}></Route>
-      ))}
-      {userToken &&
-        privateRoutes.map((el) => (
+    <div className="content">
+      <Routes>
+        {routes.map((el) => (
           <Route path={el.path} key={el.path} element={el.element}></Route>
         ))}
-      {testFormRoutes.map((el) => (
-        <Route path={el.path} key={el.path} element={el.element}></Route>
-      ))}
-      {quizFormRoutes.map((el) => (
-        <Route path={el.path} key={el.path} element={el.element}></Route>
-      ))}
-    </Routes>
+        {userToken &&
+          privateRoutes.map((el) => (
+            <Route path={el.path} key={el.path} element={el.element}></Route>
+          ))}
+        {testFormRoutes.map((el) => (
+          <Route path={el.path} key={el.path} element={el.element}></Route>
+        ))}
+        {quizFormRoutes.map((el) => (
+          <Route path={el.path} key={el.path} element={el.element}></Route>
+        ))}
+      </Routes>
+    </div>
   );
 }

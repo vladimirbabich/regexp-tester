@@ -12,14 +12,9 @@ import TestScore from './TestScore';
 import StartMenu from './StartMenu';
 import Timer from './Timer';
 import { setActiveMode, setUserToken } from '../features/global/globalSlice';
-import { useGetQuestionsOfQuizQuery } from '../features/services/apiSlice';
+import { useGetQuestionsOfQuizQuery } from '../features/services/apiService';
 import { metaTagsController } from '../controllers/MetaTagsController';
-import { useNavigate } from 'react-router-dom';
-import {
-  FetchedQuizQuestion,
-  FetchedQuizType,
-  PreparedQuizQuestion,
-} from '../models/objectModels';
+import { FetchedQuizType } from '../models/objectModels';
 
 export default function QuizForm({ mode, id = 1 }: any) {
   useEffect(() => {
@@ -78,6 +73,10 @@ export default function QuizForm({ mode, id = 1 }: any) {
       setIsTimerActive(false);
     }
   }, [questionsDB, isTestOver]);
+
+  useEffect(() => {
+    dispatch(setIsTestOver(false));
+  }, []);
 
   const [questions, currentQuestionIndex] = useAppSelector((state) => [
     state.quizForm.questions,

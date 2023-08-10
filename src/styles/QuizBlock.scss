@@ -12,9 +12,9 @@ div.quizBlock {
   &:first-of-type {
     margin-top: 10px;
   }
-  .questionId {
-    // width: fit-content;
+  div.questionId {
     border: 2px blue solid;
+    width: fit-content;
     height: fit-content;
     padding: 4px;
     border-top-left-radius: 3px;

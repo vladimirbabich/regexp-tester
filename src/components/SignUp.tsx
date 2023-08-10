@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { useAppDispatch } from '../app/hooks';
 import jwtDecode from 'jwt-decode';
-import { useRegUserMutation } from '../features/services/apiSlice';
+import { useRegUserMutation } from '../features/services/apiService';
 import './../App.scss';
 import './../styles/SignPage.scss';
 import SignNotification from './SignNotification';
@@ -61,7 +61,7 @@ export default function SignUp({
       email: currentEmail.value || null,
       pass: currentPass.value,
     })
-      .then((response) => {
+      .then((response: any) => {
         if ('data' in response) {
           //check server errors
           if ('nickError' in response.data) {

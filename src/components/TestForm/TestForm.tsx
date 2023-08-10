@@ -1,12 +1,14 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react';
-// import './../../App.scss';
+import React, { useEffect, useState, useRef } from 'react';
 import './../../styles/TestForm.scss';
 import Popup from '../Popup';
 import { getResult } from '../../controllers/TestController';
 import Timer from '../Timer';
 import TestInput from '../TestInput';
-import { IQuestion, IResultMatch } from '../../models/objectModels';
-import { getFlagsString } from '../../utils';
+import {
+  IDropDownPickerList,
+  IQuestion,
+  IResultMatch,
+} from '../../models/objectModels';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
   resetFlags,
@@ -18,11 +20,13 @@ import {
 import TestScore from '../TestScore';
 import {
   setActiveMode,
-  setDataOfTest,
   setNotificationText,
   setUserToken,
 } from '../../features/global/globalSlice';
-import { useGetAllQuestionsForModeQuery } from '../../features/services/apiSlice';
+import {
+  useGetAllQuestionsForModeQuery,
+  useSendTestMutation,
+} from '../../features/services/apiService';
 import { LocalStorageController } from '../../controllers/StorageController';
 import { ITestForm } from '../../models/componentModels';
 import { metaTagsController } from '../../controllers/MetaTagsController';
@@ -32,6 +36,17 @@ import { useGetSkippedQuestionAmount } from './hooks';
 import QuestionsCounter from './QuestionsCounter';
 
 const SKIP_ANIMATION_TIME_AMOUNT = 25; //seconds
+
+function getFlagsString(array: Array<IDropDownPickerList>) {
+  let str = array
+    .filter((el) => {
+      if (el.status) return 1;
+      return 0;
+    })
+    .map((el) => el.name)
+    .join('');
+  return str;
+}
 
 export default function TestForm({ title, mode }: ITestForm) {
   const [timeSpent, setTimeSpent] = useState<number>(0);
@@ -61,6 +76,8 @@ export default function TestForm({ title, mode }: ITestForm) {
     error: questionsDBError,
     isLoading: questionsDBIsLoading,
   } = useGetAllQuestionsForModeQuery(mode);
+
+  const [sendTest] = useSendTestMutation();
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -142,28 +159,36 @@ export default function TestForm({ title, mode }: ITestForm) {
       askedQuestions.length > 0 &&
       askedQuestions.filter((el) => (el?.userAnswer ? 1 : 0)).length > 0
     ) {
+      const defaultTimeAmount = getDefaultTimeAmount(mode);
       const testQuestions = askedQuestions.map((el) => ({
         questionId: el.id,
         difficulty: el.difficulty,
         userAnswer: el.userAnswer ? el.userAnswer : null,
       }));
-      // if i will decide that default timeAmount is better in time modes - chalge timeSpent into finalTimeSpent
-      // const finalTimeSpent = getDefaultTimeAmount(mode) || timeSpent;
       setTestStart(new Date().getTime() / 1000);
 
       const localStorageController = new LocalStorageController();
       const userId = localStorageController.getUsersKey('id');
-      // alert(userId);
+
       const formdata = {
         testQuestions,
         timeSpent:
-          getDefaultTimeAmount(mode) === 0
-            ? timeAmount
-            : getDefaultTimeAmount(mode) - timeAmount,
+          defaultTimeAmount === 0 ? timeAmount : defaultTimeAmount - timeAmount,
         modeName: mode,
-        userId: typeof userId == 'number' ? userId : parseInt(userId),
+        userId: +userId,
       };
-      dispatch(setDataOfTest(formdata));
+      const request = sendTest(formdata);
+      request.then((res: any) => {
+        if ('data' in res) {
+          localStorageController.updateGenUserId(res.data.userId);
+        }
+
+        if ('data' in res) {
+          if (res.data?.token) {
+            dispatch(setUserToken(res.data.token));
+          }
+        }
+      });
     }
   }
 
@@ -178,12 +203,10 @@ export default function TestForm({ title, mode }: ITestForm) {
     }
   }
   useEffect(() => {
-    console.log('useEffect: flags, pattern, selectedFunction');
     updateResults();
   }, [dispatch, flags, pattern, selectedFunction]);
 
   useEffect(() => {
-    console.log('useEffect: questions');
     if (questions && questions?.length > 0) {
       if (!currentQuestion) setRandomQuestion();
     }
@@ -283,7 +306,7 @@ export default function TestForm({ title, mode }: ITestForm) {
   }
 
   useEffect(() => {
-    if (timeSpent > 0) prepareAndSendEndedTest(); // if test over - change dataOfTest in globalSlice and send it to the server
+    if (timeSpent > 0) prepareAndSendEndedTest();
   }, [dispatch, timeSpent]);
   useEffect(() => {
     //resetTestForm
@@ -443,6 +466,7 @@ export default function TestForm({ title, mode }: ITestForm) {
         value={pattern}
         handleChange={handleChange}
         inputRef={inputRef}
+        getFlagsString={getFlagsString}
         mode={mode}></TestInput>
       <span className="textBlock" role="textbox">
         {currentQuestion?.text ? (

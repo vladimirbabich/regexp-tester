@@ -3,7 +3,6 @@ import './../App.scss';
 import './../styles/TestInput.scss';
 import DropDownPicker from './DropDownPicker';
 import { ITestInput } from '../models/componentModels';
-import { getFlagsString } from '../utils';
 import { useAppSelector } from '../app/hooks';
 
 export default function TestInput({
@@ -11,6 +10,7 @@ export default function TestInput({
   value,
   mode,
   inputRef,
+  getFlagsString,
 }: ITestInput) {
   const flags = useAppSelector((state) => state.testForm.flags);
   const isTestOver = useAppSelector((state) => state.testForm.isTestOver);

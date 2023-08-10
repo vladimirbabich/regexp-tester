@@ -2,6 +2,7 @@ import { MutableRefObject } from 'react';
 import {
   AskedQuestion,
   handleChangeInputParamsType,
+  IDropDownPickerList,
   ILeaderboardColumnSetting,
   ILeaderboardFetchInfo,
   IQuizResult,
@@ -32,6 +33,7 @@ export type ITestInput = {
   value: string;
   mode?: string;
   inputRef: React.RefObject<HTMLInputElement>;
+  getFlagsString: (array: Array<IDropDownPickerList>) => string;
 };
 export interface INavigation {
   className: string;

@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useAppDispatch } from '../app/hooks';
-import { useLoginUserMutation } from '../features/services/apiSlice';
+import { useLoginUserMutation } from '../features/services/apiService';
 import { setUserToken } from '../features/global/globalSlice';
 import { ISign } from '../models/componentModels';
 import './../App.scss';
@@ -52,7 +52,7 @@ export default function SignIn({
       nicknameOrEmail: currentNickEmail.value,
       pass: currentPass.value,
     })
-      .then((response) => {
+      .then((response: any) => {
         if ('data' in response) {
           //check server errors
           if ('nickError' in response.data) {

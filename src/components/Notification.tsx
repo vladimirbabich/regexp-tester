@@ -1,36 +1,27 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useAppSelector } from '../app/hooks';
 import { INotification } from '../models/componentModels';
 import './../styles/Notification.scss';
 
-const horOffset = 20;
-const vertOffset = 20;
-const borderSize = 2;
-const browserScrollWidth = 20;
+const offset: number = 20;
+function getIsEnoughSpace(
+  coordPos: number,
+  coordSize: number,
+  notificationSize: number = 0
+) {
+  return coordPos + notificationSize + offset < coordSize;
+}
+
 export default function Notification({ position }: INotification) {
   const text = useAppSelector((state) => state.global.notificationText);
-  let elementWidth = 0;
-  let elementHeight = 0;
+  const notificationRef = useRef<HTMLDivElement>(null);
 
-  const [isEnoughSpaceHor, setIsEnoughSpaceHor] = useState<boolean>(false);
-  const [isEnoughSpaceVer, setIsEnoughSpaceVer] = useState<boolean>(false);
-  const notificationRef = useRef(null);
-
-  useEffect(() => {
-    if (notificationRef && notificationRef.current) {
-      elementWidth = (notificationRef.current as HTMLElement).clientWidth;
-      elementHeight = (notificationRef.current as HTMLElement).clientHeight;
-      const elWidth = elementWidth > 0 ? elementWidth : 70;
-
-      setIsEnoughSpaceHor(
-        position.x + elWidth + horOffset + borderSize + browserScrollWidth <
-          window.innerWidth
-      );
-      setIsEnoughSpaceVer(
-        position.y + elementHeight + vertOffset < window.innerHeight
-      );
-    }
-  }, [notificationRef, notificationRef.current]);
+  const [isEnoughSpaceHor] = useState<boolean>(() =>
+    getIsEnoughSpace(position.x, window.innerWidth)
+  );
+  const [isEnoughSpaceVer] = useState<boolean>(() =>
+    getIsEnoughSpace(position.y, window.innerHeight)
+  );
 
   return (
     <div
@@ -51,13 +42,13 @@ export default function Notification({ position }: INotification) {
 
 const styles = {
   horizontalLeft: (x: number) => ({
-    left: x + horOffset,
+    left: x + offset,
   }),
   horizontalRight: (rightOffset: number) => ({
-    right: rightOffset + horOffset / 2,
+    right: rightOffset + offset,
   }),
   verticalTop: (y: number) => ({
-    top: y + vertOffset,
+    top: y + offset,
   }),
   verticalBottom: (bottomOffset: number) => ({
     bottom: bottomOffset,

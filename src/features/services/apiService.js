@@ -8,12 +8,10 @@ export const apiService = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: apiBaseUrl,
     prepareHeaders: (headers) => {
-      // Read the token from localStorage
       const token = localStorage.getItem('userToken');
       const genUserId = localStorage.getItem('genUserId');
 
       if (token) {
-        // Add the token to the Authorization header
         headers.set('Authorization', `Bearer ${token}`);
       }
       if (genUserId) {

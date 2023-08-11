@@ -88,7 +88,7 @@ export default function SignUp({
             dispatch(setUserToken(response.data.token));
           }
         }
-        if ('error' in response) alert(response.error);
+        if ('error' in response) console.log(response.error);
       })
       .catch((reason: Error) => console.log(reason));
   }

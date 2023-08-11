@@ -36,8 +36,11 @@ export default function TestScore({
       const request = sendUserQuiz(formData);
       request.then((res: any) => {
         if ('data' in res) {
-          if (res.data.userId)
-            localStorageController.updateGenUserId(res.data.userId);
+          if (res.data.user.id)
+            localStorageController.updateGenUserId(res.data.user.id);
+          const savedNickname = localStorage.getItem('genUserNickname');
+          if (res.data.user.nickname && !savedNickname)
+            localStorage.setItem('genUserNickname', res.data.user.nickname);
           if (res.data?.token) {
             dispatch(setUserToken(res.data.token));
           }

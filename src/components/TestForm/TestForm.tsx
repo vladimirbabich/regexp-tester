@@ -180,7 +180,10 @@ export default function TestForm({ title, mode }: ITestForm) {
       const request = sendTest(formdata);
       request.then((res: any) => {
         if ('data' in res) {
-          localStorageController.updateGenUserId(res.data.userId);
+          localStorageController.updateGenUserId(res.data.user.id);
+          const savedNickname = localStorage.getItem('genUserNickname');
+          if (res.data.user.nickname && !savedNickname)
+            localStorage.setItem('genUserNickname', res.data.user.nickname);
         }
 
         if ('data' in res) {
